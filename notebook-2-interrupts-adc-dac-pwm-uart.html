@@ -511,11 +511,11 @@ svg.dg .hov:hover > *{opacity:.85}
 .mbits{display:flex; flex-direction:column; gap:3px; margin:4px 0}
 .mbt{font-family:'Gaegu'; font-weight:700; font-size:15px; color:var(--ink2)}
 .mbr{display:flex; gap:4px; flex-wrap:wrap}
-.mb{display:flex; flex-direction:column; align-items:center; min-width:38px}
-.mb i{font-style:normal; font-family:'Courier Prime'; font-weight:700; font-size:16px; width:30px; height:28px; display:grid; place-items:center; border:1.5px solid var(--faint); border-radius:6px; background:var(--paper); transition:all .2s}
-.mb small{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
-.mb.one i{background:var(--hi); color:#fff; border-color:var(--ink); box-shadow:0 0 10px var(--led-glow)}
-.mb.unk i{background:repeating-linear-gradient(45deg,var(--hl-o) 0 4px,transparent 4px 8px)}
+.mbc{display:flex; flex-direction:column; align-items:center; min-width:38px}
+.mbc i{font-style:normal; font-family:'Courier Prime'; font-weight:700; font-size:16px; width:30px; height:28px; display:grid; place-items:center; border:1.5px solid var(--faint); border-radius:6px; background:var(--paper); transition:all .2s}
+.mbc small{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
+.mbc.one i{background:var(--hi); color:#fff; border-color:var(--ink); box-shadow:0 0 10px var(--led-glow)}
+.mbc.unk i{background:repeating-linear-gradient(45deg,var(--hl-o) 0 4px,transparent 4px 8px)}
 
 /* scanner schematic */
 svg.scan .wire{fill:none; stroke:var(--ink3); stroke-width:3; stroke-linecap:round; transition:stroke .15s}
@@ -794,6 +794,7 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
 .term pre{margin:0; white-space:pre-wrap; word-break:break-all; font-size:18px}
 .term .cur{font-style:normal; animation:blink 1s steps(2) infinite}
 @media (max-width:640px){ .lsrbits{grid-template-columns:repeat(4,minmax(0,1fr))} .meter{min-width:110px} }
+.tbl.pwmff td.act{background:var(--hl-y); font-weight:700}
 
 </style>
 </head>
@@ -1028,7 +1029,7 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
     <li><b>NVIC</b> = Nested Vectored Interrupt Controller. It controls system exceptions and peripheral interrupts. In the LPC176x it supports <b>35 vectored interrupts</b>.</li>
     <li>Each peripheral has one or more interrupt lines to the NVIC. The <b>interrupt number</b> tells where its entry sits in the Interrupt Vector Table (IVT).</li>
     <li><b>Interrupt vector</b> = the <span class="hl-p">address of the ISR</span>. The vector of interrupt type N is stored at <b>base address + 4 × N</b> (each entry is 4 bytes).</li>
-    <li>When the interrupt occurs, the NVIC loads that vector into the PC → the ISR runs and services the peripheral.</li>
+    <li>When the interrupt occurs, the NVIC loads that vector into the <b>PC</b> (<b>Program Counter</b>: the CPU register holding the address of the next instruction — not the timer's prescale counter!) → the ISR runs and services the peripheral.</li>
   </ul>
   <div class="icard"><div class="ih">where is the vector of type N?</div><div class="eq">address = IVT base + 4 × N</div></div>
 
@@ -1036,7 +1037,7 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
   <ol class="b">
     <li>The peripheral is <b>enabled to interrupt</b> on some event → when the event occurs, an INTR request goes to the NVIC.</li>
     <li>If the NVIC is <b>enabled</b> for that peripheral (<code>NVIC_EnableIRQ(…)</code>), it services the request:</li>
-    <li>save the <b>return address</b> → get the interrupt vector from the IVT → load it into the <b>PC</b> → run the ISR.</li>
+    <li>save the <b>return address</b> (pushed on the <b>stack</b>, a memory area for values to restore later) → get the interrupt vector from the IVT → load it into the <b>PC</b> → run the ISR.</li>
     <li>When the ISR finishes, the CPU <b>resumes</b> the interrupted function.</li>
   </ol>
   <div class="wg" id="w-ivt"></div>
@@ -1066,7 +1067,7 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.1</span>IR — write 1 to clear</h3>
   <ul class="b">
     <li>Bits 0–3 = MR0–MR3 interrupt flags, bits 4–5 = CR0–CR1 capture interrupt flags. 1 = that interrupt happened.</li>
-    <li>Writing <b>1</b> to a bit clears (resets) it; writing <b>0</b> has no effect. So <code>LPC_TIM0-&gt;IR = 1;</code> clears only the MR0 flag.</li>
+    <li>Writing <b>1</b> clears a bit, writing <b>0</b> does nothing → <code>LPC_TIM0-&gt;IR = 1;</code> clears only the MR0 flag.</li>
   </ul>
   <div class="wg" id="w-ir"></div>
 
@@ -1199,11 +1200,8 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
   <div class="box idea sk"><span class="tag">the big idea</span><svg class="sticker"><use href="#st-bulb"/></svg>
     <ul class="b">
       <li>The real world is analog (any voltage). The CPU only understands numbers. An <b>Analog-to-Digital Converter</b> measures a voltage and gives a number — needed for analog sensors, e.g. a temperature sensor.</li>
-      <li>LPC1768 ADC: <b>12-bit</b>, based on <b>Successive Approximation (SAR)</b>, range <b>V<sub>REFN</sub> to V<sub>REFP</sub></b> (commonly 0 to 3.3 V), up to <b>8 multiplexed inputs</b> (AD0.0–AD0.7).</li>
+      <li>LPC1768 ADC: <b>12-bit</b> (output 0 … 4095), based on <b>Successive Approximation (SAR)</b>, range <b>V<sub>REFN</sub> to V<sub>REFP</sub></b> (commonly 0 to 3.3 V), up to <b>8 multiplexed inputs</b> AD0.0–AD0.7 (one converter, switched between 8 pins).</li>
     </ul>
-  </div>
-  <div class="note analogy lav"><div class="nh"><svg><use href="#st-meter"/></svg>analogy · a measuring jug</div>
-    The ADC is a jug with <b>4096 marks</b> (2<sup>12</sup>) between 0 V and 3.3 V. Pour in the voltage → it tells you the mark number. One mark = 3.3 V / 4096 ≈ 0.805 mV.
   </div>
 
   <h3 class="bub jit" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">5.1</span>Voltage ↔ number</h3>
@@ -1228,12 +1226,12 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
     <li>AD0.6 = P0.3, AD0.7 = P0.2 → function <b>10</b>.</li>
     <li>When the ADC function is selected, the pin's digital part is disconnected.</li>
   </ul>
-  <p class="mnote r">the slide writes "P0.30 / P0.31" for AD0.4 / AD0.5 — it's P1.30 / P1.31 (that's what the code uses)</p>
+  <p class="mnote r">the slide writes "P0.30 / P0.31, FN 03" for AD0.4 / AD0.5 — it's P1.30 / P1.31 (that's what the code uses)</p>
 
   <h3 class="bub jit" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">5.4</span>ADCR — the control register</h3>
   <div class="wg" id="w-adcr"></div>
   <ul class="b arrow">
-    <li>ADC clock = PCLK / (CLKDIV + 1) must be ≤ 13 MHz. With PCLK = 3 MHz, CLKDIV = 0 is fine.</li>
+    <li>ADC clock = PCLK / (CLKDIV + 1) must be ≤ 13 MHz → program the <b>smallest</b> CLKDIV that gives ≤ 13 MHz (a slower clock only helps for a high-impedance source). With PCLK = 3 MHz, CLKDIV = 0 is fine.</li>
     <li><b>Software mode</b> (BURST = 0): select <em>one</em> channel in SEL, write START = 001 → one conversion (65 clocks).</li>
     <li><b>Burst mode</b> (BURST = 1, START = 000): the ADC keeps converting all selected channels by itself (up to 200 kHz), lowest channel first. Clear BURST to stop (the running conversion finishes).</li>
     <li>The ADC must be powered: <code>LPC_SC-&gt;PCONP |= (1&lt;&lt;12);</code> (it's off after reset).</li>
@@ -1242,7 +1240,7 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
   <h3 class="bub jit" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">5.5</span>Reading the result</h3>
   <ul class="b">
     <li><b>ADGDR</b> (global data register): result of the most recent conversion + its flags. <b>ADDR0–ADDR7</b>: the last result of each channel.</li>
-    <li>Both: <b>RESULT = bits 15:4</b> (12 bits), <b>OVERRUN = bit 30</b> (burst mode: a result was overwritten before being read), <b>DONE = bit 31</b> (conversion complete). Reading the register clears DONE (and OVERRUN).</li>
+    <li>Both: <b>RESULT = bits 15:4</b> (12 bits, valid when DONE = 1: 0 → input ≤ V<sub>REFN</sub>, 0xFFF → input ≥ V<sub>REFP</sub>), <b>OVERRUN = bit 30</b> (burst mode: a result was overwritten before being read), <b>DONE = bit 31</b> (conversion complete). Reading the register clears DONE (and OVERRUN).</li>
     <li>ADGDR also has <b>CHN = bits 26:24</b>: which channel the result is from.</li>
     <li>So: <code>value = (reg &gt;&gt; 4) &amp; 0xFFF;</code> and wait with <code>while((reg &amp; (1&lt;&lt;31)) == 0);</code></li>
   </ul>
@@ -1302,7 +1300,7 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
 
   <h3 class="bub jit" style="--bc:var(--hl-o);--bc2:var(--n-o)"><span class="num">6.1</span>DAC registers</h3>
   <ul class="b">
-    <li><b>DACR</b>: <b>VALUE = bits 15:6</b> (the 10-bit number, so write <code>value &lt;&lt; 6</code>). <b>BIAS = bit 16</b>: 0 → settling 1 µs (1 MHz update), max 700 µA; 1 → 2.5 µs (400 kHz), max 350 µA.</li>
+    <li><b>DACR</b>: <b>VALUE = bits 15:6</b> (the 10-bit number, so write <code>value &lt;&lt; 6</code>). <b>BIAS = bit 16</b>: 0 → settling time 1 µs (1 MHz update), max 700 µA; 1 → 2.5 µs (400 kHz), max 350 µA. (Settling time = how long AOUT takes to reach the new voltage.)</li>
     <li><b>DACCTRL</b>: bit 0 INT_DMA_REQ (set by hardware when the timer times out; cleared by any write to DACR), bit 1 <b>DBLBUF_ENA</b>, bit 2 <b>CNT_ENA</b> (time-out counter on), bit 3 DMA_ENA.</li>
     <li><b>DACCNTVAL</b>: bits 15:0 = reload value of the DAC's interrupt/DMA timer.</li>
   </ul>
@@ -1346,9 +1344,6 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
       <li>Reverse the sequence → reverse direction. Faster sequence → faster rotation.</li>
     </ul>
   </div>
-  <div class="note analogy blue"><div class="nh"><svg><use href="#st-cat"/></svg>analogy · cat and laser dot</div>
-    The rotor is a cat chasing a laser dot. Move the dot to the next spot around a circle → the cat jumps there. Keep moving it around → the cat runs in circles.
-  </div>
   <div class="wg" id="w-motor"></div>
   <ul class="b">
     <li>Bit order on P0.3–P0.0 = <b>C D A B</b>. Sequence: <b>0011 (3)</b> → <b>1001 (9)</b> → <b>1100 (C)</b> → <b>0110 (6)</b> → repeat.</li>
@@ -1389,9 +1384,6 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
     </ul>
   </div>
   <div class="icard"><div class="ih">average voltage (slide)</div><div class="eq">V<sub>AVG</sub> = Duty cycle × V<sub>H</sub></div><p class="center small">V<sub>H</sub> = the HIGH level of the PWM signal</p></div>
-  <div class="note analogy pink"><div class="nh"><svg><use href="#st-cat"/></svg>analogy · blinking eyes</div>
-    Close your eyes for half of every second and the room looks half as bright on average. Blink fast enough and you don't notice the blinking at all — only the dimness.
-  </div>
   <div class="wg" id="w-duty"></div>
 
   <h3 class="bub jit" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">8.1</span>Single edge vs double edge</h3>
@@ -1399,7 +1391,7 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
     <li><b>Single edge</b>: the pulse always <b>starts at the beginning</b> of the period; only its end moves.</li>
     <li><b>Double edge</b>: both edges can move → the pulse can be anywhere in the period (used in multi-phase motor control).</li>
     <li>LPC1768: <b>6 PWM outputs</b> PWM1.1 … PWM1.6, built on a timer with <b>7 match registers</b> MR0–MR6. <b>MR0 sets the period</b> (the PWM timer resets on MR0).</li>
-    <li>Single edge: set by Match0, reset by Match n. Double edge: set by Match (n−1), reset by Match n (PWM1 is always single edge).</li>
+    <li>Each output is an S-R flip-flop (S input → output 1, R input → output 0). <b>Single edge</b> uses 2 match registers: set by <b>Match 0</b>, reset by <b>Match n</b>. <b>Double edge</b> uses 3 (MR0 for the period + two edge positions): set by <b>Match (n−1)</b>, reset by <b>Match n</b>. PWM1 is always single edge. The table in the widget below is the slide's set/reset table.</li>
   </ul>
   <div class="wg" id="w-ramp"></div>
   <div class="tblwrap"><table class="tbl" style="max-width:640px">
@@ -1437,6 +1429,7 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
     <li>Every period the PWM interrupt (on MR0) changes MR4 by ±50 → the duty slowly sweeps up then down → the LED "breathes".</li>
   </ul>
   <div class="wg" id="w-w1" style="--tilt:0deg"></div>
+  <p class="small p-soft">The slide also writes <code>LPC_PWM1-&gt;LER = 0x000000FF;</code> when flag flips. LER only has bits 0–6, so this works exactly like 0x7F (bit 7 is ignored).</p>
 </article>
 
 <!-- ===================== CH 9 : UART ===================== -->
@@ -1451,11 +1444,8 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
     <ul class="b">
       <li><b>UART</b> (Universal Asynchronous Receiver/Transmitter) sends data on <b>TxD</b> and gets data on <b>RxD</b>, one bit at a time.</li>
       <li><b>Asynchronous</b> = no shared clock wire. Both sides agree on the speed (<b>baud rate</b>, bits per second) in advance.</li>
-      <li>Data travels in packets called <b>frames</b>: <b>start bit (0)</b> → <b>5–8 data bits</b> (LSB first) → optional <b>parity bit</b> → <b>stop bit (1)</b>. The idle line is 1.</li>
+      <li>Data travels in packets called <b>frames</b>: <b>start bit (0)</b> → <b>5–8 data bits</b> (LSB first) → optional <b>parity bit</b> (an extra bit that makes the count of 1s odd/even, so a flipped bit can be detected) → <b>stop bit (1)</b>. The idle line is 1.</li>
     </ul>
-  </div>
-  <div class="note analogy green"><div class="nh"><svg><use href="#st-mail"/></svg>analogy · tapping a rhythm</div>
-    Two friends agree: "one tap every second". A <b>start</b> tap says "listen now!", then 8 taps/no-taps carry the bits, then a pause (<b>stop</b>) ends the letter. Nobody needs a shared clock — just the agreed tempo.
   </div>
   <div class="wg" id="w-frame"></div>
   <div class="tblwrap"><table class="tbl" style="max-width:560px">
@@ -1469,14 +1459,16 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
   <h3 class="bub jit" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">9.1</span>RS-232 &amp; MAX232</h3>
   <ul class="b">
     <li>The micro has a built-in UART (asynchronous). PCs used IBM's <b>DB-9 RS-232</b> standard.</li>
-    <li>RS-232 levels: bit <b>0 = +3 … +25 V</b>, bit <b>1 = −25 … −3 V</b>; −3 … +3 V is undefined. TTL logic came later, so RS-232 is <b>not TTL-compatible</b>.</li>
-    <li>So a converter is needed: <b>MAX232</b> (a "line driver") changes micro levels ↔ RS-232 levels. It has 2 transmit drivers <b>T1, T2</b> and 2 receivers <b>R1, R2</b>, and makes ±10 V from +5 V by itself (voltage doubler + inverter with 4 capacitors).</li>
+    <li>RS-232 levels: bit <b>0 = +3 … +25 V</b>, bit <b>1 = −25 … −3 V</b>; −3 … +3 V is undefined. TTL logic (the micro's levels: 0 = 0 V, 1 = +3.3 / 5 V) came later, so RS-232 is <b>not TTL-compatible</b>.</li>
+    <li>So a converter is needed: <b>MAX232</b> (a "line driver") changes micro levels ↔ RS-232 levels. It has 2 transmit drivers <b>T1, T2</b> and 2 receivers <b>R1, R2</b>, and makes ±10 V from +5 V by itself (voltage doubler +5 → +10 V, inverter +10 → −10 V, 4 capacitors C1–C4).</li>
+    <li>MAX232 pins: T1 in 11 → T1 out 14 · T2 in 10 → T2 out 7 · R1 in 13 → R1 out 12 · R2 in 8 → R2 out 9 · V<sub>CC</sub> 16, GND 15. DB-9: pin 2 RxD, 3 TxD, 5 GND.</li>
     <li>Wiring crosses over: serial-port <b>TxD → (MAX232) → RxD</b> of the controller, and controller <b>TxD → (MAX232) → RxD</b> of the serial port.</li>
   </ul>
   <div class="wg" id="w-rs232"></div>
 
   <h3 class="bub jit" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">9.2</span>UART registers</h3>
   <ul class="b">
+    <li><b>FIFO</b> = First-In-First-Out queue (16 bytes): bytes leave in the same order they came in. The UART has one for TX and one for RX.</li>
     <li><b>U0THR</b> (Transmit Holding, write): top byte of the TX FIFO = newest character; written here → sent when it reaches the bottom of the FIFO. Needs DLAB = 0.</li>
     <li><b>U0RBR</b> (Receiver Buffer, read): top byte of the RX FIFO = <b>oldest</b> received character. Needs DLAB = 0.</li>
     <li><b>U0DLL / U0DLM</b> (Divisor Latch LSB / MSB): together a 16-bit divisor for the baud rate (0 is treated as 1). Needs <b>DLAB = 1</b>.</li>
@@ -1491,7 +1483,7 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
 
   <h3 class="bub jit" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">9.3</span>Baud rate</h3>
   <div class="icard"><div class="ih">baud rate formula (slide)</div>
-    <div class="eq">UARTn<sub>baudrate</sub> = <span class="frac"><span>PCLK</span><span>16 × (256 × UnDLM + UnDLL) × (1 + DivAddVal / MulVal)</span></span></div>
+    <div class="eq" style="font-size:clamp(16px,2.3vw,24px)">UARTn<sub>baudrate</sub> = <span class="frac"><span>PCLK</span><span>16 × (256 × UnDLM + UnDLL) × (1 + <span class="frac"><span>DivAddVal</span><span>MulVal</span></span>)</span></span></div>
   </div>
   <ul class="b">
     <li><b>U0FDR</b> (Fractional Divider): DIVADDVAL = bits 3:0 (reset 0 → no effect), MULVAL = bits 7:4 (must be ≥ 1; reset 1).</li>
@@ -1503,7 +1495,7 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
   <p><span class="pill p">question</span> Program to receive a character and send it back.</p>
   <ul class="b">
     <li>Init: P0.2/P0.3 → TXD0/RXD0 (PINSEL0 |= 0x50); LCR = 0x83 (8 data bits, 1 stop, no parity, <b>DLAB = 1</b>); DLM = 0, DLL = 0x13 = 19 → 3 MHz / (16 × 19) ≈ 9868 ≈ <b>9600 baud</b>; LCR = 0x03 (DLAB back to 0); FCR = 0x07; IER = 0x03 (receive + THRE interrupts).</li>
-    <li>ISR: read IIR, keep bits 3:1 (<code>&amp; 0x06</code>): 0x02 → THRE (sent) → tx flag; 0x04 → RDA (data arrived) → read RBR → rx flag.</li>
+    <li>ISR: read IIR, keep bits 2:1 (<code>&amp; 0x06</code>): 0x02 → THRE (sent) → tx flag; 0x04 → RDA (data arrived) → read RBR → rx flag.</li>
     <li>main: wait for rx flag → write it to THR → wait for tx flag → repeat.</li>
   </ul>
   <div class="wg" id="w-u1" style="--tilt:0deg"></div>
@@ -1986,7 +1978,7 @@ function ruler(host, label, min, max, val, step, fmt, oninput) {
 function miniBits(host, labels, title) { // small labelled bit cells, labels left→right
   const w = el('div', { class: 'mbits' }); if (title) w.appendChild(el('div', { class: 'mbt' }, title));
   const row = el('div', { class: 'mbr' }); w.appendChild(row); host.appendChild(w);
-  const cells = labels.map(l => { const c = el('div', { class: 'mb' }, `<i>0</i><small>${l}</small>`); row.appendChild(c); return c; });
+  const cells = labels.map(l => { const c = el('div', { class: 'mbc' }, `<i>0</i><small>${l}</small>`); row.appendChild(c); return c; });
   return { el: w, set(arr) { arr.forEach((b, i) => { const c = cells[i]; if (!c) return; c.firstChild.textContent = b === null ? '?' : b; c.classList.toggle('one', b === 1); c.classList.toggle('unk', b === null); }); } };
 }
 
@@ -2093,8 +2085,10 @@ BUILD.push(function wIvt() {
   const w = W('w-ivt', 'an interrupt, in slow motion', 'choose N, then step');
   let N = 17; const BASE = 0x00000000;
   const top = el('div', { class: 'row mb' }); w.appendChild(top);
-  ruler(top, 'interrupt type N', 0, 34, N, 1, v => 'N = ' + v + ' → offset ' + hx(4 * v, 2), v => { N = v; st.refresh(); });
-  top.appendChild(el('span', { class: 'small p-soft', style: 'max-width:380px' }, 'On the LPC1768 the 16 Cortex system exceptions come first, so Timer0 (IRQ 1) is type N = 17 → offset 0x44.'));
+  const nr = ruler(top, 'interrupt type N', 0, 50, N, 1, v => 'N = ' + v + ' → offset ' + hx(4 * v, 2), v => { N = v; st.refresh(); });
+  top.appendChild(el('span', { class: 'small p-soft', style: 'max-width:380px' }, 'The 16 Cortex system exceptions come first (N = 0–15), then the 35 peripheral interrupts: N = 16 + IRQ number.'));
+  const qc = el('div', { class: 'chips mb' }); w.appendChild(qc); qc.appendChild(el('span', { class: 'cav p-soft' }, 'ISRs in these notes:'));
+  [['TIMER0', 1], ['UART0', 5], ['PWM1', 9], ['EINT2', 20], ['EINT3', 21], ['ADC', 22]].forEach(([n, q]) => { const c = el('button', { class: 'chip', type: 'button' }, `${n} · IRQ ${q} → N ${16 + q}`); c.onclick = () => { nr.value = 16 + q; nr.dispatchEvent(new Event('input')); }; qc.appendChild(c); });
   const host = el('div'); w.appendChild(host); const L = t => lineOf(IVT_CODE, t);
   const steps = [
     { l: [L('do_main_work')], t: 'The main program is running. PC points into <code>main()</code>.', f: s => set(s, { pc: 'main + 0x10', where: 'main' }) },
@@ -2725,7 +2719,7 @@ BUILD.push(function wAdcr() {
   const selSay = x => { const ch = []; for (let i = 0; i < 8; i++) if ((x >> i) & 1) ch.push('AD0.' + i); return ch.length ? `channel(s) selected: <b>${ch.join(', ')}</b>` : '<span class="p-red">no channel selected</span>'; };
   RegBuilder(w, {
     name: 'ADCR', reg: 'LPC_ADC->ADCR', width: 28, value: (1 << 5) | (1 << 21) | (1 << 24), hexd: 8, fields: [
-      { lo: 0, hi: 7, name: 'SEL', desc: 'bit n = 1 → sample AD0.n. Software mode: exactly one bit. Burst mode: any number.', say: selSay },
+      { lo: 0, hi: 7, name: 'SEL', desc: 'bit n = 1 → sample AD0.n. Software mode: exactly one bit. Burst mode: 1 to 8 bits. All zeros = same as 0x01.', say: selSay },
       { lo: 8, hi: 15, name: 'CLKDIV', desc: 'ADC clock = PCLK / (CLKDIV + 1), must be ≤ 13 MHz', say: (x) => `ADC clock = 3 MHz / ${x + 1} = ${(3 / (x + 1)).toFixed(3)} MHz` },
       { bit: 16, name: 'BURST', desc: '1 = keep converting the selected channels automatically', opts: { 0: '0 · software', 1: '1 · burst' }, say: { 0: 'software-controlled mode (convert when START says)', 1: '<b>burst mode</b>: repeated conversions, START must be 000' } },
       { bit: 21, name: 'PDN', desc: '1 = ADC operational, 0 = power-down', opts: { 0: '0 · off', 1: '1 · on' }, say: { 0: '<span class="p-red">ADC in power-down</span>', 1: 'ADC <b>operational</b>' } },
@@ -2733,7 +2727,7 @@ BUILD.push(function wAdcr() {
       { bit: 27, name: 'EDGE', desc: 'for START = 010–111: 1 = falling edge, 0 = rising edge', opts: { 0: '0 rising', 1: '1 falling' }, say: (x, v) => ((v >> 24) & 7) >= 2 ? (x ? 'on the falling edge' : 'on the rising edge') : null }
     ], presets: [[(1 << 4) | (1 << 21) | (1 << 24), 'A1: AD0.4 start'], [(1 << 5) | (1 << 21) | (1 << 24), 'A1/A3: AD0.5 start'], [(1 << 4) | (1 << 5) | (1 << 16) | (1 << 21), 'A2: burst 4+5']]
   });
-  w.appendChild(el('p', { class: 'small p-soft' }, 'Bits 20:17 and 23:22 are reserved (bits 19:17 were CLKS in older parts — keep 0).'));
+  w.appendChild(el('p', { class: 'small p-soft' }, 'Bits 20:17, 23:22 and 31:28 are reserved — write 0. START = 000 is also the value to use when clearing PDN to 0. For 100–111 the MAT signal does not need to be pinned out (MAT0.3 can\'t even be).'));
 });
 
 /* ---------- ADGDR decoder ---------- */
@@ -2767,7 +2761,7 @@ BUILD.push(function wModes() {
   blk(120, 500, 140, 'var(--hl-g)', 'free for other work … the ISR reads results when DONE interrupts');
   x = 120; for (let i = 0; i < 9; i++) { sv('text', { x: x + 52, y: 162, 'text-anchor': 'middle', style: 'font-size:13px' }, g).textContent = '⚡'; x += 56; }
   const t = el('div', { class: 'split mt' }); w.appendChild(t);
-  t.innerHTML = '<ul class="b"><li><b>Software mode</b>: CPU picks a channel, writes START = 001, waits for DONE, reads. One conversion per START.</li><li>Simple. CPU busy-waits.</li></ul><ul class="b"><li><b>Burst mode</b>: ADC cycles through all SEL channels on its own, again and again.</li><li>CPU is free; use ADINTEN + the ADC interrupt to collect results.</li></ul>';
+  t.innerHTML = '<ul class="b"><li><b>Software</b>: one START → one conversion; the CPU waits for DONE.</li></ul><ul class="b"><li><b>Burst</b>: the ADC loops through the SEL channels by itself; the CPU is free and collects results in the ADC interrupt.</li></ul>';
 });
 
 /* ---------- A1 software ---------- */
@@ -3155,7 +3149,7 @@ BUILD.push(function wSine() {
     [0, 90, 180, 270, 360].forEach(t => sv('text', { x: X(t), y: 228, 'text-anchor': 'middle', class: 'mono', style: 'font-size:11px' }, s).textContent = t + '°');
     const v = vals[sel];
     math.innerHTML = `<div class="ih">sample ${sel}: θ = ${+v.th.toFixed(1)}°</div><div style="padding:8px 4px;font-size:17px">V = 1.25 + 1.25 × sin ${+v.th.toFixed(1)}° = <b>${v.V.toFixed(3)} V</b><br>digital = 1024 × V / 3.3 = 1024 × ${v.V.toFixed(3)} / 3.3 = ${(v.V * 1024 / 3.3).toFixed(2)} ≈ <b>${v.d}</b></div>`;
-    tbl.innerHTML = `<div class="gae small">sinetable[${N}] =</div><div class="mono">{ ${vals.map((x, k) => `<span class="${k === sel ? 'hl' : ''}">${x.d}</span>`).join(', ')} }</div><div class="small p-soft">delay between samples for a 10 ms period = 10 ms / ${N} = ${(10 / N).toFixed(3)} ms → f = 100 Hz</div>`;
+    tbl.innerHTML = `<div class="gae small">sinetable[${N}] =</div><div class="mono">{ ${vals.map((x, k) => `<span class="${k === sel ? 'hl' : ''}">${x.d}</span>`).join(', ')} }</div><div class="small p-soft">delay between samples for a 10 ms period = 10 ms / ${N} = ${(10 / N).toFixed(3)} ms (f = 100 Hz) = ${+(30000 / N).toFixed(1)} PCLK ticks at 3 MHz → e.g. Timer0 PR = 0, MR0 = ${Math.round(30000 / N)} (stop on match)</div>`;
   }
   draw();
   const host = el('div', { class: 'mt' }); w.appendChild(host);
@@ -3298,7 +3292,7 @@ BUILD.push(function wS1() {
   let N = 150, ms = 16.67, run = null;
   function calc() {
     const spr = 360 / ang, tRev = 60 / rpm; ms = tRev / spr * 1000; N = Math.round(rev * spr);
-    calcBox.innerHTML = `<div class="ih">working (exam style)</div><div style="padding:8px 4px;font-size:17.5px;line-height:1.7">time for 1 revolution at ${rpm} rpm = 60/${rpm} = <b>${tRev.toFixed(3)} s</b><br>steps per revolution = 360 / ${ang} = <b>${+spr.toFixed(2)}</b><br>time per step = ${tRev.toFixed(3)} s / ${+spr.toFixed(2)} = <b>${ms.toFixed(2)} ms</b> ← the timer delay<br>steps needed = ${rev} × ${+spr.toFixed(2)} = <b>${N}</b> ← the for-loop limit</div>`;
+    calcBox.innerHTML = `<div class="ih">working (exam style)</div><div style="padding:8px 4px;font-size:17.5px;line-height:1.7">time for 1 revolution at ${rpm} rpm = 60/${rpm} = <b>${tRev.toFixed(3)} s</b><br>steps per revolution = 360 / ${ang} = <b>${+spr.toFixed(2)}</b><br>time per step = ${tRev.toFixed(3)} s / ${+spr.toFixed(2)} = <b>${ms.toFixed(2)} ms</b> ← the timer delay<br>steps needed = ${rev} × ${+spr.toFixed(2)} = <b>${N}</b> ← the for-loop limit<br><span class="small">delay() with Timer0: ${ms.toFixed(2)} ms × 3 MHz ≈ <b>${Math.round(ms * 3000)}</b> PCLK ticks → PR = 0, MR0 = ${Math.round(ms * 3000)}, MCR = 4 (stop), wait for EM0 — as in notebook ①</span></div>`;
   }
   b.onclick = () => {
     if (run) { clearInterval(run); run = null; b.textContent = '▶ run the for loop'; return; }
@@ -3306,7 +3300,8 @@ BUILD.push(function wS1() {
     b.textContent = '❚❚ stop';
     run = setInterval(() => { if (i >= N) { clearInterval(run); run = null; b.textContent = '▶ run again'; return; } const c = SEQ_CW[i % 4]; m.set(c); i++; total += ang; ro.innerHTML = `i = ${i} / ${N} · FIOPIN = step_pos[${(i - 1) % 4}] = ${hx(c, 1)} · real angle turned = <b>${(total).toFixed(1)}°</b> = ${(total / 360).toFixed(2)} rev`; }, sim);
   };
-  calc();
+  calc(); m.set(3, false);
+  w.appendChild(el('p', { class: 'small p-soft' }, 'Slide nits: <code>step_pos[]= { 3,9,C,6};</code> — a bare <code>C</code> is not a number in C, write <code>0xC</code>; and <code>delay()</code> is not given — write it with Timer0 as above.'));
 });
 
 /* =========================================================
@@ -3386,9 +3381,34 @@ BUILD.push(function wRamp() {
       sv('path', { d: digi(pts, X, y, y + 30), style: 'fill:none;stroke:var(--red);stroke-width:2.6' }, s);
     });
     [1, 27, 41, 53, 65, 78, 100].forEach(t => sv('text', { x: X(t), y: 124 + show.length * 52, 'text-anchor': 'middle', class: 'mono', style: 'font-size:10px;fill:var(--ink3)' }, s).textContent = t);
-    let h = '<table class="tbl" style="max-width:640px"><tr><th>channel</th><th>mode</th><th>set by</th><th>reset by</th><th>HIGH from → to</th></tr>';
-    for (let n = 1; n <= 6; n++) { const d = sel[n] && n > 1; h += `<tr class="${show.includes(n) ? 'hit' : ''}"><td class="m">PWM${n}</td><td>${d ? 'double' : 'single'}</td><td>Match ${d ? n - 1 : 0}</td><td>Match ${n}</td><td class="m">${d ? `${MR[n - 1]} → ${MR[n]}` : `start → ${MR[n]}`}</td></tr>`; }
-    tb.innerHTML = h + '</table><p class="small p-soft">Slide example: MR0 = 100, MR1 = 41, MR2 = 78 (PWM2), MR3 = 53, MR4 = 27 (PWM4), MR5 = 65 (PWM5), PWMSEL2 &amp; PWMSEL4 set. "(D)" = double edge. In double-edge mode the set match may be bigger than the reset match — then the pulse wraps around the period end (that\'s PWM4 here).</p>';
+    let h = '<table class="tbl pwmff" style="max-width:640px"><tr><th>channel</th><th>single edge<br><small>set · reset by</small></th><th>double edge<br><small>set · reset by</small></th><th>HIGH</th></tr>';
+    for (let n = 1; n <= 6; n++) { const d = sel[n] && n > 1; h += `<tr><td class="m">PWM${n}</td><td class="${d ? '' : 'act'}">Match 0 · Match ${n}</td><td class="${d ? 'act' : ''}">Match ${n > 1 ? n - 1 : 0} · Match ${n}${n === 1 || n === 3 || n === 5 ? ' *' : ''}</td><td class="m">${d ? `${MR[n - 1]} → ${MR[n]}` : `start → ${MR[n]}`}</td></tr>`; }
+    tb.innerHTML = h + '</table><p class="small p-soft">Single = PWMSELn 0, double = PWMSELn 1; highlighted = the mode in use. * PWM1 has no PWMSEL bit (always single edge); double-edge PWM3/PWM5 would use up the match registers of PWM2/PWM4 — so PWM2, 4, 6 give the most double-edge outputs.<br>Slide example: MR0 = 100, MR1 = 41, MR2 = 78 (PWM2), MR3 = 53, MR4 = 27 (PWM4), MR5 = 65 (PWM5), PWMSEL2 &amp; PWMSEL4 set. "(D)" = double edge. If the set match is bigger than the reset match, the pulse wraps around the period end (PWM4 here).</p>';
+    drawFF();
+  }
+  // one output, inside: MUX → S-R flip-flop → enable → pin
+  const inn = el('div', { class: 'mt' }); w.appendChild(inn); let ch = 4;
+  const cc = el('div', { class: 'chips' }); inn.appendChild(cc); cc.appendChild(el('span', { class: 'gae small' }, 'inside one output:'));
+  chipGroup(cc, [1, 2, 3, 4, 5, 6].map(n => [n, 'PWM1.' + n]), ch, v => { ch = +v; drawFF(); });
+  const ff = sv('svg', { class: 'dg', viewBox: '0 0 520 176', style: 'max-width:600px' }); inn.appendChild(ff);
+  const ffs = el('div', { class: 'say' }); inn.appendChild(ffs);
+  function drawFF() {
+    const n = ch, d = n > 1 && !!sel[n]; ff.innerHTML = '';
+    const bx = (x, y, t, on) => { sv('rect', { x, y, width: 104, height: 28, rx: 6, class: 'ink', style: `fill:${on ? 'var(--n-y)' : 'var(--paper)'}` }, ff); sv('text', { x: x + 52, y: y + 20, 'text-anchor': 'middle', style: 'font-size:17px' }, ff).textContent = t; };
+    const wr = (dd, on) => sv('path', { d: dd, style: `fill:none;stroke:${on ? 'var(--pink)' : 'var(--ink3)'};stroke-width:${on ? 3 : 1.6};stroke-linejoin:round` }, ff);
+    const tx = (x, y, t, st) => { sv('text', { x, y, style: st || 'font-size:12px' }, ff).textContent = t; };
+    bx(6, 10, 'Match 0', !d); bx(6, 58, n > 1 ? 'Match ' + (n - 1) : 'Match 0', d); bx(6, 128, 'Match ' + n, 1);
+    wr('M110 24 H160', !d); wr('M110 72 H160', d);
+    sv('path', { d: 'M160 12 L196 26 L196 74 L160 88 Z', class: 'ink', style: 'fill:var(--card)' }, ff);
+    tx(164, 29, '0', 'font-size:13px'); tx(164, 77, '1', 'font-size:13px'); tx(165, 55, 'MUX', 'font-size:11.5px');
+    wr('M178 81 V106', 0); tx(124, 122, n > 1 ? `PWMSEL${n} = ${sel[n] ? 1 : 0}` : 'no PWMSEL1', 'font-size:14px;font-family:Courier Prime;font-weight:700');
+    wr('M196 50 H264', 1); wr('M110 142 H264', 1);
+    sv('rect', { x: 264, y: 34, width: 76, height: 124, rx: 6, class: 'ink', style: 'fill:var(--n-l)' }, ff);
+    tx(272, 56, 'S', 'font-size:18px;font-weight:700'); tx(272, 148, 'R', 'font-size:18px;font-weight:700'); tx(318, 102, 'Q', 'font-size:18px;font-weight:700'); tx(270, 174, 'flip-flop', 'font-size:14px');
+    wr('M340 96 H384', 1); wr('M366 146 V116 H384', 1); tx(346, 164, `PWMENA${n} = 1`, 'font-size:13px;font-family:Courier Prime;font-weight:700');
+    sv('path', { d: 'M384 82 h18 a23 23 0 0 1 0 46 h-18 z', class: 'ink', style: 'fill:var(--paper)' }, ff);
+    wr('M425 105 H452', 1); tx(456, 101, 'PWM1.' + n, 'font-size:15px;font-weight:700'); tx(456, 119, 'pin', 'font-size:14px');
+    ffs.innerHTML = `PWM1.${n}: <b>set</b> (S → output 1) by Match ${d ? n - 1 : 0}, <b>reset</b> (R → output 0) by Match ${n} → ${d ? '<b>double</b> edge: both edges movable' : '<b>single</b> edge: the pulse always starts with the period'}. PWMENA${n} = 1 lets it out to the pin.`;
   }
   s.addEventListener('pointermove', e => { if (!drag) return; const r = s.getBoundingClientRect(); const t = clamp(Math.round(((e.clientX - r.left) / r.width * 660 - 70) / 560 * 100), 1, 99); MR[drag] = t; rr[drag].value = t; rr[drag].dispatchEvent(new Event('input')); });
   s.addEventListener('pointerup', () => drag = null);
@@ -3493,6 +3513,7 @@ void PWM1_IRQHandler(void)
         if(LPC_PWM1->MR4 > 29900)
         {
             flag = 0xff;
+            LPC_PWM1->LER = 0x000000FF;
         }
     }
     else if(flag == 0xff)
@@ -3502,6 +3523,7 @@ void PWM1_IRQHandler(void)
         if(LPC_PWM1->MR4 < 100)
         {
             flag = 0x00;
+            LPC_PWM1->LER = 0X000000FF;
         }
     }
 }`;
@@ -3519,8 +3541,8 @@ BUILD.push(function wW1() {
     { l: [L('TCR = 0x00000002'), L('TCR = 0x00000009')], t: 'TCR = 2: reset. TCR = 9 = bit 0 (counter enable) + bit 3 (<b>PWM enable</b>) → go!' },
     { l: L('NVIC_EnableIRQ(PWM1_IRQn)'), t: 'Enable the PWM1 interrupt in the NVIC.' },
     { l: [L('LPC_PWM1->IR = 0x01'), L('if(flag == 0x00)'), L('MR4 += 50'), L('LER = 0x0000007F;', 2)], t: 'Each period (every 10 ms): ISR clears IR bit 0, flag = 0 → MR4 += 50, set LER so it takes effect next period → LED slightly brighter.', f: s => set(s, { mr4: 100 }) },
-    { l: [L('MR4 += 50'), L('if(LPC_PWM1->MR4 > 29900)')], t: 'After ~600 periods (≈ 6 s) MR4 > 29900 → almost 100 % duty → <b>flag = 0xFF</b>.', f: s => set(s, { mr4: 29950, flag: 1 }) },
-    { l: [L('else if(flag == 0xff)'), L('MR4 -= 50'), L('if(LPC_PWM1->MR4 < 100)')], t: 'Now MR4 −= 50 each period → dimmer … until MR4 &lt; 100 → flag = 0 → brighten again. A smooth <b>breathing</b> LED.', f: s => set(s, { mr4: 90, flag: 0 }) }
+    { l: [L('MR4 += 50'), L('if(LPC_PWM1->MR4 > 29900)'), L('flag = 0xff;'), L('LER = 0x000000FF')], t: 'After ~600 periods (≈ 6 s) MR4 > 29900 → almost 100 % duty → <b>flag = 0xFF</b>. (LER = 0xFF: bit 7 doesn\'t exist, so it acts like 0x7F.)', f: s => set(s, { mr4: 29950, flag: 1 }) },
+    { l: [L('else if(flag == 0xff)'), L('MR4 -= 50'), L('if(LPC_PWM1->MR4 < 100)'), L('flag = 0x00;')], t: 'Now MR4 −= 50 each period → dimmer … until MR4 &lt; 100 → flag = 0 → brighten again. A smooth <b>breathing</b> LED.', f: s => set(s, { mr4: 90, flag: 0 }) }
   ];
   let live = 50, fl = 0;
   const view = (s, v, k, first) => {
@@ -3601,13 +3623,13 @@ BUILD.push(function wRs232() {
   sv('text', { x: 590, y: 112, 'text-anchor': 'middle', class: 'lbl' }, s).textContent = 'LPC1768';
   const a1 = sv('path', { d: 'M260 80 H66', class: 'wr2' }, s), a2 = sv('path', { d: 'M540 80 H380', class: 'wr2' }, s);
   const b1 = sv('path', { d: 'M66 120 H260', class: 'wr2' }, s), b2 = sv('path', { d: 'M380 120 H540', class: 'wr2' }, s);
-  [[200, 74, 'T1 out (±10 V)'], [395, 74, 'T1 in (0/3.3 V)'], [140, 114, 'R1 in (±10 V)'], [395, 114, 'R1 out']].forEach(([x, y, t]) => sv('text', { x, y, class: 'mono', style: 'font-size:10px' }, s).textContent = t);
+  [[140, 74, 'T1 out ·14 (±10 V)'], [386, 74, 'T1 in ·11'], [120, 114, 'R1 in ·13 (±10 V)'], [386, 114, 'R1 out ·12']].forEach(([x, y, t]) => sv('text', { x, y, class: 'mono', style: 'font-size:10px' }, s).textContent = t);
   sv('text', { x: 500, y: 74, class: 'mono', style: 'font-size:10px' }, s).textContent = 'TxD'; sv('text', { x: 500, y: 114, class: 'mono', style: 'font-size:10px' }, s).textContent = 'RxD';
   const bt = el('div', { class: 'row' }); w.appendChild(bt);
   const send = el('button', { class: 'btn p', type: 'button' }, 'micro sends "U" ➝'); const recv = el('button', { class: 'btn sm', type: 'button' }, '⬅ PC sends "U"'); bt.append(send, recv);
   const sc = sv('svg', { class: 'dg', viewBox: '0 0 660 230' }); w.appendChild(sc);
   function wave(rs) {
-    sc.innerHTML = ''; const bits = frameBits(0x55, 8, 'none', 1); const X = i => 90 + i * 50;
+    sc.innerHTML = ''; const bits = frameBits(0x55, 8, 'none', 1); const X = i => 110 + i * 48;
     const Yt = v => 70 - v * 46, Yr = v => 165 + (v ? 1 : -1) * 40 * 1; // rs: 1 → -10, 0 → +10
     sv('text', { x: 2, y: 50, class: 'lbl', style: 'font-size:13px' }, sc).textContent = 'TTL side'; sv('text', { x: 2, y: 66, class: 'mono', style: 'font-size:10px' }, sc).textContent = '1 = 3.3 V';
     sv('text', { x: 2, y: 160, class: 'lbl', style: 'font-size:13px' }, sc).textContent = 'RS-232 side'; sv('text', { x: 2, y: 176, class: 'mono', style: 'font-size:10px' }, sc).textContent = '1 = −10 V';
@@ -3674,7 +3696,7 @@ BUILD.push(function wLsr() {
   const D = [['RXFE', 'error in RX FIFO (PE/FE/BI)'], ['TEMT', 'THR and TSR both empty'], ['THRE', 'THR empty (can write)'], ['BI', 'break interrupt'], ['FE', 'framing error (stop bit = 0)'], ['PE', 'parity error'], ['OE', 'overrun: RX FIFO was full'], ['RDR', 'receive data ready']];
   function paint() {
     const v = { RDR: st.rx.length ? 1 : 0, OE: st.oe, PE: st.pe, FE: st.fe, BI: st.bi, THRE: st.thr === null ? 1 : 0, TEMT: st.thr === null && st.tsr === null ? 1 : 0, RXFE: st.pe || st.fe || st.bi ? 1 : 0 };
-    pipe.innerHTML = `<div class="prow"><span class="gae">RxD</span>➝<div class="fifo">${Array.from({ length: MAX }, (_, i) => `<i>${st.rx[i] ?? ''}</i>`).join('')}</div><span class="small">RX FIFO (RBR reads the left end)</span></div><div class="prow"><span class="gae">CPU</span>➝<div class="fifo one"><i>${st.thr ?? ''}</i></div><span class="small">THR</span>➝<div class="fifo one"><i>${st.tsr ?? ''}</i></div><span class="small">TSR</span>➝<span class="gae">TxD</span></div>`;
+    pipe.innerHTML = `<div class="prow"><span class="gae">RxD</span>➝<div class="fifo">${Array.from({ length: MAX }, (_, i) => `<i>${st.rx[i] ?? ''}</i>`).join('')}</div><span class="small">RX FIFO (RBR reads the left end · really 16 deep)</span></div><div class="prow"><span class="gae">CPU</span>➝<div class="fifo one"><i>${st.thr ?? ''}</i></div><span class="small">THR</span>➝<div class="fifo one"><i>${st.tsr ?? ''}</i></div><span class="small">TSR (shift register: sends bit by bit)</span>➝<span class="gae">TxD</span></div>`;
     strip.innerHTML = D.map(([n, d], i) => `<span class="lb ${v[n] ? 'one' : ''}"><small>bit ${7 - i}</small><b>${v[n]}</b><em>${n}</em><u>${d}</u></span>`).join('');
   }
   paint(); say.textContent = 'All quiet: RX empty (RDR = 0), THR and TSR empty (THRE = 1, TEMT = 1).';

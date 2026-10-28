@@ -21,6 +21,51 @@ BUILD.push(function wBits() {
   inp.addEventListener('input', calc); calc();
 });
 
+/* ---------- GPIO port playground ---------- */
+BUILD.push(function wGpio() {
+  const w = W('w-gpio', 'GPIO port playground', 'type a value, write it into a register · P0.7 … P0.0 shown');
+  let dir = 0x0F, mask = 0, lat = 0x05, ext = 0x40, rd = null, chg = 0, row = '';
+  const lv = () => ((dir & lat) | (~dir & ext)) & 0xFF; // real pin levels
+  const ctl = el('div', { class: 'row' }); w.appendChild(ctl);
+  const inp = el('input', { class: 'inp', value: '0x04', style: 'width:6.5em', 'aria-label': 'value', spellcheck: 'false' });
+  const vb = el('span', { class: 'ro' }); ctl.append(el('span', { class: 'gae' }, 'value ='), inp, vb);
+  const qc = el('div', { class: 'chips' }); ctl.appendChild(qc);
+  ['0x04', '0x01', '0x0F', '0xF0', '0x00'].forEach(t => { const c = el('button', { class: 'chip', type: 'button' }, t); c.onclick = () => { inp.value = t; showV(); }; qc.appendChild(c); });
+  const bt = el('div', { class: 'row' }); w.appendChild(bt);
+  const g = el('div', { class: 'gpg' }); w.appendChild(g);
+  const say = el('div', { class: 'say' }); w.appendChild(say);
+  const val = () => { try { return safeEval(inp.value) & 0xFF; } catch (e) { return null; } };
+  const showV = () => { const v = val(); vb.textContent = v == null ? '?' : '= ' + bin(v, 8); };
+  const pins = v => { const a = []; for (let b = 7; b >= 0; b--) if ((v >> b) & 1) a.push('P0.' + b); return a.join(', ') || 'none'; };
+  const A = [
+    ['FIODIR', 'dir', v => { chg = dir ^ v; dir = v; return `1-bits → <b>outputs</b> (${pins(v)}); 0-bits → inputs.`; }],
+    ['FIOMASK', 'mask', v => { chg = mask ^ v; mask = v; return v ? `${pins(v)} now <b>protected</b>: FIOPIN / FIOSET / FIOCLR skip them, and they read as 0.` : 'nothing masked — all pins normal.'; }],
+    ['FIOSET', 'pin', v => { const m = v & ~mask & 0xFF; chg = m & ~lat & dir; lat |= m; return `1-bits → HIGH (${pins(m)}). 0-bits → <b>no change</b>.${m & ~dir ? ' An input pin just ignores it — the outside world sets its level.' : ''}`; }],
+    ['FIOCLR', 'pin', v => { const m = v & ~mask & 0xFF; chg = m & lat & dir; lat &= ~m & 0xFF; return `1-bits → LOW (${pins(m)}). 0-bits → <b>no change</b>.`; }],
+    ['FIOPIN', 'pin', v => { const n = ((lat & mask) | (v & ~mask)) & 0xFF, low = lat & ~n & dir; chg = (n ^ lat) & dir; lat = n; return `<b>every</b> unmasked pin copies its bit → changed: ${pins(chg)}.${low ? ` <span class="p-red">The 0-bits pulled ${pins(low)} LOW too!</span>` : ''}`; }]
+  ];
+  A.forEach(([n, r, f]) => { const b = el('button', { class: 'btn sm p', type: 'button' }, n + ' = value'); b.onclick = () => { const v = val(); if (v == null) { say.textContent = '✗ not a number'; return; } rd = null; row = r; say.innerHTML = `<code>LPC_GPIO0-&gt;${n} = ${hx(v)};</code> → ` + f(v); paint(); }; bt.appendChild(b); });
+  const br = el('button', { class: 'btn sm g', type: 'button' }, 'x = FIOPIN (read)'); bt.appendChild(br);
+  br.onclick = () => { rd = lv() & ~mask & 0xFF; row = 'read'; chg = 0xFF; say.innerHTML = `<code>x = LPC_GPIO0-&gt;FIOPIN;</code> → x = <b>${hx(rd)}</b>: the real level of every pin (inputs = what the outside gives${mask ? ', masked pins = 0' : ''}).`; paint(); };
+  inp.addEventListener('input', showV);
+  function paint() {
+    const L = lv(); g.innerHTML = '';
+    const add = (cls, h) => { const d = el('div', { class: cls }, h); g.appendChild(d); return d; };
+    const cell = (r, bitv, b) => add('gc' + (bitv === 1 ? ' one' : '') + (row === r && (chg >> b) & 1 ? ' chg' : ''), bitv);
+    add('gl', ''); for (let b = 7; b >= 0; b--) add('gh', 'P0.' + b);
+    add('gl', 'FIODIR'); for (let b = 7; b >= 0; b--) cell('dir', (dir >> b) & 1, b);
+    add('gl', 'FIOMASK'); for (let b = 7; b >= 0; b--) cell('mask', (mask >> b) & 1, b);
+    add('gl', 'pin'); for (let b = 7; b >= 0; b--) {
+      const p = add('gp' + (row === 'pin' && (chg >> b) & 1 ? ' chg' : ''), '');
+      if ((dir >> b) & 1) p.innerHTML = `<span class="led${(L >> b) & 1 ? ' on' : ''}"></span><small>out</small>`;
+      else { const k = el('button', { class: 'gin' + ((ext >> b) & 1 ? ' on' : ''), type: 'button', title: 'input: click to change what the outside world puts here', 'aria-label': 'input P0.' + b }, (ext >> b) & 1); k.onclick = () => { ext ^= 1 << b; rd = null; row = ''; say.innerHTML = `outside world: P0.${b} is now ${(ext >> b) & 1 ? 'HIGH' : 'LOW'} (it's an input, so only the outside can change it).`; paint(); }; p.append(k, el('small', {}, 'in')); }
+    }
+    add('gl', 'x = FIOPIN'); for (let b = 7; b >= 0; b--) cell('read', rd == null ? '·' : (rd >> b) & 1, b);
+  }
+  showV(); paint();
+  say.innerHTML = 'P0.3–P0.0 are outputs (LEDs), P0.7–P0.4 inputs (click to flip them). Try <b>FIOSET = 0x04</b>, then <b>FIOPIN = 0x01</b> — spot the difference.';
+});
+
 /* ---------- PINSEL finder ---------- */
 BUILD.push(function wPinsel() {
   const w = W('w-pinsel', 'PINSEL finder', 'pick a pin + function → register, bits, code');
@@ -211,7 +256,7 @@ BUILD.push(function wMask() {
   for (let b = N - 1; b >= 0; b--) brace.appendChild(el('div', { class: 'sc tiny' }, b >= 15 && b <= 18 ? (b === 17 ? 'decoder' : '') : (b >= 4 && b <= 11 ? (b === 8 ? 'segments' : '') : '')));
   let mask = 0, val = null, port = 0b10110000101101010110, use = true;
   const digRow = el('div', { class: 'row mt', style: 'align-items:flex-end' }); w.appendChild(digRow);
-  const digs = [0, 1, 2, 3].map(i => { const d = el('div', { class: 'col center' }); digRow.appendChild(d); const s = SevenSeg(d); d.appendChild(el('span', { class: 'gae small' }, 'Digit ' + (i + 1))); return { d, s }; });
+  const digs = []; [3, 2, 1, 0].forEach(i => { const d = el('div', { class: 'col center' }); digRow.appendChild(d); digs[i] = mkDig(d, i); }); function mkDig(d, i) { const s = SevenSeg(d); d.appendChild(el('span', { class: 'gae small' }, 'Digit ' + (i + 1) + (i === 0 ? ' (Y0)' : ''))); return { d, s }; }
   const dsay = el('div', { class: 'say' }); digRow.appendChild(dsay);
   const btns = el('div', { class: 'row mt' }); w.appendChild(btns);
   const key = { v: 6 };

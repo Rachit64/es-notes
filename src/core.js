@@ -470,7 +470,7 @@ function ruler(host, label, min, max, val, step, fmt, oninput) {
 function miniBits(host, labels, title) { // small labelled bit cells, labels left→right
   const w = el('div', { class: 'mbits' }); if (title) w.appendChild(el('div', { class: 'mbt' }, title));
   const row = el('div', { class: 'mbr' }); w.appendChild(row); host.appendChild(w);
-  const cells = labels.map(l => { const c = el('div', { class: 'mb' }, `<i>0</i><small>${l}</small>`); row.appendChild(c); return c; });
+  const cells = labels.map(l => { const c = el('div', { class: 'mbc' }, `<i>0</i><small>${l}</small>`); row.appendChild(c); return c; });
   return { el: w, set(arr) { arr.forEach((b, i) => { const c = cells[i]; if (!c) return; c.firstChild.textContent = b === null ? '?' : b; c.classList.toggle('one', b === 1); c.classList.toggle('unk', b === null); }); } };
 }
 

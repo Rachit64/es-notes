@@ -78,7 +78,7 @@ BUILD.push(function wAdcr() {
   const selSay = x => { const ch = []; for (let i = 0; i < 8; i++) if ((x >> i) & 1) ch.push('AD0.' + i); return ch.length ? `channel(s) selected: <b>${ch.join(', ')}</b>` : '<span class="p-red">no channel selected</span>'; };
   RegBuilder(w, {
     name: 'ADCR', reg: 'LPC_ADC->ADCR', width: 28, value: (1 << 5) | (1 << 21) | (1 << 24), hexd: 8, fields: [
-      { lo: 0, hi: 7, name: 'SEL', desc: 'bit n = 1 → sample AD0.n. Software mode: exactly one bit. Burst mode: any number.', say: selSay },
+      { lo: 0, hi: 7, name: 'SEL', desc: 'bit n = 1 → sample AD0.n. Software mode: exactly one bit. Burst mode: 1 to 8 bits. All zeros = same as 0x01.', say: selSay },
       { lo: 8, hi: 15, name: 'CLKDIV', desc: 'ADC clock = PCLK / (CLKDIV + 1), must be ≤ 13 MHz', say: (x) => `ADC clock = 3 MHz / ${x + 1} = ${(3 / (x + 1)).toFixed(3)} MHz` },
       { bit: 16, name: 'BURST', desc: '1 = keep converting the selected channels automatically', opts: { 0: '0 · software', 1: '1 · burst' }, say: { 0: 'software-controlled mode (convert when START says)', 1: '<b>burst mode</b>: repeated conversions, START must be 000' } },
       { bit: 21, name: 'PDN', desc: '1 = ADC operational, 0 = power-down', opts: { 0: '0 · off', 1: '1 · on' }, say: { 0: '<span class="p-red">ADC in power-down</span>', 1: 'ADC <b>operational</b>' } },
@@ -86,7 +86,7 @@ BUILD.push(function wAdcr() {
       { bit: 27, name: 'EDGE', desc: 'for START = 010–111: 1 = falling edge, 0 = rising edge', opts: { 0: '0 rising', 1: '1 falling' }, say: (x, v) => ((v >> 24) & 7) >= 2 ? (x ? 'on the falling edge' : 'on the rising edge') : null }
     ], presets: [[(1 << 4) | (1 << 21) | (1 << 24), 'A1: AD0.4 start'], [(1 << 5) | (1 << 21) | (1 << 24), 'A1/A3: AD0.5 start'], [(1 << 4) | (1 << 5) | (1 << 16) | (1 << 21), 'A2: burst 4+5']]
   });
-  w.appendChild(el('p', { class: 'small p-soft' }, 'Bits 20:17 and 23:22 are reserved (bits 19:17 were CLKS in older parts — keep 0).'));
+  w.appendChild(el('p', { class: 'small p-soft' }, 'Bits 20:17, 23:22 and 31:28 are reserved — write 0. START = 000 is also the value to use when clearing PDN to 0. For 100–111 the MAT signal does not need to be pinned out (MAT0.3 can\'t even be).'));
 });
 
 /* ---------- ADGDR decoder ---------- */
@@ -120,7 +120,7 @@ BUILD.push(function wModes() {
   blk(120, 500, 140, 'var(--hl-g)', 'free for other work … the ISR reads results when DONE interrupts');
   x = 120; for (let i = 0; i < 9; i++) { sv('text', { x: x + 52, y: 162, 'text-anchor': 'middle', style: 'font-size:13px' }, g).textContent = '⚡'; x += 56; }
   const t = el('div', { class: 'split mt' }); w.appendChild(t);
-  t.innerHTML = '<ul class="b"><li><b>Software mode</b>: CPU picks a channel, writes START = 001, waits for DONE, reads. One conversion per START.</li><li>Simple. CPU busy-waits.</li></ul><ul class="b"><li><b>Burst mode</b>: ADC cycles through all SEL channels on its own, again and again.</li><li>CPU is free; use ADINTEN + the ADC interrupt to collect results.</li></ul>';
+  t.innerHTML = '<ul class="b"><li><b>Software</b>: one START → one conversion; the CPU waits for DONE.</li></ul><ul class="b"><li><b>Burst</b>: the ADC loops through the SEL channels by itself; the CPU is free and collects results in the ADC interrupt.</li></ul>';
 });
 
 /* ---------- A1 software ---------- */
@@ -508,7 +508,7 @@ BUILD.push(function wSine() {
     [0, 90, 180, 270, 360].forEach(t => sv('text', { x: X(t), y: 228, 'text-anchor': 'middle', class: 'mono', style: 'font-size:11px' }, s).textContent = t + '°');
     const v = vals[sel];
     math.innerHTML = `<div class="ih">sample ${sel}: θ = ${+v.th.toFixed(1)}°</div><div style="padding:8px 4px;font-size:17px">V = 1.25 + 1.25 × sin ${+v.th.toFixed(1)}° = <b>${v.V.toFixed(3)} V</b><br>digital = 1024 × V / 3.3 = 1024 × ${v.V.toFixed(3)} / 3.3 = ${(v.V * 1024 / 3.3).toFixed(2)} ≈ <b>${v.d}</b></div>`;
-    tbl.innerHTML = `<div class="gae small">sinetable[${N}] =</div><div class="mono">{ ${vals.map((x, k) => `<span class="${k === sel ? 'hl' : ''}">${x.d}</span>`).join(', ')} }</div><div class="small p-soft">delay between samples for a 10 ms period = 10 ms / ${N} = ${(10 / N).toFixed(3)} ms → f = 100 Hz</div>`;
+    tbl.innerHTML = `<div class="gae small">sinetable[${N}] =</div><div class="mono">{ ${vals.map((x, k) => `<span class="${k === sel ? 'hl' : ''}">${x.d}</span>`).join(', ')} }</div><div class="small p-soft">delay between samples for a 10 ms period = 10 ms / ${N} = ${(10 / N).toFixed(3)} ms (f = 100 Hz) = ${+(30000 / N).toFixed(1)} PCLK ticks at 3 MHz → e.g. Timer0 PR = 0, MR0 = ${Math.round(30000 / N)} (stop on match)</div>`;
   }
   draw();
   const host = el('div', { class: 'mt' }); w.appendChild(host);
@@ -651,7 +651,7 @@ BUILD.push(function wS1() {
   let N = 150, ms = 16.67, run = null;
   function calc() {
     const spr = 360 / ang, tRev = 60 / rpm; ms = tRev / spr * 1000; N = Math.round(rev * spr);
-    calcBox.innerHTML = `<div class="ih">working (exam style)</div><div style="padding:8px 4px;font-size:17.5px;line-height:1.7">time for 1 revolution at ${rpm} rpm = 60/${rpm} = <b>${tRev.toFixed(3)} s</b><br>steps per revolution = 360 / ${ang} = <b>${+spr.toFixed(2)}</b><br>time per step = ${tRev.toFixed(3)} s / ${+spr.toFixed(2)} = <b>${ms.toFixed(2)} ms</b> ← the timer delay<br>steps needed = ${rev} × ${+spr.toFixed(2)} = <b>${N}</b> ← the for-loop limit</div>`;
+    calcBox.innerHTML = `<div class="ih">working (exam style)</div><div style="padding:8px 4px;font-size:17.5px;line-height:1.7">time for 1 revolution at ${rpm} rpm = 60/${rpm} = <b>${tRev.toFixed(3)} s</b><br>steps per revolution = 360 / ${ang} = <b>${+spr.toFixed(2)}</b><br>time per step = ${tRev.toFixed(3)} s / ${+spr.toFixed(2)} = <b>${ms.toFixed(2)} ms</b> ← the timer delay<br>steps needed = ${rev} × ${+spr.toFixed(2)} = <b>${N}</b> ← the for-loop limit<br><span class="small">delay() with Timer0: ${ms.toFixed(2)} ms × 3 MHz ≈ <b>${Math.round(ms * 3000)}</b> PCLK ticks → PR = 0, MR0 = ${Math.round(ms * 3000)}, MCR = 4 (stop), wait for EM0 — as in notebook ①</span></div>`;
   }
   b.onclick = () => {
     if (run) { clearInterval(run); run = null; b.textContent = '▶ run the for loop'; return; }
@@ -659,5 +659,6 @@ BUILD.push(function wS1() {
     b.textContent = '❚❚ stop';
     run = setInterval(() => { if (i >= N) { clearInterval(run); run = null; b.textContent = '▶ run again'; return; } const c = SEQ_CW[i % 4]; m.set(c); i++; total += ang; ro.innerHTML = `i = ${i} / ${N} · FIOPIN = step_pos[${(i - 1) % 4}] = ${hx(c, 1)} · real angle turned = <b>${(total).toFixed(1)}°</b> = ${(total / 360).toFixed(2)} rev`; }, sim);
   };
-  calc();
+  calc(); m.set(3, false);
+  w.appendChild(el('p', { class: 'small p-soft' }, 'Slide nits: <code>step_pos[]= { 3,9,C,6};</code> — a bare <code>C</code> is not a number in C, write <code>0xC</code>; and <code>delay()</code> is not given — write it with Timer0 as above.'));
 });

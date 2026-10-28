@@ -10,11 +10,11 @@
 .mbits{display:flex; flex-direction:column; gap:3px; margin:4px 0}
 .mbt{font-family:'Gaegu'; font-weight:700; font-size:15px; color:var(--ink2)}
 .mbr{display:flex; gap:4px; flex-wrap:wrap}
-.mb{display:flex; flex-direction:column; align-items:center; min-width:38px}
-.mb i{font-style:normal; font-family:'Courier Prime'; font-weight:700; font-size:16px; width:30px; height:28px; display:grid; place-items:center; border:1.5px solid var(--faint); border-radius:6px; background:var(--paper); transition:all .2s}
-.mb small{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
-.mb.one i{background:var(--hi); color:#fff; border-color:var(--ink); box-shadow:0 0 10px var(--led-glow)}
-.mb.unk i{background:repeating-linear-gradient(45deg,var(--hl-o) 0 4px,transparent 4px 8px)}
+.mbc{display:flex; flex-direction:column; align-items:center; min-width:38px}
+.mbc i{font-style:normal; font-family:'Courier Prime'; font-weight:700; font-size:16px; width:30px; height:28px; display:grid; place-items:center; border:1.5px solid var(--faint); border-radius:6px; background:var(--paper); transition:all .2s}
+.mbc small{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
+.mbc.one i{background:var(--hi); color:#fff; border-color:var(--ink); box-shadow:0 0 10px var(--led-glow)}
+.mbc.unk i{background:repeating-linear-gradient(45deg,var(--hl-o) 0 4px,transparent 4px 8px)}
 
 /* scanner schematic */
 svg.scan .wire{fill:none; stroke:var(--ink3); stroke-width:3; stroke-linecap:round; transition:stroke .15s}

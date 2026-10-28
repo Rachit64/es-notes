@@ -64,6 +64,10 @@
   <div class="wg" id="w-bits"></div>
 
   <h3 class="bub jit" style="--bc:var(--hl-y);--bc2:var(--n-y)"><span class="num">0.2</span>The 6 GPIO registers</h3>
+  <ul class="b">
+    <li><b>GPIO</b> = General Purpose Input/Output: a pin you drive HIGH/LOW yourself (output) or read (input).</li>
+    <li>Pin names: <b>P0.2</b> = port 0, pin 2. A port has 32 pins, so each port register is 32 bits: <span class="hl-y">bit n ↔ pin n</span>.</li>
+  </ul>
   <p class="mnote o">FIOSET / FIOCLR only touch the 1-bits → safe. <br>FIOPIN = x writes the <u>whole</u> port!</p>
   <div class="tblwrap"><table class="tbl">
     <tr><th>register</th><th>what it does</th></tr>
@@ -72,8 +76,9 @@
     <tr><td class="m">FIOSET</td><td>write 1 → that pin goes <span class="p-red">HIGH</span>. Writing 0 does nothing.</td></tr>
     <tr><td class="m">FIOCLR</td><td>write 1 → that pin goes <span class="p-blue">LOW</span>. Writing 0 does nothing.</td></tr>
     <tr><td class="m">FIOPIN</td><td><b>read</b> → the level of every pin right now. <b>write</b> → sets every (unmasked) pin of the port at once.</td></tr>
-    <tr><td class="m">FIOMASK</td><td><b>1 = protected</b>: FIOPIN reads/writes ignore that bit. 0 = normal.</td></tr>
+    <tr><td class="m">FIOMASK</td><td><b>1 = protected</b>: writes via FIOPIN / FIOSET / FIOCLR skip that pin, and FIOPIN reads it as 0. 0 = normal.</td></tr>
   </table></div>
+  <div class="wg" id="w-gpio"></div>
   <ul class="b arrow">
     <li>Each PINSEL register covers 16 pins: <b>PINSEL0</b> = P0.0–15, <b>PINSEL1</b> = P0.16–31, <b>PINSEL2</b> = P1.0–15, <b>PINSEL3</b> = P1.16–31, <b>PINSEL4</b> = P2.0–15.</li>
     <li>Pin Px.n uses bits <span class="hl-g">2×(n mod 16)+1 : 2×(n mod 16)</span>. Example P1.28 → (28−16)×2 = 24 → bits 25:24 → <code>3&lt;&lt;24</code> picks function 3.</li>
@@ -88,7 +93,7 @@
   </div>
   <ul class="b">
     <li><code>SystemInit();</code> + <code>SystemCoreClockUpdate();</code> start most programs: they set up the clock system and record the CPU frequency. Just copy them.</li>
-    <li><code>#include &lt;LPC17xx.h&gt;</code> gives the names <code>LPC_GPIO0</code>, <code>LPC_TIM0</code> … so you can write <code>LPC_TIM0-&gt;TC</code> instead of raw addresses.</li>
+    <li><code>#include &lt;LPC17xx.h&gt;</code> gives the names <code>LPC_GPIO0</code> … <code>LPC_GPIO4</code> (one per port), <code>LPC_PINCON</code> (PINSEL), <code>LPC_TIM0</code> … Each points to a block of registers; <code>-&gt;</code> picks one: <code>LPC_TIM0-&gt;TC</code> = "the TC register of Timer0".</li>
   </ul>
 </article>
 
@@ -107,9 +112,6 @@
       <li>Pressing a key <b>connects</b> its row wire to its column wire.</li>
       <li>To find the key: make <em>one row</em> HIGH at a time and look which <em>column</em> becomes HIGH. That's called <span class="hl-p">scanning</span>.</li>
     </ul>
-  </div>
-  <div class="note analogy"><div class="nh"><svg><use href="#st-cat"/></svg>analogy · roll call</div>
-    A class sits in 4 rows × 4 columns. The teacher shouts "<b>Row 2</b>, raise hands if you need help!" — only row 2 can answer. A hand goes up in <b>column 3</b> → it's the student at (row 2, col 3). Calling row 1, 2, 3, 4 again and again, super fast = scanning.
   </div>
   <ul class="b arrow">
     <li>Why bother? n rows × m columns = n·m keys with only <b>n + m</b> pins. 16 keys → 8 pins (instead of 16). 64 keys → 16 pins.</li>
@@ -157,7 +159,7 @@
 
   <h3 class="bub jit" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">1.4</span>Picking the digit: decoder + FIOMASK</h3>
   <ul class="b">
-    <li>The board has 4 digits sharing the same 8 segment lines. A <b>decoder</b> driven by <b>P0.15–P0.18</b> switches on one digit (outputs Y0–Y3). Putting <b>0</b> on P0.15–P0.18 → Y0 → <b>Digit 1</b>.</li>
+    <li>The board has 4 digits sharing the same 8 segment lines (on the board, <b>Digit 1 is the rightmost</b> one). A <b>decoder</b> (binary number in → exactly one output on) driven by <b>P0.15–P0.18</b> picks the digit: 0 → Y0, 1 → Y1, 2 → Y2, 3 → Y3. Putting <b>0</b> on P0.15–P0.18 → Y0 → <b>Digit 1</b>.</li>
     <li>Problem: segments (P0.4–11) and decoder (P0.15–18) are on the <em>same</em> port. <code>FIOPIN = x</code> would overwrite both.</li>
     <li>Fix: <span class="hl-b">FIOMASK</span> — put 1s on the bits you want to <b>protect</b>; FIOPIN then only changes the 0-bits of the mask. It's a stencil:</li>
   </ul>
@@ -192,9 +194,6 @@
       <li><b>Counter mode</b>: instead of PCLK ticks it counts pulses arriving on a pin (a CAP pin).</li>
       <li>LPC1768 has 4 of them: Timer0 … Timer3 (<code>LPC_TIM0</code> … <code>LPC_TIM3</code>), all 32-bit.</li>
     </ul>
-  </div>
-  <div class="note analogy pink"><div class="nh"><svg><use href="#st-clock"/></svg>analogy · a wall clock</div>
-    The <b>seconds hand</b> (PC) runs round and round. Each time it finishes a round (PR + 1 ticks), the <b>minutes hand</b> (TC) moves one step. The <b>alarm</b> (MR) is set on the minutes dial — when the minutes hand reaches it: <em>ring!</em> (a match).
   </div>
 
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.1</span>The counting chain</h3>
@@ -234,8 +233,7 @@
 
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.4</span>CTCR — timer or counter?</h3>
   <ul class="b">
-    <li><b>Bits 1:0</b> = what moves TC: <code>00</code> timer (PCLK via the prescaler), <code>01</code> rising edges, <code>10</code> falling edges, <code>11</code> both edges of a CAP pin.</li>
-    <li><b>Bits 3:2</b> = which CAP pin (only in counter mode): <code>00</code> CAPn.0, <code>01</code> CAPn.1 (10, 11 reserved).</li>
+    <li><b>Bits 1:0</b> = what moves TC (PCLK or edges of a CAP pin), <b>bits 3:2</b> = which CAP pin (used only in counter mode).</li>
     <li>In counter mode the prescaler isn't used: each selected edge = TC + 1.</li>
   </ul>
   <div class="wg" id="w-ctcr"></div>
@@ -250,25 +248,22 @@
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.6</span>On a match … MCR decides</h3>
   <ul class="b">
     <li>MR0–MR3 are compared with TC continuously. When equal, actions happen <span class="hl-b">automatically</span>.</li>
-    <li>The Match Control Register gives each MR three switches: <b>I</b> = generate an interrupt, <b>R</b> = reset TC, <b>S</b> = stop TC &amp; PC (and clear TCR bit 0).</li>
-    <li>Bits: MR0 → 2:0, MR1 → 5:3, MR2 → 8:6, MR3 → 11:9 (each ordered I, R, S). Upper bits reserved — don't write 1s there.</li>
+    <li>The Match Control Register gives each MR three switches: <b>I</b> = generate an interrupt (the CPU jumps to a small function — notebook ②), <b>R</b> = reset TC, <b>S</b> = stop TC &amp; PC (and clear TCR bit 0). Bits 31:12 are reserved — don't write 1s there.</li>
   </ul>
   <div class="wg" id="w-mcr"></div>
 
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.7</span>EMR — wiggle a pin on a match</h3>
   <ul class="b">
-    <li>Each match register has an "external match" bit <b>EM0 … EM3</b> (bits 3:0). It can drive the pin <b>MATn.0 … MATn.3</b> if that pin is selected in PINSEL.</li>
-    <li><b>EMC0 … EMC3</b> (2 bits each, bits 5:4, 7:6, 9:8, 11:10) say what EMx does on a match: <code>00</code> nothing, <code>01</code> clear to 0, <code>10</code> set to 1, <code>11</code> toggle.</li>
+    <li>Each match register has an "external match" bit <b>EM0 … EM3</b> (bits 3:0). It drives the pin <b>MATn.0 … MATn.3</b> (0 = LOW, 1 = HIGH) if that pin is selected in PINSEL.</li>
+    <li><b>EMC0 … EMC3</b> (2 bits each) say what EMx does on a match: nothing / clear / set / toggle.</li>
     <li>EMx is also readable → the slides poll <code>EMR &amp; 0x01</code> to know "MR0 matched".</li>
   </ul>
   <div class="wg" id="w-emr"></div>
 
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.8</span>Capture — a snapshot of TC</h3>
-  <div class="note analogy"><div class="nh"><svg><use href="#st-cam"/></svg>analogy · photo finish</div>
-    TC is a stopwatch that keeps running. When an edge arrives on a CAP pin, the timer takes a <b>photo</b> of the stopwatch and keeps it in a capture register (CR0 / CR1). The stopwatch itself doesn't stop.
-  </div>
   <ul class="b">
-    <li>Each capture register belongs to a pin: <b>CR0 ← CAPn.0</b>, <b>CR1 ← CAPn.1</b>.</li>
+    <li>When a chosen edge arrives on a CAP pin, the hardware copies TC into a <b>capture register</b> — a snapshot. TC itself keeps counting.</li>
+    <li>Each capture register belongs to a pin: <b>CR0 ← CAPn.0</b>, <b>CR1 ← CAPn.1</b>. (The slide's text says "one of the four Capture Registers" — copied from a generic manual; LPC1768 timers have only these <b>two</b>; CR2/CR3 are reserved, as the block diagram shows.)</li>
     <li>The <b>CCR</b> (Capture Control Register) decides: capture on the rising edge? falling edge? both? and interrupt on capture?</li>
   </ul>
   <div class="wg" id="w-ccr"></div>
@@ -292,7 +287,7 @@
   <p><span class="pill p">question</span> Toggle the LED on P0.2 every second, i.e. a square wave with period 2 s.</p>
   <ul class="b">
     <li><code>delay()</code> runs Timer0 until MR0 matches; EMR = 0x20 makes <b>EM0 → 1</b> on that match; the <code>while</code> waits for it.</li>
-    <li>Writing <code>EMR = 0x20</code> at the start of every delay also writes <b>EM0 = 0</b> — that's what re-arms the flag. Clever!</li>
+    <li>Writing <code>EMR = 0x20</code> at the start of every delay also writes <b>EM0 = 0</b> — that re-arms the flag for the next wait.</li>
   </ul>
   <div class="wg" id="w-p1" style="--tilt:0deg"></div>
   <p class="small p-soft">Slide's one-line alternative to the FIOSET/FIOCLR pair: <code>LPC_GPIO0-&gt;FIOPIN = ~(LPC_GPIO0-&gt;FIOPIN &amp; 0x00000004);</code> — if P0.2 was 1 the result has bit 2 = 0, if it was 0 → 1. A toggle in one line.</p>
@@ -300,7 +295,7 @@
   <h3 class="bub jit" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">P2</span>75 % duty cycle</h3>
   <p><span class="pill p">question</span> Square wave of period 2 s with 75 % duty cycle on P0.2.</p>
   <ul class="b">
-    <li>75 % of 2 s = <b>1.5 s HIGH</b>, 0.5 s LOW.</li>
+    <li><b>Duty cycle</b> = HIGH time ÷ period. 75 % of 2 s = <b>1.5 s HIGH</b>, 0.5 s LOW.</li>
     <li>PR = 2999 → one TC step = 1 ms. Then MR0 = 1500 → 1.5 s, MR0 = 500 → 0.5 s. <code>main()</code> changes MR0 before each <code>delay()</code>.</li>
   </ul>
   <div class="wg" id="w-p2" style="--tilt:0deg"></div>
@@ -352,12 +347,9 @@
   <div class="box idea sk"><span class="tag">the big idea</span><svg class="sticker"><use href="#st-bulb"/></svg>
     <ul class="b">
       <li>A 16×2 LCD shows <b>32 characters</b>: 2 rows × 16. It has its own little controller chip that draws the letters.</li>
-      <li>We just send it bytes. Each byte is either a <span class="hl-l">command</span> ("clear", "go to line 2", "cursor on") or <span class="hl-y">data</span> (an ASCII character to show).</li>
+      <li>We just send it bytes. Each byte is either a <span class="hl-l">command</span> ("clear", "go to line 2", "cursor on") or <span class="hl-y">data</span> = the <b>ASCII</b> code of a character to show (ASCII = the standard number for each character: 'A' = 0x41, '0' = 0x30, ' ' = 0x20).</li>
       <li><b>RS</b> pin says which one: RS = 0 → command, RS = 1 → data. A pulse on <b>EN</b> says "take it now".</li>
     </ul>
-  </div>
-  <div class="note analogy lav"><div class="nh"><svg><use href="#st-mail"/></svg>analogy · an assistant with two in-trays</div>
-    The LCD is an assistant. Tray RS = 0 is for <b>instructions</b> ("wipe the board"), tray RS = 1 for <b>things to write</b> ("A"). You put a note on the desk (data pins), point at a tray (RS), then ring the bell (EN pulse). In 4-bit mode each note is torn in two halves and handed over one half at a time.
   </div>
 
   <h3 class="bub jit" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">4.1</span>The 16 pins &amp; our wiring</h3>
@@ -365,7 +357,7 @@
   <div class="wg" id="w-lcdpins"></div>
   <ul class="b arrow">
     <li><b>4-bit mode</b>: only D7–D4 are used (P0.26–P0.23). D3–D0 are tied to GND. Saves 4 pins.</li>
-    <li>R/W is tied to GND → we <em>only ever write</em>. So we can't read the LCD's busy flag → the code uses <b>delays</b> instead.</li>
+    <li>R/W is tied to GND → we <em>only ever write</em>. So we can't read the LCD's <b>busy flag</b> (BF = 1: still executing an internal operation, BF = 0: ready for the next byte) → the code just waits with <b>delays</b> instead.</li>
   </ul>
 
   <h3 class="bub jit" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">4.2</span>Commands — the LCD's vocabulary</h3>
@@ -379,7 +371,7 @@
 
   <h3 class="bub jit" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">4.3</span>Where does the cursor go? (DDRAM)</h3>
   <ul class="b">
-    <li>Every box on the screen has an address in the LCD's memory (DDRAM): line 1 = <b>0x00–0x0F</b>, line 2 = <b>0x40–0x4F</b>.</li>
+    <li>Every box on the screen has an address in the LCD's memory (<b>DDRAM</b> = Display Data RAM): line 1 = <b>0x00–0x0F</b>, line 2 = <b>0x40–0x4F</b>.</li>
     <li>"Set cursor" command = <span class="hl-l">0x80 | address</span> → line 1 box k: <b>0x80 + k</b>, line 2 box k: <b>0xC0 + k</b> (k = 0 … 15).</li>
     <li>That's why <b>0x80</b> = start of line 1 and <b>0xC0</b> = start of line 2.</li>
   </ul>
@@ -495,7 +487,7 @@ void lcd_str(char *s)          { while (*s) lcd_char(*s++); }
   <ul class="b">
     <li>Keep 4 separate BCD digits d[0..3]. Add 1 to the last digit; if it becomes 10 → make it 0 and <b>carry</b> 1 into the next digit (like an odometer).</li>
     <li>A digit 0–9 becomes its ASCII character by adding <b>0x30</b> ('0' = 0x30, '9' = 0x39).</li>
-    <li>Each time: cursor to 0x80, print the 4 characters, wait, count.</li>
+    <li>Each time: cursor to 0xC0 (line 2 — line 1 holds the title), print the 4 characters, wait, count.</li>
   </ul>
   <div class="wg" id="w-q2" style="--tilt:0deg"></div>
 

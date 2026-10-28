@@ -511,11 +511,11 @@ svg.dg .hov:hover > *{opacity:.85}
 .mbits{display:flex; flex-direction:column; gap:3px; margin:4px 0}
 .mbt{font-family:'Gaegu'; font-weight:700; font-size:15px; color:var(--ink2)}
 .mbr{display:flex; gap:4px; flex-wrap:wrap}
-.mb{display:flex; flex-direction:column; align-items:center; min-width:38px}
-.mb i{font-style:normal; font-family:'Courier Prime'; font-weight:700; font-size:16px; width:30px; height:28px; display:grid; place-items:center; border:1.5px solid var(--faint); border-radius:6px; background:var(--paper); transition:all .2s}
-.mb small{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
-.mb.one i{background:var(--hi); color:#fff; border-color:var(--ink); box-shadow:0 0 10px var(--led-glow)}
-.mb.unk i{background:repeating-linear-gradient(45deg,var(--hl-o) 0 4px,transparent 4px 8px)}
+.mbc{display:flex; flex-direction:column; align-items:center; min-width:38px}
+.mbc i{font-style:normal; font-family:'Courier Prime'; font-weight:700; font-size:16px; width:30px; height:28px; display:grid; place-items:center; border:1.5px solid var(--faint); border-radius:6px; background:var(--paper); transition:all .2s}
+.mbc small{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
+.mbc.one i{background:var(--hi); color:#fff; border-color:var(--ink); box-shadow:0 0 10px var(--led-glow)}
+.mbc.unk i{background:repeating-linear-gradient(45deg,var(--hl-o) 0 4px,transparent 4px 8px)}
 
 /* scanner schematic */
 svg.scan .wire{fill:none; stroke:var(--ink3); stroke-width:3; stroke-linecap:round; transition:stroke .15s}
@@ -727,6 +727,18 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
 .gpiotbl td{vertical-align:middle}
 
 /* notebook-1 specific tweaks */
+/* GPIO port playground */
+.gpg{display:grid; grid-template-columns:auto repeat(8,minmax(24px,1fr)); gap:5px 4px; align-items:center; max-width:560px; margin:12px 0 8px}
+.gpg .gl{font-family:'Gaegu'; font-weight:700; font-size:15px; color:var(--ink2); padding-right:4px; white-space:nowrap}
+.gpg .gh{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3); text-align:center}
+.gpg .gc{font-family:'Courier Prime'; font-weight:700; font-size:15px; text-align:center; border:1.5px solid var(--faint); border-radius:6px; background:var(--paper); padding:3px 0}
+.gpg .gc.one{background:var(--hl-y); border-color:var(--ink)}
+.gpg .gp{display:flex; flex-direction:column; align-items:center; gap:2px}
+.gpg .gp small{font-family:'Courier Prime'; font-size:9.5px; color:var(--ink3)}
+.gpg .gin{width:24px; height:24px; border-radius:7px; border:2px solid var(--ink); background:#9aa0ad; color:#fff; font-family:'Courier Prime'; font-weight:700; font-size:13px; cursor:pointer; padding:0; line-height:1}
+.gpg .gin.on{background:#3fae6c}
+.gpg .chg{animation:shake2 .45s}
+@media (max-width:520px){ .gpg .gl{font-size:13px} .gpg .gh{font-size:9px} }
 
 </style>
 </head>
@@ -958,6 +970,10 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
   <div class="wg" id="w-bits"></div>
 
   <h3 class="bub jit" style="--bc:var(--hl-y);--bc2:var(--n-y)"><span class="num">0.2</span>The 6 GPIO registers</h3>
+  <ul class="b">
+    <li><b>GPIO</b> = General Purpose Input/Output: a pin you drive HIGH/LOW yourself (output) or read (input).</li>
+    <li>Pin names: <b>P0.2</b> = port 0, pin 2. A port has 32 pins, so each port register is 32 bits: <span class="hl-y">bit n ↔ pin n</span>.</li>
+  </ul>
   <p class="mnote o">FIOSET / FIOCLR only touch the 1-bits → safe. <br>FIOPIN = x writes the <u>whole</u> port!</p>
   <div class="tblwrap"><table class="tbl">
     <tr><th>register</th><th>what it does</th></tr>
@@ -966,8 +982,9 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
     <tr><td class="m">FIOSET</td><td>write 1 → that pin goes <span class="p-red">HIGH</span>. Writing 0 does nothing.</td></tr>
     <tr><td class="m">FIOCLR</td><td>write 1 → that pin goes <span class="p-blue">LOW</span>. Writing 0 does nothing.</td></tr>
     <tr><td class="m">FIOPIN</td><td><b>read</b> → the level of every pin right now. <b>write</b> → sets every (unmasked) pin of the port at once.</td></tr>
-    <tr><td class="m">FIOMASK</td><td><b>1 = protected</b>: FIOPIN reads/writes ignore that bit. 0 = normal.</td></tr>
+    <tr><td class="m">FIOMASK</td><td><b>1 = protected</b>: writes via FIOPIN / FIOSET / FIOCLR skip that pin, and FIOPIN reads it as 0. 0 = normal.</td></tr>
   </table></div>
+  <div class="wg" id="w-gpio"></div>
   <ul class="b arrow">
     <li>Each PINSEL register covers 16 pins: <b>PINSEL0</b> = P0.0–15, <b>PINSEL1</b> = P0.16–31, <b>PINSEL2</b> = P1.0–15, <b>PINSEL3</b> = P1.16–31, <b>PINSEL4</b> = P2.0–15.</li>
     <li>Pin Px.n uses bits <span class="hl-g">2×(n mod 16)+1 : 2×(n mod 16)</span>. Example P1.28 → (28−16)×2 = 24 → bits 25:24 → <code>3&lt;&lt;24</code> picks function 3.</li>
@@ -982,7 +999,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
   </div>
   <ul class="b">
     <li><code>SystemInit();</code> + <code>SystemCoreClockUpdate();</code> start most programs: they set up the clock system and record the CPU frequency. Just copy them.</li>
-    <li><code>#include &lt;LPC17xx.h&gt;</code> gives the names <code>LPC_GPIO0</code>, <code>LPC_TIM0</code> … so you can write <code>LPC_TIM0-&gt;TC</code> instead of raw addresses.</li>
+    <li><code>#include &lt;LPC17xx.h&gt;</code> gives the names <code>LPC_GPIO0</code> … <code>LPC_GPIO4</code> (one per port), <code>LPC_PINCON</code> (PINSEL), <code>LPC_TIM0</code> … Each points to a block of registers; <code>-&gt;</code> picks one: <code>LPC_TIM0-&gt;TC</code> = "the TC register of Timer0".</li>
   </ul>
 </article>
 
@@ -1001,9 +1018,6 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
       <li>Pressing a key <b>connects</b> its row wire to its column wire.</li>
       <li>To find the key: make <em>one row</em> HIGH at a time and look which <em>column</em> becomes HIGH. That's called <span class="hl-p">scanning</span>.</li>
     </ul>
-  </div>
-  <div class="note analogy"><div class="nh"><svg><use href="#st-cat"/></svg>analogy · roll call</div>
-    A class sits in 4 rows × 4 columns. The teacher shouts "<b>Row 2</b>, raise hands if you need help!" — only row 2 can answer. A hand goes up in <b>column 3</b> → it's the student at (row 2, col 3). Calling row 1, 2, 3, 4 again and again, super fast = scanning.
   </div>
   <ul class="b arrow">
     <li>Why bother? n rows × m columns = n·m keys with only <b>n + m</b> pins. 16 keys → 8 pins (instead of 16). 64 keys → 16 pins.</li>
@@ -1051,7 +1065,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
 
   <h3 class="bub jit" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">1.4</span>Picking the digit: decoder + FIOMASK</h3>
   <ul class="b">
-    <li>The board has 4 digits sharing the same 8 segment lines. A <b>decoder</b> driven by <b>P0.15–P0.18</b> switches on one digit (outputs Y0–Y3). Putting <b>0</b> on P0.15–P0.18 → Y0 → <b>Digit 1</b>.</li>
+    <li>The board has 4 digits sharing the same 8 segment lines (on the board, <b>Digit 1 is the rightmost</b> one). A <b>decoder</b> (binary number in → exactly one output on) driven by <b>P0.15–P0.18</b> picks the digit: 0 → Y0, 1 → Y1, 2 → Y2, 3 → Y3. Putting <b>0</b> on P0.15–P0.18 → Y0 → <b>Digit 1</b>.</li>
     <li>Problem: segments (P0.4–11) and decoder (P0.15–18) are on the <em>same</em> port. <code>FIOPIN = x</code> would overwrite both.</li>
     <li>Fix: <span class="hl-b">FIOMASK</span> — put 1s on the bits you want to <b>protect</b>; FIOPIN then only changes the 0-bits of the mask. It's a stencil:</li>
   </ul>
@@ -1086,9 +1100,6 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
       <li><b>Counter mode</b>: instead of PCLK ticks it counts pulses arriving on a pin (a CAP pin).</li>
       <li>LPC1768 has 4 of them: Timer0 … Timer3 (<code>LPC_TIM0</code> … <code>LPC_TIM3</code>), all 32-bit.</li>
     </ul>
-  </div>
-  <div class="note analogy pink"><div class="nh"><svg><use href="#st-clock"/></svg>analogy · a wall clock</div>
-    The <b>seconds hand</b> (PC) runs round and round. Each time it finishes a round (PR + 1 ticks), the <b>minutes hand</b> (TC) moves one step. The <b>alarm</b> (MR) is set on the minutes dial — when the minutes hand reaches it: <em>ring!</em> (a match).
   </div>
 
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.1</span>The counting chain</h3>
@@ -1128,8 +1139,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
 
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.4</span>CTCR — timer or counter?</h3>
   <ul class="b">
-    <li><b>Bits 1:0</b> = what moves TC: <code>00</code> timer (PCLK via the prescaler), <code>01</code> rising edges, <code>10</code> falling edges, <code>11</code> both edges of a CAP pin.</li>
-    <li><b>Bits 3:2</b> = which CAP pin (only in counter mode): <code>00</code> CAPn.0, <code>01</code> CAPn.1 (10, 11 reserved).</li>
+    <li><b>Bits 1:0</b> = what moves TC (PCLK or edges of a CAP pin), <b>bits 3:2</b> = which CAP pin (used only in counter mode).</li>
     <li>In counter mode the prescaler isn't used: each selected edge = TC + 1.</li>
   </ul>
   <div class="wg" id="w-ctcr"></div>
@@ -1144,25 +1154,22 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.6</span>On a match … MCR decides</h3>
   <ul class="b">
     <li>MR0–MR3 are compared with TC continuously. When equal, actions happen <span class="hl-b">automatically</span>.</li>
-    <li>The Match Control Register gives each MR three switches: <b>I</b> = generate an interrupt, <b>R</b> = reset TC, <b>S</b> = stop TC &amp; PC (and clear TCR bit 0).</li>
-    <li>Bits: MR0 → 2:0, MR1 → 5:3, MR2 → 8:6, MR3 → 11:9 (each ordered I, R, S). Upper bits reserved — don't write 1s there.</li>
+    <li>The Match Control Register gives each MR three switches: <b>I</b> = generate an interrupt (the CPU jumps to a small function — notebook ②), <b>R</b> = reset TC, <b>S</b> = stop TC &amp; PC (and clear TCR bit 0). Bits 31:12 are reserved — don't write 1s there.</li>
   </ul>
   <div class="wg" id="w-mcr"></div>
 
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.7</span>EMR — wiggle a pin on a match</h3>
   <ul class="b">
-    <li>Each match register has an "external match" bit <b>EM0 … EM3</b> (bits 3:0). It can drive the pin <b>MATn.0 … MATn.3</b> if that pin is selected in PINSEL.</li>
-    <li><b>EMC0 … EMC3</b> (2 bits each, bits 5:4, 7:6, 9:8, 11:10) say what EMx does on a match: <code>00</code> nothing, <code>01</code> clear to 0, <code>10</code> set to 1, <code>11</code> toggle.</li>
+    <li>Each match register has an "external match" bit <b>EM0 … EM3</b> (bits 3:0). It drives the pin <b>MATn.0 … MATn.3</b> (0 = LOW, 1 = HIGH) if that pin is selected in PINSEL.</li>
+    <li><b>EMC0 … EMC3</b> (2 bits each) say what EMx does on a match: nothing / clear / set / toggle.</li>
     <li>EMx is also readable → the slides poll <code>EMR &amp; 0x01</code> to know "MR0 matched".</li>
   </ul>
   <div class="wg" id="w-emr"></div>
 
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.8</span>Capture — a snapshot of TC</h3>
-  <div class="note analogy"><div class="nh"><svg><use href="#st-cam"/></svg>analogy · photo finish</div>
-    TC is a stopwatch that keeps running. When an edge arrives on a CAP pin, the timer takes a <b>photo</b> of the stopwatch and keeps it in a capture register (CR0 / CR1). The stopwatch itself doesn't stop.
-  </div>
   <ul class="b">
-    <li>Each capture register belongs to a pin: <b>CR0 ← CAPn.0</b>, <b>CR1 ← CAPn.1</b>.</li>
+    <li>When a chosen edge arrives on a CAP pin, the hardware copies TC into a <b>capture register</b> — a snapshot. TC itself keeps counting.</li>
+    <li>Each capture register belongs to a pin: <b>CR0 ← CAPn.0</b>, <b>CR1 ← CAPn.1</b>. (The slide's text says "one of the four Capture Registers" — copied from a generic manual; LPC1768 timers have only these <b>two</b>; CR2/CR3 are reserved, as the block diagram shows.)</li>
     <li>The <b>CCR</b> (Capture Control Register) decides: capture on the rising edge? falling edge? both? and interrupt on capture?</li>
   </ul>
   <div class="wg" id="w-ccr"></div>
@@ -1186,7 +1193,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
   <p><span class="pill p">question</span> Toggle the LED on P0.2 every second, i.e. a square wave with period 2 s.</p>
   <ul class="b">
     <li><code>delay()</code> runs Timer0 until MR0 matches; EMR = 0x20 makes <b>EM0 → 1</b> on that match; the <code>while</code> waits for it.</li>
-    <li>Writing <code>EMR = 0x20</code> at the start of every delay also writes <b>EM0 = 0</b> — that's what re-arms the flag. Clever!</li>
+    <li>Writing <code>EMR = 0x20</code> at the start of every delay also writes <b>EM0 = 0</b> — that re-arms the flag for the next wait.</li>
   </ul>
   <div class="wg" id="w-p1" style="--tilt:0deg"></div>
   <p class="small p-soft">Slide's one-line alternative to the FIOSET/FIOCLR pair: <code>LPC_GPIO0-&gt;FIOPIN = ~(LPC_GPIO0-&gt;FIOPIN &amp; 0x00000004);</code> — if P0.2 was 1 the result has bit 2 = 0, if it was 0 → 1. A toggle in one line.</p>
@@ -1194,7 +1201,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
   <h3 class="bub jit" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">P2</span>75 % duty cycle</h3>
   <p><span class="pill p">question</span> Square wave of period 2 s with 75 % duty cycle on P0.2.</p>
   <ul class="b">
-    <li>75 % of 2 s = <b>1.5 s HIGH</b>, 0.5 s LOW.</li>
+    <li><b>Duty cycle</b> = HIGH time ÷ period. 75 % of 2 s = <b>1.5 s HIGH</b>, 0.5 s LOW.</li>
     <li>PR = 2999 → one TC step = 1 ms. Then MR0 = 1500 → 1.5 s, MR0 = 500 → 0.5 s. <code>main()</code> changes MR0 before each <code>delay()</code>.</li>
   </ul>
   <div class="wg" id="w-p2" style="--tilt:0deg"></div>
@@ -1246,12 +1253,9 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
   <div class="box idea sk"><span class="tag">the big idea</span><svg class="sticker"><use href="#st-bulb"/></svg>
     <ul class="b">
       <li>A 16×2 LCD shows <b>32 characters</b>: 2 rows × 16. It has its own little controller chip that draws the letters.</li>
-      <li>We just send it bytes. Each byte is either a <span class="hl-l">command</span> ("clear", "go to line 2", "cursor on") or <span class="hl-y">data</span> (an ASCII character to show).</li>
+      <li>We just send it bytes. Each byte is either a <span class="hl-l">command</span> ("clear", "go to line 2", "cursor on") or <span class="hl-y">data</span> = the <b>ASCII</b> code of a character to show (ASCII = the standard number for each character: 'A' = 0x41, '0' = 0x30, ' ' = 0x20).</li>
       <li><b>RS</b> pin says which one: RS = 0 → command, RS = 1 → data. A pulse on <b>EN</b> says "take it now".</li>
     </ul>
-  </div>
-  <div class="note analogy lav"><div class="nh"><svg><use href="#st-mail"/></svg>analogy · an assistant with two in-trays</div>
-    The LCD is an assistant. Tray RS = 0 is for <b>instructions</b> ("wipe the board"), tray RS = 1 for <b>things to write</b> ("A"). You put a note on the desk (data pins), point at a tray (RS), then ring the bell (EN pulse). In 4-bit mode each note is torn in two halves and handed over one half at a time.
   </div>
 
   <h3 class="bub jit" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">4.1</span>The 16 pins &amp; our wiring</h3>
@@ -1259,7 +1263,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
   <div class="wg" id="w-lcdpins"></div>
   <ul class="b arrow">
     <li><b>4-bit mode</b>: only D7–D4 are used (P0.26–P0.23). D3–D0 are tied to GND. Saves 4 pins.</li>
-    <li>R/W is tied to GND → we <em>only ever write</em>. So we can't read the LCD's busy flag → the code uses <b>delays</b> instead.</li>
+    <li>R/W is tied to GND → we <em>only ever write</em>. So we can't read the LCD's <b>busy flag</b> (BF = 1: still executing an internal operation, BF = 0: ready for the next byte) → the code just waits with <b>delays</b> instead.</li>
   </ul>
 
   <h3 class="bub jit" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">4.2</span>Commands — the LCD's vocabulary</h3>
@@ -1273,7 +1277,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
 
   <h3 class="bub jit" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">4.3</span>Where does the cursor go? (DDRAM)</h3>
   <ul class="b">
-    <li>Every box on the screen has an address in the LCD's memory (DDRAM): line 1 = <b>0x00–0x0F</b>, line 2 = <b>0x40–0x4F</b>.</li>
+    <li>Every box on the screen has an address in the LCD's memory (<b>DDRAM</b> = Display Data RAM): line 1 = <b>0x00–0x0F</b>, line 2 = <b>0x40–0x4F</b>.</li>
     <li>"Set cursor" command = <span class="hl-l">0x80 | address</span> → line 1 box k: <b>0x80 + k</b>, line 2 box k: <b>0xC0 + k</b> (k = 0 … 15).</li>
     <li>That's why <b>0x80</b> = start of line 1 and <b>0xC0</b> = start of line 2.</li>
   </ul>
@@ -1389,7 +1393,7 @@ void lcd_str(char *s)          { while (*s) lcd_char(*s++); }
   <ul class="b">
     <li>Keep 4 separate BCD digits d[0..3]. Add 1 to the last digit; if it becomes 10 → make it 0 and <b>carry</b> 1 into the next digit (like an odometer).</li>
     <li>A digit 0–9 becomes its ASCII character by adding <b>0x30</b> ('0' = 0x30, '9' = 0x39).</li>
-    <li>Each time: cursor to 0x80, print the 4 characters, wait, count.</li>
+    <li>Each time: cursor to 0xC0 (line 2 — line 1 holds the title), print the 4 characters, wait, count.</li>
   </ul>
   <div class="wg" id="w-q2" style="--tilt:0deg"></div>
 
@@ -1896,7 +1900,7 @@ function ruler(host, label, min, max, val, step, fmt, oninput) {
 function miniBits(host, labels, title) { // small labelled bit cells, labels left→right
   const w = el('div', { class: 'mbits' }); if (title) w.appendChild(el('div', { class: 'mbt' }, title));
   const row = el('div', { class: 'mbr' }); w.appendChild(row); host.appendChild(w);
-  const cells = labels.map(l => { const c = el('div', { class: 'mb' }, `<i>0</i><small>${l}</small>`); row.appendChild(c); return c; });
+  const cells = labels.map(l => { const c = el('div', { class: 'mbc' }, `<i>0</i><small>${l}</small>`); row.appendChild(c); return c; });
   return { el: w, set(arr) { arr.forEach((b, i) => { const c = cells[i]; if (!c) return; c.firstChild.textContent = b === null ? '?' : b; c.classList.toggle('one', b === 1); c.classList.toggle('unk', b === null); }); } };
 }
 
@@ -1953,6 +1957,51 @@ BUILD.push(function wBits() {
   function show() { strip.set(v); hexo.textContent = hex(v); deco.textContent = '= ' + v.toString(10); const on = []; for (let b = 31; b >= 0; b--) if ((v >>> b) & 1) on.push(b); msg.className = 'say'; msg.textContent = on.length ? (on.length > 10 ? `${on.length} bits are 1 — zeros at: ${[...Array(32).keys()].filter(b => !((v >>> b) & 1)).reverse().join(', ') || 'none'}` : 'bits that are 1: ' + on.join(', ')) : 'all bits are 0'; }
   function calc() { try { v = safeEval(inp.value); show(); } catch (e) { msg.className = 'say r'; msg.textContent = '✗ ' + e.message; } }
   inp.addEventListener('input', calc); calc();
+});
+
+/* ---------- GPIO port playground ---------- */
+BUILD.push(function wGpio() {
+  const w = W('w-gpio', 'GPIO port playground', 'type a value, write it into a register · P0.7 … P0.0 shown');
+  let dir = 0x0F, mask = 0, lat = 0x05, ext = 0x40, rd = null, chg = 0, row = '';
+  const lv = () => ((dir & lat) | (~dir & ext)) & 0xFF; // real pin levels
+  const ctl = el('div', { class: 'row' }); w.appendChild(ctl);
+  const inp = el('input', { class: 'inp', value: '0x04', style: 'width:6.5em', 'aria-label': 'value', spellcheck: 'false' });
+  const vb = el('span', { class: 'ro' }); ctl.append(el('span', { class: 'gae' }, 'value ='), inp, vb);
+  const qc = el('div', { class: 'chips' }); ctl.appendChild(qc);
+  ['0x04', '0x01', '0x0F', '0xF0', '0x00'].forEach(t => { const c = el('button', { class: 'chip', type: 'button' }, t); c.onclick = () => { inp.value = t; showV(); }; qc.appendChild(c); });
+  const bt = el('div', { class: 'row' }); w.appendChild(bt);
+  const g = el('div', { class: 'gpg' }); w.appendChild(g);
+  const say = el('div', { class: 'say' }); w.appendChild(say);
+  const val = () => { try { return safeEval(inp.value) & 0xFF; } catch (e) { return null; } };
+  const showV = () => { const v = val(); vb.textContent = v == null ? '?' : '= ' + bin(v, 8); };
+  const pins = v => { const a = []; for (let b = 7; b >= 0; b--) if ((v >> b) & 1) a.push('P0.' + b); return a.join(', ') || 'none'; };
+  const A = [
+    ['FIODIR', 'dir', v => { chg = dir ^ v; dir = v; return `1-bits → <b>outputs</b> (${pins(v)}); 0-bits → inputs.`; }],
+    ['FIOMASK', 'mask', v => { chg = mask ^ v; mask = v; return v ? `${pins(v)} now <b>protected</b>: FIOPIN / FIOSET / FIOCLR skip them, and they read as 0.` : 'nothing masked — all pins normal.'; }],
+    ['FIOSET', 'pin', v => { const m = v & ~mask & 0xFF; chg = m & ~lat & dir; lat |= m; return `1-bits → HIGH (${pins(m)}). 0-bits → <b>no change</b>.${m & ~dir ? ' An input pin just ignores it — the outside world sets its level.' : ''}`; }],
+    ['FIOCLR', 'pin', v => { const m = v & ~mask & 0xFF; chg = m & lat & dir; lat &= ~m & 0xFF; return `1-bits → LOW (${pins(m)}). 0-bits → <b>no change</b>.`; }],
+    ['FIOPIN', 'pin', v => { const n = ((lat & mask) | (v & ~mask)) & 0xFF, low = lat & ~n & dir; chg = (n ^ lat) & dir; lat = n; return `<b>every</b> unmasked pin copies its bit → changed: ${pins(chg)}.${low ? ` <span class="p-red">The 0-bits pulled ${pins(low)} LOW too!</span>` : ''}`; }]
+  ];
+  A.forEach(([n, r, f]) => { const b = el('button', { class: 'btn sm p', type: 'button' }, n + ' = value'); b.onclick = () => { const v = val(); if (v == null) { say.textContent = '✗ not a number'; return; } rd = null; row = r; say.innerHTML = `<code>LPC_GPIO0-&gt;${n} = ${hx(v)};</code> → ` + f(v); paint(); }; bt.appendChild(b); });
+  const br = el('button', { class: 'btn sm g', type: 'button' }, 'x = FIOPIN (read)'); bt.appendChild(br);
+  br.onclick = () => { rd = lv() & ~mask & 0xFF; row = 'read'; chg = 0xFF; say.innerHTML = `<code>x = LPC_GPIO0-&gt;FIOPIN;</code> → x = <b>${hx(rd)}</b>: the real level of every pin (inputs = what the outside gives${mask ? ', masked pins = 0' : ''}).`; paint(); };
+  inp.addEventListener('input', showV);
+  function paint() {
+    const L = lv(); g.innerHTML = '';
+    const add = (cls, h) => { const d = el('div', { class: cls }, h); g.appendChild(d); return d; };
+    const cell = (r, bitv, b) => add('gc' + (bitv === 1 ? ' one' : '') + (row === r && (chg >> b) & 1 ? ' chg' : ''), bitv);
+    add('gl', ''); for (let b = 7; b >= 0; b--) add('gh', 'P0.' + b);
+    add('gl', 'FIODIR'); for (let b = 7; b >= 0; b--) cell('dir', (dir >> b) & 1, b);
+    add('gl', 'FIOMASK'); for (let b = 7; b >= 0; b--) cell('mask', (mask >> b) & 1, b);
+    add('gl', 'pin'); for (let b = 7; b >= 0; b--) {
+      const p = add('gp' + (row === 'pin' && (chg >> b) & 1 ? ' chg' : ''), '');
+      if ((dir >> b) & 1) p.innerHTML = `<span class="led${(L >> b) & 1 ? ' on' : ''}"></span><small>out</small>`;
+      else { const k = el('button', { class: 'gin' + ((ext >> b) & 1 ? ' on' : ''), type: 'button', title: 'input: click to change what the outside world puts here', 'aria-label': 'input P0.' + b }, (ext >> b) & 1); k.onclick = () => { ext ^= 1 << b; rd = null; row = ''; say.innerHTML = `outside world: P0.${b} is now ${(ext >> b) & 1 ? 'HIGH' : 'LOW'} (it's an input, so only the outside can change it).`; paint(); }; p.append(k, el('small', {}, 'in')); }
+    }
+    add('gl', 'x = FIOPIN'); for (let b = 7; b >= 0; b--) cell('read', rd == null ? '·' : (rd >> b) & 1, b);
+  }
+  showV(); paint();
+  say.innerHTML = 'P0.3–P0.0 are outputs (LEDs), P0.7–P0.4 inputs (click to flip them). Try <b>FIOSET = 0x04</b>, then <b>FIOPIN = 0x01</b> — spot the difference.';
 });
 
 /* ---------- PINSEL finder ---------- */
@@ -2145,7 +2194,7 @@ BUILD.push(function wMask() {
   for (let b = N - 1; b >= 0; b--) brace.appendChild(el('div', { class: 'sc tiny' }, b >= 15 && b <= 18 ? (b === 17 ? 'decoder' : '') : (b >= 4 && b <= 11 ? (b === 8 ? 'segments' : '') : '')));
   let mask = 0, val = null, port = 0b10110000101101010110, use = true;
   const digRow = el('div', { class: 'row mt', style: 'align-items:flex-end' }); w.appendChild(digRow);
-  const digs = [0, 1, 2, 3].map(i => { const d = el('div', { class: 'col center' }); digRow.appendChild(d); const s = SevenSeg(d); d.appendChild(el('span', { class: 'gae small' }, 'Digit ' + (i + 1))); return { d, s }; });
+  const digs = []; [3, 2, 1, 0].forEach(i => { const d = el('div', { class: 'col center' }); digRow.appendChild(d); digs[i] = mkDig(d, i); }); function mkDig(d, i) { const s = SevenSeg(d); d.appendChild(el('span', { class: 'gae small' }, 'Digit ' + (i + 1) + (i === 0 ? ' (Y0)' : ''))); return { d, s }; }
   const dsay = el('div', { class: 'say' }); digRow.appendChild(dsay);
   const btns = el('div', { class: 'row mt' }); w.appendChild(btns);
   const key = { v: 6 };

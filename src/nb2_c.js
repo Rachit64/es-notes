@@ -75,9 +75,34 @@ BUILD.push(function wRamp() {
       sv('path', { d: digi(pts, X, y, y + 30), style: 'fill:none;stroke:var(--red);stroke-width:2.6' }, s);
     });
     [1, 27, 41, 53, 65, 78, 100].forEach(t => sv('text', { x: X(t), y: 124 + show.length * 52, 'text-anchor': 'middle', class: 'mono', style: 'font-size:10px;fill:var(--ink3)' }, s).textContent = t);
-    let h = '<table class="tbl" style="max-width:640px"><tr><th>channel</th><th>mode</th><th>set by</th><th>reset by</th><th>HIGH from → to</th></tr>';
-    for (let n = 1; n <= 6; n++) { const d = sel[n] && n > 1; h += `<tr class="${show.includes(n) ? 'hit' : ''}"><td class="m">PWM${n}</td><td>${d ? 'double' : 'single'}</td><td>Match ${d ? n - 1 : 0}</td><td>Match ${n}</td><td class="m">${d ? `${MR[n - 1]} → ${MR[n]}` : `start → ${MR[n]}`}</td></tr>`; }
-    tb.innerHTML = h + '</table><p class="small p-soft">Slide example: MR0 = 100, MR1 = 41, MR2 = 78 (PWM2), MR3 = 53, MR4 = 27 (PWM4), MR5 = 65 (PWM5), PWMSEL2 &amp; PWMSEL4 set. "(D)" = double edge. In double-edge mode the set match may be bigger than the reset match — then the pulse wraps around the period end (that\'s PWM4 here).</p>';
+    let h = '<table class="tbl pwmff" style="max-width:640px"><tr><th>channel</th><th>single edge<br><small>set · reset by</small></th><th>double edge<br><small>set · reset by</small></th><th>HIGH</th></tr>';
+    for (let n = 1; n <= 6; n++) { const d = sel[n] && n > 1; h += `<tr><td class="m">PWM${n}</td><td class="${d ? '' : 'act'}">Match 0 · Match ${n}</td><td class="${d ? 'act' : ''}">Match ${n > 1 ? n - 1 : 0} · Match ${n}${n === 1 || n === 3 || n === 5 ? ' *' : ''}</td><td class="m">${d ? `${MR[n - 1]} → ${MR[n]}` : `start → ${MR[n]}`}</td></tr>`; }
+    tb.innerHTML = h + '</table><p class="small p-soft">Single = PWMSELn 0, double = PWMSELn 1; highlighted = the mode in use. * PWM1 has no PWMSEL bit (always single edge); double-edge PWM3/PWM5 would use up the match registers of PWM2/PWM4 — so PWM2, 4, 6 give the most double-edge outputs.<br>Slide example: MR0 = 100, MR1 = 41, MR2 = 78 (PWM2), MR3 = 53, MR4 = 27 (PWM4), MR5 = 65 (PWM5), PWMSEL2 &amp; PWMSEL4 set. "(D)" = double edge. If the set match is bigger than the reset match, the pulse wraps around the period end (PWM4 here).</p>';
+    drawFF();
+  }
+  // one output, inside: MUX → S-R flip-flop → enable → pin
+  const inn = el('div', { class: 'mt' }); w.appendChild(inn); let ch = 4;
+  const cc = el('div', { class: 'chips' }); inn.appendChild(cc); cc.appendChild(el('span', { class: 'gae small' }, 'inside one output:'));
+  chipGroup(cc, [1, 2, 3, 4, 5, 6].map(n => [n, 'PWM1.' + n]), ch, v => { ch = +v; drawFF(); });
+  const ff = sv('svg', { class: 'dg', viewBox: '0 0 520 176', style: 'max-width:600px' }); inn.appendChild(ff);
+  const ffs = el('div', { class: 'say' }); inn.appendChild(ffs);
+  function drawFF() {
+    const n = ch, d = n > 1 && !!sel[n]; ff.innerHTML = '';
+    const bx = (x, y, t, on) => { sv('rect', { x, y, width: 104, height: 28, rx: 6, class: 'ink', style: `fill:${on ? 'var(--n-y)' : 'var(--paper)'}` }, ff); sv('text', { x: x + 52, y: y + 20, 'text-anchor': 'middle', style: 'font-size:17px' }, ff).textContent = t; };
+    const wr = (dd, on) => sv('path', { d: dd, style: `fill:none;stroke:${on ? 'var(--pink)' : 'var(--ink3)'};stroke-width:${on ? 3 : 1.6};stroke-linejoin:round` }, ff);
+    const tx = (x, y, t, st) => { sv('text', { x, y, style: st || 'font-size:12px' }, ff).textContent = t; };
+    bx(6, 10, 'Match 0', !d); bx(6, 58, n > 1 ? 'Match ' + (n - 1) : 'Match 0', d); bx(6, 128, 'Match ' + n, 1);
+    wr('M110 24 H160', !d); wr('M110 72 H160', d);
+    sv('path', { d: 'M160 12 L196 26 L196 74 L160 88 Z', class: 'ink', style: 'fill:var(--card)' }, ff);
+    tx(164, 29, '0', 'font-size:13px'); tx(164, 77, '1', 'font-size:13px'); tx(165, 55, 'MUX', 'font-size:11.5px');
+    wr('M178 81 V106', 0); tx(124, 122, n > 1 ? `PWMSEL${n} = ${sel[n] ? 1 : 0}` : 'no PWMSEL1', 'font-size:14px;font-family:Courier Prime;font-weight:700');
+    wr('M196 50 H264', 1); wr('M110 142 H264', 1);
+    sv('rect', { x: 264, y: 34, width: 76, height: 124, rx: 6, class: 'ink', style: 'fill:var(--n-l)' }, ff);
+    tx(272, 56, 'S', 'font-size:18px;font-weight:700'); tx(272, 148, 'R', 'font-size:18px;font-weight:700'); tx(318, 102, 'Q', 'font-size:18px;font-weight:700'); tx(270, 174, 'flip-flop', 'font-size:14px');
+    wr('M340 96 H384', 1); wr('M366 146 V116 H384', 1); tx(346, 164, `PWMENA${n} = 1`, 'font-size:13px;font-family:Courier Prime;font-weight:700');
+    sv('path', { d: 'M384 82 h18 a23 23 0 0 1 0 46 h-18 z', class: 'ink', style: 'fill:var(--paper)' }, ff);
+    wr('M425 105 H452', 1); tx(456, 101, 'PWM1.' + n, 'font-size:15px;font-weight:700'); tx(456, 119, 'pin', 'font-size:14px');
+    ffs.innerHTML = `PWM1.${n}: <b>set</b> (S → output 1) by Match ${d ? n - 1 : 0}, <b>reset</b> (R → output 0) by Match ${n} → ${d ? '<b>double</b> edge: both edges movable' : '<b>single</b> edge: the pulse always starts with the period'}. PWMENA${n} = 1 lets it out to the pin.`;
   }
   s.addEventListener('pointermove', e => { if (!drag) return; const r = s.getBoundingClientRect(); const t = clamp(Math.round(((e.clientX - r.left) / r.width * 660 - 70) / 560 * 100), 1, 99); MR[drag] = t; rr[drag].value = t; rr[drag].dispatchEvent(new Event('input')); });
   s.addEventListener('pointerup', () => drag = null);
@@ -182,6 +207,7 @@ void PWM1_IRQHandler(void)
         if(LPC_PWM1->MR4 > 29900)
         {
             flag = 0xff;
+            LPC_PWM1->LER = 0x000000FF;
         }
     }
     else if(flag == 0xff)
@@ -191,6 +217,7 @@ void PWM1_IRQHandler(void)
         if(LPC_PWM1->MR4 < 100)
         {
             flag = 0x00;
+            LPC_PWM1->LER = 0X000000FF;
         }
     }
 }`;
@@ -208,8 +235,8 @@ BUILD.push(function wW1() {
     { l: [L('TCR = 0x00000002'), L('TCR = 0x00000009')], t: 'TCR = 2: reset. TCR = 9 = bit 0 (counter enable) + bit 3 (<b>PWM enable</b>) → go!' },
     { l: L('NVIC_EnableIRQ(PWM1_IRQn)'), t: 'Enable the PWM1 interrupt in the NVIC.' },
     { l: [L('LPC_PWM1->IR = 0x01'), L('if(flag == 0x00)'), L('MR4 += 50'), L('LER = 0x0000007F;', 2)], t: 'Each period (every 10 ms): ISR clears IR bit 0, flag = 0 → MR4 += 50, set LER so it takes effect next period → LED slightly brighter.', f: s => set(s, { mr4: 100 }) },
-    { l: [L('MR4 += 50'), L('if(LPC_PWM1->MR4 > 29900)')], t: 'After ~600 periods (≈ 6 s) MR4 > 29900 → almost 100 % duty → <b>flag = 0xFF</b>.', f: s => set(s, { mr4: 29950, flag: 1 }) },
-    { l: [L('else if(flag == 0xff)'), L('MR4 -= 50'), L('if(LPC_PWM1->MR4 < 100)')], t: 'Now MR4 −= 50 each period → dimmer … until MR4 &lt; 100 → flag = 0 → brighten again. A smooth <b>breathing</b> LED.', f: s => set(s, { mr4: 90, flag: 0 }) }
+    { l: [L('MR4 += 50'), L('if(LPC_PWM1->MR4 > 29900)'), L('flag = 0xff;'), L('LER = 0x000000FF')], t: 'After ~600 periods (≈ 6 s) MR4 > 29900 → almost 100 % duty → <b>flag = 0xFF</b>. (LER = 0xFF: bit 7 doesn\'t exist, so it acts like 0x7F.)', f: s => set(s, { mr4: 29950, flag: 1 }) },
+    { l: [L('else if(flag == 0xff)'), L('MR4 -= 50'), L('if(LPC_PWM1->MR4 < 100)'), L('flag = 0x00;')], t: 'Now MR4 −= 50 each period → dimmer … until MR4 &lt; 100 → flag = 0 → brighten again. A smooth <b>breathing</b> LED.', f: s => set(s, { mr4: 90, flag: 0 }) }
   ];
   let live = 50, fl = 0;
   const view = (s, v, k, first) => {
@@ -290,13 +317,13 @@ BUILD.push(function wRs232() {
   sv('text', { x: 590, y: 112, 'text-anchor': 'middle', class: 'lbl' }, s).textContent = 'LPC1768';
   const a1 = sv('path', { d: 'M260 80 H66', class: 'wr2' }, s), a2 = sv('path', { d: 'M540 80 H380', class: 'wr2' }, s);
   const b1 = sv('path', { d: 'M66 120 H260', class: 'wr2' }, s), b2 = sv('path', { d: 'M380 120 H540', class: 'wr2' }, s);
-  [[200, 74, 'T1 out (±10 V)'], [395, 74, 'T1 in (0/3.3 V)'], [140, 114, 'R1 in (±10 V)'], [395, 114, 'R1 out']].forEach(([x, y, t]) => sv('text', { x, y, class: 'mono', style: 'font-size:10px' }, s).textContent = t);
+  [[140, 74, 'T1 out ·14 (±10 V)'], [386, 74, 'T1 in ·11'], [120, 114, 'R1 in ·13 (±10 V)'], [386, 114, 'R1 out ·12']].forEach(([x, y, t]) => sv('text', { x, y, class: 'mono', style: 'font-size:10px' }, s).textContent = t);
   sv('text', { x: 500, y: 74, class: 'mono', style: 'font-size:10px' }, s).textContent = 'TxD'; sv('text', { x: 500, y: 114, class: 'mono', style: 'font-size:10px' }, s).textContent = 'RxD';
   const bt = el('div', { class: 'row' }); w.appendChild(bt);
   const send = el('button', { class: 'btn p', type: 'button' }, 'micro sends "U" ➝'); const recv = el('button', { class: 'btn sm', type: 'button' }, '⬅ PC sends "U"'); bt.append(send, recv);
   const sc = sv('svg', { class: 'dg', viewBox: '0 0 660 230' }); w.appendChild(sc);
   function wave(rs) {
-    sc.innerHTML = ''; const bits = frameBits(0x55, 8, 'none', 1); const X = i => 90 + i * 50;
+    sc.innerHTML = ''; const bits = frameBits(0x55, 8, 'none', 1); const X = i => 110 + i * 48;
     const Yt = v => 70 - v * 46, Yr = v => 165 + (v ? 1 : -1) * 40 * 1; // rs: 1 → -10, 0 → +10
     sv('text', { x: 2, y: 50, class: 'lbl', style: 'font-size:13px' }, sc).textContent = 'TTL side'; sv('text', { x: 2, y: 66, class: 'mono', style: 'font-size:10px' }, sc).textContent = '1 = 3.3 V';
     sv('text', { x: 2, y: 160, class: 'lbl', style: 'font-size:13px' }, sc).textContent = 'RS-232 side'; sv('text', { x: 2, y: 176, class: 'mono', style: 'font-size:10px' }, sc).textContent = '1 = −10 V';
@@ -363,7 +390,7 @@ BUILD.push(function wLsr() {
   const D = [['RXFE', 'error in RX FIFO (PE/FE/BI)'], ['TEMT', 'THR and TSR both empty'], ['THRE', 'THR empty (can write)'], ['BI', 'break interrupt'], ['FE', 'framing error (stop bit = 0)'], ['PE', 'parity error'], ['OE', 'overrun: RX FIFO was full'], ['RDR', 'receive data ready']];
   function paint() {
     const v = { RDR: st.rx.length ? 1 : 0, OE: st.oe, PE: st.pe, FE: st.fe, BI: st.bi, THRE: st.thr === null ? 1 : 0, TEMT: st.thr === null && st.tsr === null ? 1 : 0, RXFE: st.pe || st.fe || st.bi ? 1 : 0 };
-    pipe.innerHTML = `<div class="prow"><span class="gae">RxD</span>➝<div class="fifo">${Array.from({ length: MAX }, (_, i) => `<i>${st.rx[i] ?? ''}</i>`).join('')}</div><span class="small">RX FIFO (RBR reads the left end)</span></div><div class="prow"><span class="gae">CPU</span>➝<div class="fifo one"><i>${st.thr ?? ''}</i></div><span class="small">THR</span>➝<div class="fifo one"><i>${st.tsr ?? ''}</i></div><span class="small">TSR</span>➝<span class="gae">TxD</span></div>`;
+    pipe.innerHTML = `<div class="prow"><span class="gae">RxD</span>➝<div class="fifo">${Array.from({ length: MAX }, (_, i) => `<i>${st.rx[i] ?? ''}</i>`).join('')}</div><span class="small">RX FIFO (RBR reads the left end · really 16 deep)</span></div><div class="prow"><span class="gae">CPU</span>➝<div class="fifo one"><i>${st.thr ?? ''}</i></div><span class="small">THR</span>➝<div class="fifo one"><i>${st.tsr ?? ''}</i></div><span class="small">TSR (shift register: sends bit by bit)</span>➝<span class="gae">TxD</span></div>`;
     strip.innerHTML = D.map(([n, d], i) => `<span class="lb ${v[n] ? 'one' : ''}"><small>bit ${7 - i}</small><b>${v[n]}</b><em>${n}</em><u>${d}</u></span>`).join('');
   }
   paint(); say.textContent = 'All quiet: RX empty (RDR = 0), THR and TSR empty (THRE = 1, TEMT = 1).';

@@ -69,8 +69,10 @@ BUILD.push(function wIvt() {
   const w = W('w-ivt', 'an interrupt, in slow motion', 'choose N, then step');
   let N = 17; const BASE = 0x00000000;
   const top = el('div', { class: 'row mb' }); w.appendChild(top);
-  ruler(top, 'interrupt type N', 0, 34, N, 1, v => 'N = ' + v + ' → offset ' + hx(4 * v, 2), v => { N = v; st.refresh(); });
-  top.appendChild(el('span', { class: 'small p-soft', style: 'max-width:380px' }, 'On the LPC1768 the 16 Cortex system exceptions come first, so Timer0 (IRQ 1) is type N = 17 → offset 0x44.'));
+  const nr = ruler(top, 'interrupt type N', 0, 50, N, 1, v => 'N = ' + v + ' → offset ' + hx(4 * v, 2), v => { N = v; st.refresh(); });
+  top.appendChild(el('span', { class: 'small p-soft', style: 'max-width:380px' }, 'The 16 Cortex system exceptions come first (N = 0–15), then the 35 peripheral interrupts: N = 16 + IRQ number.'));
+  const qc = el('div', { class: 'chips mb' }); w.appendChild(qc); qc.appendChild(el('span', { class: 'cav p-soft' }, 'ISRs in these notes:'));
+  [['TIMER0', 1], ['UART0', 5], ['PWM1', 9], ['EINT2', 20], ['EINT3', 21], ['ADC', 22]].forEach(([n, q]) => { const c = el('button', { class: 'chip', type: 'button' }, `${n} · IRQ ${q} → N ${16 + q}`); c.onclick = () => { nr.value = 16 + q; nr.dispatchEvent(new Event('input')); }; qc.appendChild(c); });
   const host = el('div'); w.appendChild(host); const L = t => lineOf(IVT_CODE, t);
   const steps = [
     { l: [L('do_main_work')], t: 'The main program is running. PC points into <code>main()</code>.', f: s => set(s, { pc: 'main + 0x10', where: 'main' }) },

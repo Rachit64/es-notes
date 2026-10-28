@@ -66,3 +66,4 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
 .term pre{margin:0; white-space:pre-wrap; word-break:break-all; font-size:18px}
 .term .cur{font-style:normal; animation:blink 1s steps(2) infinite}
 @media (max-width:640px){ .lsrbits{grid-template-columns:repeat(4,minmax(0,1fr))} .meter{min-width:110px} }
+.tbl.pwmff td.act{background:var(--hl-y); font-weight:700}

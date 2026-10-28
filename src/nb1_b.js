@@ -17,19 +17,24 @@ BUILD.push(function wEngine() {
   // PC dial
   const dial = sv('g', { transform: 'translate(150 78)' }, s);
   sv('circle', { r: 56, class: 'ink', style: 'fill:var(--paper);stroke-width:2.2' }, dial);
-  const marks = sv('g', {}, dial); const hand = sv('line', { x1: 0, y1: 0, x2: 0, y2: -44, class: 'hand' }, dial);
+  const hand = sv('line', { x1: 0, y1: 0, x2: 0, y2: -44, class: 'hand' }, dial); const marks = sv('g', {}, dial);
   sv('circle', { r: 5, style: 'fill:var(--pink)' }, dial);
   sv('text', { x: 150, y: 156, 'text-anchor': 'middle', class: 'lbl' }, s).textContent = 'PC (prescale counter)';
   const pcTxt = sv('text', { x: 150, y: 176, 'text-anchor': 'middle', class: 'mono' }, s);
-  sv('path', { d: 'M212 78 Q232 60 250 78', class: 'ink', 'marker-end': 'url(#ah)' }, s);
-  sv('text', { x: 232, y: 50, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:12px;fill:var(--ink2)' }, s).textContent = 'every PR+1';
+  const arW = sv('g', {}, s);
+  sv('path', { d: 'M212 78 Q232 60 250 78', class: 'ink', 'marker-end': 'url(#ah)' }, arW);
+  sv('text', { x: 232, y: 50, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:12px;fill:var(--ink2)' }, arW).textContent = 'every PR+1';
+  const arN = sv('g', { style: 'display:none' }, s); // narrow layout: TC ruler moves under the dial
+  sv('path', { d: 'M206 100 Q292 150 262 238', class: 'ink', 'marker-end': 'url(#ah)' }, arN);
+  sv('text', { x: 268, y: 118, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:13px;fill:var(--ink2)' }, arN).textContent = 'every PR+1';
   // TC ruler
-  const rg = sv('g', {}, s); const bead = sv('g', {}, s);
+  const tcG = sv('g', {}, s);
+  const rg = sv('g', {}, tcG); const bead = sv('g', {}, tcG);
   sv('circle', { r: 12, class: 'bead' }, bead); const beadT = sv('text', { y: 5, 'text-anchor': 'middle', class: 'mono', style: 'font-size:12px' }, bead);
-  const flag = sv('g', {}, s); sv('path', { d: 'M0 0 V-40 L18 -33 L0 -26', style: 'fill:var(--red);stroke:var(--ink);stroke-width:1.5' }, flag); sv('text', { x: 0, y: 14, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:13px;fill:var(--red)' }, flag).textContent = 'MR0';
-  const bell = sv('g', { class: 'bellg' }, s); sv('use', { href: '#st-bell', x: -16, y: -16, width: 32, height: 32 }, bell);
-  sv('text', { x: 410, y: 156, 'text-anchor': 'middle', class: 'lbl' }, s).textContent = 'TC (timer counter)';
-  const tcTxt = sv('text', { x: 410, y: 176, 'text-anchor': 'middle', class: 'mono' }, s);
+  const flag = sv('g', {}, tcG); sv('path', { d: 'M0 0 V-40 L18 -33 L0 -26', style: 'fill:var(--red);stroke:var(--ink);stroke-width:1.5' }, flag); sv('text', { x: 0, y: 14, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:13px;fill:var(--red)' }, flag).textContent = 'MR0';
+  const bell = sv('g', { class: 'bellg' }, tcG); sv('use', { href: '#st-bell', x: -16, y: -16, width: 32, height: 32 }, bell);
+  sv('text', { x: 410, y: 156, 'text-anchor': 'middle', class: 'lbl' }, tcG).textContent = 'TC (timer counter)';
+  const tcTxt = sv('text', { x: 410, y: 176, 'text-anchor': 'middle', class: 'mono' }, tcG);
   const X0 = 270, X1 = 580;
   // status lamps
   const lamps = el('div', { class: 'row small' }); vis.appendChild(lamps);
@@ -52,7 +57,7 @@ BUILD.push(function wEngine() {
   const stat = el('div', { class: 'say b' }); w.appendChild(stat);
   // timing diagram
   const td = sv('svg', { class: 'dg td', viewBox: '0 0 640 178' }); w.appendChild(td);
-  const NT = 22, DX = 25, LX = 62;
+  let NT = 22; const DX = 25, LX = 62;
   ['PCLK', 'PC', 'TC', 'match', 'EM0'].forEach((t, i) => sv('text', { x: 4, y: 22 + i * 34, class: 'lbl', style: 'font-size:13px' }, td).textContent = t);
   const tdG = sv('g', {}, td);
   function reset() { pc = 0; tc = 0; en = true; rstPend = false; em = 0; ir = 0; ticks = 0; hist = []; draw(); }
@@ -68,7 +73,7 @@ BUILD.push(function wEngine() {
   function draw() {
     // PC dial
     marks.innerHTML = ''; const n = PR + 1;
-    for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 - Math.PI / 2; sv('circle', { cx: Math.cos(a) * 46, cy: Math.sin(a) * 46, r: 3.2, style: `fill:${i === pc ? 'var(--pink)' : 'var(--ink3)'}` }, marks); sv('text', { x: Math.cos(a) * 32, y: Math.sin(a) * 32 + 4, 'text-anchor': 'middle', class: 'mono', style: 'font-size:10px' }, marks).textContent = i; }
+    for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 - Math.PI / 2; sv('circle', { cx: Math.cos(a) * 46, cy: Math.sin(a) * 46, r: 3.2, style: `fill:${i === pc ? 'var(--pink)' : 'var(--ink3)'}` }, marks); sv('text', { x: Math.cos(a) * 31, y: Math.sin(a) * 31 + 4, 'text-anchor': 'middle', class: 'mono', style: 'font-size:11px;paint-order:stroke;stroke:var(--paper);stroke-width:3px' }, marks).textContent = i; }
     hand.setAttribute('transform', `rotate(${pc / n * 360})`);
     pcTxt.textContent = `PC = ${pc}  (PR = ${PR})`;
     // TC ruler
@@ -97,6 +102,11 @@ BUILD.push(function wEngine() {
     });
     if (hist.length) sv('path', { d: `M${base + hist.length * DX - DX / 2} 2 V172`, style: 'stroke:var(--pink);stroke-width:1.5;stroke-dasharray:3 4' }, tdG);
   }
+  widthWatch(w, 600, narrow => { // phone: stack the TC ruler under the PC dial, show fewer columns in the timing diagram
+    s.setAttribute('viewBox', narrow ? '0 0 340 384' : '0 0 600 210'); tcG.setAttribute('transform', narrow ? 'translate(-250 190)' : '');
+    arW.style.display = narrow ? 'none' : ''; arN.style.display = narrow ? '' : 'none';
+    NT = narrow ? 11 : 22; td.setAttribute('viewBox', `0 0 ${narrow ? 350 : 640} 178`); while (hist.length > NT) hist.shift(); draw();
+  });
   const lp = Loop(s, dt => { flash = Math.max(0, flash - dt * 4); ring = Math.max(0, ring - dt * 1.4); if (run) { acc += dt * speed; while (acc >= 1) { acc -= 1; tick(); } } draw(); });
   lp.start(); reset();
 });
@@ -224,7 +234,7 @@ BUILD.push(function wEmr() {
   const emc = n => ({ lo: 4 + 2 * n, hi: 5 + 2 * n, name: 'EMC' + n, desc: `what EM${n} does when MR${n} matches`, opts: { 0: '00 nothing', 1: '01 clear', 2: '10 set', 3: '11 toggle' }, say: x => [null, `on MR${n} match: EM${n} → <b>0</b> (MATn.${n} LOW)`, `on MR${n} match: EM${n} → <b>1</b> (MATn.${n} HIGH)`, `on MR${n} match: EM${n} <b>toggles</b>`][x] });
   const em = n => ({ bit: n, name: 'EM' + n, desc: `current level of external match ${n} (drives MATn.${n} if pinned out)`, opts: { 0: '0', 1: '1' }, say: x => x ? `EM${n} is 1 right now` : null });
   RegBuilder(w, { name: 'EMR', reg: 'LPC_TIM0->EMR', width: 12, value: 0x20, fields: [em(0), em(1), em(2), em(3), emc(0), emc(1), emc(2), emc(3)], presets: [[0x20, 'P1/P2: set EM0'], [0x30, 'P3: toggle EM0'], [0xC0, 'P4: toggle EM1'], [0x00, 'nothing']], onchange: pick });
-  w.appendChild(el('div', { class: 'gae mt' }, 'EM0 over 5 matches for each EMC0 option (starting at 0):'));
+  w.appendChild(el('div', { class: 'gae mt' }, 'EM0 over 5 matches, for each EMC0 option (EM0 starts at 0 — at 1 for "clear", so you can see it drop):'));
   w.appendChild(demo); pick(0x20);
 });
 
@@ -262,7 +272,8 @@ BUILD.push(function wCcr() {
 /* ---------- block diagram explorer ---------- */
 BUILD.push(function wBlock() {
   const w = W('w-block', 'timer block diagram', 'tap a block · or play the flow');
-  const s = sv('svg', { class: 'dg blk', viewBox: '0 0 720 480' }); w.appendChild(s);
+  const sc = el('div', { class: 'hscroll' }); w.appendChild(sc); w.appendChild(el('div', { class: 'swipe-hint' }, '← swipe the diagram →'));
+  const s = sv('svg', { class: 'dg blk', viewBox: '0 0 720 480' }); sc.appendChild(s);
   const info = el('div', { class: 'note blue', style: 'margin:14px 0 0' }, '<div class="nh">tap a block</div>Each box is one register or part of the timer.'); w.appendChild(info);
   const B = {};
   const box = (id, x, y, ww, hh, t, d, fill) => { const g = sv('g', { class: 'hov bk', 'data-id': id }, s); sv('rect', { x, y, width: ww, height: hh, rx: 6, class: 'ink', style: `fill:${fill || 'var(--card)'}` }, g); t.split('\n').forEach((ln, i, a) => sv('text', { x: x + ww / 2, y: y + hh / 2 + 5 + (i - (a.length - 1) / 2) * 15, 'text-anchor': 'middle', style: 'font-size:13px' }, g).textContent = ln); g.addEventListener('click', () => sel(id)); B[id] = { g, d, t }; return g; };
@@ -275,7 +286,7 @@ BUILD.push(function wBlock() {
     wire(`M${x} 48 V80`, 'm' + i); wire(`M${x} 166 V116`, 'tcb'); wire(`M${x + 15} 98 H${x + 30} V230`, 'cmpo');
   });
   B.cmp = { d: '<b>Comparators (=)</b> — one per match register. Output goes HIGH the moment TC = MRx → a <b>match event</b> for the control logic.', t: 'comparator' };
-  sv('path', { d: 'M250 166 H660', class: 'ink', 'data-w': 'tcb', style: 'stroke-width:2.6' }, s);
+  sv('path', { d: 'M250 166 H660', class: 'ink wr', 'data-w': 'tcb', style: 'stroke-width:2.6' }, s); // .wr = no wobble filter (a flat line has a 0-height box → filtered away)
   box('tc', 110, 150, 140, 34, 'TIMER COUNTER', '<b>TC</b> — the 32-bit count. +1 each time the prescaler overflows (CE pulse), or on CAP edges in counter mode.', 'var(--n-b)');
   box('pc', 110, 268, 140, 34, 'PRESCALE COUNTER', '<b>PC</b> — counts PCLK ticks. When PC = PR it sends a <b>TCI</b> pulse and starts again from 0.', 'var(--n-g)');
   box('pr', 110, 350, 140, 34, 'PRESCALE REG', '<b>PR</b> — the max value for PC (MAXVAL). TC moves once every PR + 1 ticks.', 'var(--n-g)');

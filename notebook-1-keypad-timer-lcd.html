@@ -740,6 +740,464 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
 .gpg .chg{animation:shake2 .45s}
 @media (max-width:520px){ .gpg .gl{font-size:13px} .gpg .gh{font-size:9px} }
 
+/* =========================================================
+   NOTEBOOK 1 · part F — master widgets ("chapter N in one widget")
+   + small phone fixes for older widgets
+   ========================================================= */
+
+/* ---------- phone / small fixes for existing widgets ---------- */
+.hscroll{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px}
+.swipe-hint{display:none; font-family:'Caveat'; font-size:18px; color:var(--ink3); text-align:center}
+@media (max-width:640px){
+  .hscroll > svg.blk{min-width:620px}
+  .swipe-hint{display:block}
+  .mbc{min-width:31px} .mbc i{width:27px; height:26px; font-size:14.5px}
+  #w-mask .seg7{width:46px}
+  #w-mask .row.mt{gap:8px 10px}
+}
+svg.nibtd .tr{fill:none; stroke-width:2.6; stroke-linejoin:round; stroke-linecap:round}
+svg.nibtd .tr.rs{stroke:var(--blue)} svg.nibtd .tr.en{stroke:var(--red)}
+svg.nibtd .tr.bus{stroke:var(--green); fill:var(--hl-g); stroke-width:1.8}
+svg.nibtd .tr.fut{stroke:var(--ink3); stroke-dasharray:4 4; opacity:.5; fill:none}
+/* LCD pin list */
+.lpgrid{display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:5px; margin-top:10px}
+.lpb{display:flex; flex-direction:column; align-items:center; gap:0; padding:3px 2px 2px; border:1.5px solid var(--faint); border-radius:8px; background:var(--paper); cursor:pointer; color:var(--ink); line-height:1.15; min-width:0}
+.lpb i{font-style:normal; font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
+.lpb b{font-family:'Gaegu'; font-weight:700; font-size:16px; color:var(--ink)}
+.lpb span{font-family:'Courier Prime'; font-size:11px; color:var(--ink3); white-space:nowrap}
+.lpb.lpc{border-color:var(--purple)} .lpb.lpc span{color:var(--purple); font-weight:700}
+.lpb.on{background:var(--hl-l); border-color:var(--ink); box-shadow:1.5px 2px 0 var(--ink)}
+@media (max-width:640px){ .lpgrid{grid-template-columns:repeat(4,minmax(0,1fr))} }
+
+/* ---------- the "cut here" line + master heading ---------- */
+.mcut{position:relative; height:0; margin:70px -8px 0; border-top:2.4px dashed var(--ink3); opacity:.85}
+.mcut span{position:absolute; left:18px; top:-15px; font-family:'Caveat'; font-size:20px; line-height:1; color:var(--ink2); background:var(--paper); padding:2px 10px; border-radius:6px}
+.bub.mh{margin-top:26px}
+.bub.mh .num{background:var(--bc2); font-size:24px; animation:mwob 2.8s ease-in-out infinite alternate}
+@keyframes mwob{from{transform:rotate(-10deg)} to{transform:rotate(8deg) scale(1.06)}}
+.mlede{max-width:780px; color:var(--ink2)}
+
+/* ---------- master card ---------- */
+.wg.master{--tilt:0deg; border:2.4px solid var(--ink); border-radius:6px 10px 8px 12px/10px 6px 12px 8px; box-shadow:4px 5px 0 var(--ink), 0 26px 44px -26px var(--shadow); padding-top:30px}
+.wg.master > .mst{position:absolute; right:-18px; top:-26px; width:58px; height:58px; --sr:14deg; z-index:5; pointer-events:none}
+.wg.master .wg-h .wt{background:var(--wtc,var(--n-y))}
+.wg.master .wg-h .wt::before{content:"★ "; color:var(--orange)}
+.mlab{font-family:'Gaegu'; font-weight:700; font-size:16px; color:var(--ink2); line-height:1.2}
+.mbox{border:1.6px solid var(--faint); border-radius:10px 13px 9px 12px/12px 9px 13px 10px; background:var(--paper); padding:8px 10px}
+.msay{font-family:'Caveat'; font-size:21px; line-height:1.2; color:var(--purple); min-height:2.4em}
+.msay.r{color:var(--red)} .msay.g{color:var(--green)}
+svg.dg .mpulse{fill:var(--orange); stroke:var(--ink); stroke-width:1.4; filter:drop-shadow(0 0 4px var(--orange))}
+svg.dg .mpulse.r{fill:var(--hi)} svg.dg .mpulse.b{fill:var(--blue)} svg.dg .mpulse.g{fill:var(--green)} svg.dg .mpulse.p{fill:var(--purple)}
+svg.dg .mring{fill:none; stroke:var(--red); stroke-width:2.4; animation:mring .7s ease-out forwards}
+@keyframes mring{from{opacity:1; r:4} to{opacity:0; r:22}}
+.mcode{font-family:'Courier Prime'; font-size:14px; background:var(--code-bg); color:var(--code-ink); border:1.5px solid var(--faint); border-radius:8px; padding:4px 10px; overflow-x:auto; white-space:pre}
+.mcode .k{color:var(--code-kw); font-weight:700} .mcode .n{color:var(--code-num)} .mcode .c{color:var(--code-com); font-style:italic} .mcode .r{color:var(--code-reg)} .mcode .s{color:var(--code-str)} .mcode .pp{color:var(--pink); font-weight:700}
+
+/* =========================================================
+   M0 · pin X-ray bench
+   ========================================================= */
+.m0top{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:16px 24px; align-items:start}
+.m0pick .chips{gap:6px}
+.m0bench{display:flex; flex-direction:column; gap:8px}
+.m0tiles{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+.m0tiles .chips{gap:5px}
+.m0tiles .chip{font-size:15px; padding:2px 10px 1px}
+.m0line{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.m0line .mcode{font-size:15.5px; flex:1 1 260px; min-width:0}
+.m0line .inp{width:9.5em}
+.m0recipe .chip{--cc:var(--n-g)}
+.m0sheet{margin-top:14px; display:flex; flex-direction:column; gap:3px}
+.m0r{display:grid; grid-template-columns:118px minmax(0,1fr) 104px; gap:8px; align-items:center}
+.m0r .lab{font-family:'Gaegu'; font-weight:700; font-size:15px; color:var(--ink2); line-height:1.1; text-align:right}
+.m0r .hx{font-family:'Courier Prime'; font-weight:700; font-size:14px; color:var(--ink)}
+.m0bits{display:flex; gap:8px; min-width:0}
+.m0half{display:grid; grid-template-columns:repeat(16,minmax(0,1fr)); gap:1px; flex:1 1 0; min-width:0}
+.m0half i{font-style:normal; font-family:'Courier Prime'; font-weight:700; font-size:12.5px; text-align:center; line-height:22px; height:22px; border:1px solid var(--faint); border-radius:3px; background:var(--paper); color:var(--ink3); transition:background .3s, color .3s}
+.m0half i.one{background:var(--hl-y); color:var(--ink)}
+.m0half i.nib{margin-left:4px}
+.m0half i.pin{box-shadow:inset 0 0 0 2px var(--pink)}
+.m0half i.chg{animation:m0chg .6s ease}
+@keyframes m0chg{40%{transform:translateY(-4px) scale(1.15); background:var(--hl-g)}}
+.m0r.hdr .m0half i{border:0; background:none; font-size:10px; color:var(--ink3); height:14px; line-height:14px; font-weight:400}
+.m0r.hdr .m0half b{grid-column:span 4; text-align:center; font-family:'Courier Prime'; font-size:13px; color:var(--blue); border-bottom:2px solid var(--hl-b); line-height:16px}
+.m0r.hdr .m0half b.pinnib{background:var(--hl-p); border-radius:4px 4px 0 0; color:var(--ink)}
+.m0r.res .lab{color:var(--green)}
+.m0r.op .lab{color:var(--purple)}
+.m0expl{font-size:.9em; color:var(--ink2); margin:4px 0 0 126px}
+.m0mid{display:grid; grid-template-columns:minmax(0,1.75fr) minmax(0,1fr); gap:16px 22px; margin-top:16px; align-items:start}
+svg.m0x{max-width:640px}
+svg.m0x .w{fill:none; stroke:var(--ink3); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; transition:stroke .3s}
+svg.m0x .w.on{stroke:var(--hi)} svg.m0x .w.lo{stroke:var(--lo)}
+svg.m0x .w.off{opacity:.35; stroke-dasharray:3 5}
+svg.m0x .blk{fill:var(--card); stroke:var(--ink); stroke-width:1.7; filter:url(#wob)}
+svg.m0x .blk.dim{opacity:.4}
+svg.m0x .gate{fill:url(#hatch-b); stroke:var(--blue); stroke-width:1.6}
+svg.m0x .gate.open{fill:var(--paper); stroke-dasharray:3 3}
+svg.m0x .sock{fill:var(--paper); stroke:var(--ink); stroke-width:1.8}
+svg.m0x .sock.on{fill:var(--hl-y)}
+svg.m0x .cord{fill:none; stroke:var(--orange); stroke-width:5; stroke-linecap:round; transition:d .5s}
+svg.m0x .cordi{fill:none; stroke:var(--paper); stroke-width:1.4; stroke-dasharray:2 5; opacity:.8; transition:d .5s}
+svg.m0x .plug{fill:var(--orange); stroke:var(--ink); stroke-width:1.5}
+svg.m0x .flash{animation:m0fl .8s ease}
+@keyframes m0fl{30%{filter:drop-shadow(0 0 8px var(--orange))}}
+svg.m0x .ledbulb{fill:#7d3a40; stroke:var(--ink); stroke-width:1.8}
+svg.m0x .ledbulb.on{fill:var(--led); filter:drop-shadow(0 0 8px var(--led-glow))}
+svg.m0x .swk{cursor:pointer}
+svg.m0x text.t{font-size:13.5px}
+svg.m0x text.s{font-size:12.5px; fill:var(--ink2)}
+svg.m0x text.m{font-family:'Courier Prime'; font-weight:700; font-size:12.5px}
+.m0regs{display:grid; grid-template-columns:auto 1fr; gap:3px 10px; align-items:center; font-size:.9em}
+.m0regs button{all:unset; cursor:pointer; font-family:'Gaegu'; font-weight:700; color:var(--ink2); padding:1px 6px; border-radius:6px; border:1.4px dashed transparent}
+.m0regs button:hover,.m0regs button.on{border-color:var(--ink3); background:var(--hl-y); color:var(--ink)}
+.m0regs span{font-family:'Courier Prime'; font-size:13.5px; overflow-wrap:anywhere}
+.m0regs span em{font-style:normal; color:var(--pink); font-weight:700}
+.m0beat{margin-top:12px; display:flex; flex-direction:column; gap:6px}
+.m0beat .odo{font-size:22px; letter-spacing:2px; min-width:0}
+@media (max-width:860px){ .m0top,.m0mid{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:640px){
+  .m0r{grid-template-columns:minmax(0,1fr) auto; gap:2px 6px}
+  .m0r .lab{text-align:left; grid-column:1; grid-row:1}
+  .m0r .hx{grid-column:2; grid-row:1}
+  .m0r .m0bits{grid-column:1 / 3; grid-row:2; flex-direction:column; gap:2px}
+  .m0half i{font-size:11.5px; height:20px; line-height:20px}
+  .m0expl{margin-left:0}
+}
+
+.chip.mn{font-family:'Courier Prime'; font-weight:700; font-size:13.5px}
+
+/* keypad keys: keep the label dark on the white key in both themes */
+.kkey b{color:#2a2933}
+@media (max-width:640px){ .wg.master > .mst{right:0; top:-24px; width:44px; height:44px} }
+
+.m0xs{overflow-x:auto; -webkit-overflow-scrolling:touch}
+@media (max-width:640px){
+  .m0xs svg.m0x{min-width:500px}
+  .m0regs span{font-size:12px}
+  .m0regs button{font-size:15px}
+}
+
+/* =========================================================
+   M1 · key-press conveyor
+   ========================================================= */
+.m1ctl{display:flex; flex-direction:column; gap:8px; margin-bottom:16px}
+.m1grid{position:relative; display:grid; gap:32px 36px; padding:8px 4px 12px 24px}
+.m1belt{position:absolute; left:0; top:0; pointer-events:none; overflow:visible; z-index:0}
+.m1belt .m1arr{fill:none; stroke:var(--ink2); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.m1belt .m1ret{fill:none; stroke:var(--purple); stroke-width:2.2; stroke-dasharray:6 5; animation:flow 1.4s linear infinite reverse}
+.m1belt .m1rett{font-family:'Caveat'; font-size:18px; fill:var(--purple)}
+.m1st{position:relative; z-index:1; background:var(--card); border:1.8px solid var(--ink); border-radius:10px 14px 9px 13px/13px 9px 14px 10px; padding:6px 10px 8px; box-shadow:2px 3px 0 var(--faint); transition:box-shadow var(--m1t,.25s), opacity var(--m1t,.3s), transform var(--m1t,.25s); min-width:0}
+.m1st.act{box-shadow:0 0 0 3px var(--orange), 3px 4px 0 var(--ink); transform:translateY(-2px)}
+.m1st.wait{opacity:.5}
+.m1st.bad{box-shadow:0 0 0 3px var(--red), 3px 4px 0 var(--ink)}
+.m1h{display:flex; align-items:center; gap:6px; font-family:'Gaegu'; font-weight:700; font-size:17px; line-height:1.3; background:var(--sh); margin:-6px -10px 6px; padding:3px 10px; border-radius:9px 13px 0 0; border-bottom:1.5px solid var(--ink)}
+.m1h i{font-style:normal; flex:none; display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--paper); border:1.5px solid var(--ink); font-size:13px}
+.m1stk{width:26px; height:26px; margin-left:auto; flex:none}
+.m1b{min-height:96px; display:flex; flex-direction:column; justify-content:center}
+.m1v{font-size:15.5px; line-height:1.25; color:var(--ink2); margin-top:5px; min-height:2.5em}
+.m1v b{font-family:'Courier Prime'; font-weight:700}
+.m1lamps{flex-direction:row; flex-wrap:wrap; justify-content:space-around; align-items:center; gap:4px}
+.m1lamp{display:flex; flex-direction:column; align-items:center; gap:2px}
+.m1lamp small{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3); text-align:center; line-height:1.1}
+.m1lamp.fl .led{background:repeating-linear-gradient(45deg,var(--orange) 0 4px, transparent 4px 8px)}
+.m1note{width:100%; font-family:'Caveat'; font-size:17px; color:var(--ink3); text-align:center; line-height:1.1; margin-top:4px}
+svg.m1mx{max-width:230px; margin:0 auto}
+svg.m1mx .mw{fill:none; stroke-width:2.8; stroke-linecap:round; transition:stroke .2s}
+svg.m1mx .mw.hi{stroke:var(--hi)} svg.m1mx .mw.lo{stroke:var(--lo); opacity:.55} svg.m1mx .mw.fl{stroke:var(--ink3); stroke-dasharray:2 4}
+svg.m1mx .m1k{cursor:pointer}
+svg.m1mx .m1k rect{fill:var(--card); stroke:var(--ink); stroke-width:1.6; transition:fill .15s}
+svg.m1mx .m1k text{font-size:15px; pointer-events:none}
+svg.m1mx .m1k.down rect{fill:var(--hl-p); stroke-width:2.6}
+svg.m1mx .m1k.live rect{fill:var(--hi)} svg.m1mx .m1k.live text{fill:#fff}
+svg.m1mx .m1k:focus-visible rect{stroke:var(--blue); stroke-width:3}
+svg.m1mx .m1spark{font-size:24px; animation:blink .2s steps(2) infinite}
+.m1if{font-family:'Courier Prime'; font-size:13px; padding:1px 6px; border-radius:5px; color:var(--ink3); white-space:nowrap}
+.m1if.hit{background:var(--hl-g); color:var(--ink); font-weight:700}
+.m1if.bug{color:var(--red); text-decoration:underline wavy var(--red)}
+.m1big{font-family:'Gaegu'; font-weight:700; font-size:24px; text-align:center; line-height:1.1}
+.m1big b{font-size:46px; color:var(--pink); font-family:'Gaegu'; display:inline-block; margin-left:4px}
+.m1big small{display:block; font-size:16px; color:var(--ink2)}
+.m1tab{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:3px}
+.m1tab span{font-family:'Courier Prime'; font-size:12px; text-align:center; border:1.2px solid var(--faint); border-radius:5px; padding:1px 0; color:var(--ink3); line-height:1.15; transition:all .25s}
+.m1tab span b{display:block; font-family:'Gaegu'; font-size:14px; color:var(--ink2)}
+.m1tab span.on{background:var(--hl-y); border-color:var(--ink); color:var(--ink); transform:scale(1.14); box-shadow:2px 2px 0 var(--ink)}
+.m1sh{display:flex; flex-direction:column; gap:3px; align-items:flex-start; font-family:'Courier Prime'}
+.m1sh div{display:flex; gap:1px; align-items:center; flex-wrap:wrap}
+.m1sh i{font-style:normal; width:13px; text-align:center; font-size:12px; border:1px solid var(--faint); border-radius:3px; color:var(--ink3); line-height:18px}
+.m1sh i.one{background:var(--hl-y); color:var(--ink)} .m1sh i.new{background:var(--hl-b); color:var(--ink)} .m1sh i.nb{margin-right:3px}
+.m1sh span{margin-left:6px; font-weight:700; font-size:13px}
+.m1sh .m1arrow{font-family:'Caveat'; font-size:16px; color:var(--purple)}
+.m1mk div{font-family:'Courier Prime'; font-size:12px; line-height:1.3; padding:3px 6px; border-radius:6px; border:1.4px dashed var(--faint); margin:2px 0; color:var(--ink3); transition:all .3s}
+.m1mk div.ok{border-style:solid; border-color:var(--green); color:var(--ink); background:var(--hl-g)}
+.m1mk b{font-family:'Courier Prime'}
+.m1dg{display:flex; gap:7px; justify-content:center; align-items:flex-end}
+.m1dg .seg7{width:38px}
+.m1dg small{font-family:'Courier Prime'; font-size:10px; color:var(--ink3)}
+.m1dg .sel .seg7 .case{stroke:var(--green); stroke-width:3}
+.m1tok{position:absolute; z-index:3; transform:translate(-100%,0) rotate(-3deg); font-family:'Courier Prime'; font-weight:700; font-size:13px; padding:2px 10px; border-radius:12px; background:var(--orange); color:#fff; border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); white-space:nowrap; transition:left .45s cubic-bezier(.4,.1,.3,1), top .45s cubic-bezier(.4,.1,.3,1); pointer-events:none}
+:root[data-theme="dark"] .m1tok{color:#1b1a20}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .m1tok{color:#1b1a20} }
+.m1tick{margin-top:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.m1tick .mcode{flex:1 1 300px; min-width:0}
+@media (max-width:640px){
+  .m1grid{gap:28px 14px; padding-left:16px; padding-right:0}
+  .m1st{padding:6px 7px 7px} .m1h{font-size:14.5px; margin:-6px -7px 6px; padding:2px 7px} .m1stk{display:none}
+  .m1v{font-size:13.5px}
+  .m1if{font-size:10.5px; padding:1px 2px}
+  .m1tab span{font-size:10px} .m1tab span b{font-size:12px}
+  .m1sh i{width:10px; font-size:10px; line-height:16px} .m1sh span{font-size:11.5px; margin-left:3px}
+  .m1mk div{font-size:10px; padding:2px 4px}
+  .m1dg{gap:3px} .m1dg .seg7{width:27px}
+  .m1lamp small{font-size:9px}
+  .m1big{font-size:20px} .m1big b{font-size:38px}
+}
+
+/* =========================================================
+   M2 · living timer board
+   ========================================================= */
+.m2wrap{display:grid; grid-template-columns:minmax(0,330px) minmax(0,1fr); gap:16px 22px; align-items:start}
+.m2panel{display:flex; flex-direction:column; gap:7px}
+.m2sec{border:1.6px solid var(--faint); border-radius:9px 12px 8px 11px/11px 8px 12px 9px; background:var(--paper); padding:4px 9px 7px; transition:box-shadow .2s, border-color .2s}
+.m2st{display:flex; align-items:baseline; gap:8px; margin-bottom:3px}
+.m2st b{font-family:'Gaegu'; font-weight:700; font-size:18px; color:var(--ink)}
+.m2st small{font-family:'Caveat'; font-size:17px; color:var(--ink3); line-height:1.1}
+.m2sec .chips{gap:4px}
+.m2sec .chip{font-size:14px; padding:1px 8px}
+.chips.m2small{margin-top:3px}
+.m2num{display:flex; align-items:center; gap:8px; margin:2px 0}
+.m2num .gae{min-width:48px}
+.m2num .inp{width:9.5em; font-size:15px; padding:2px 6px}
+.m2grid{display:grid; grid-template-columns:auto repeat(3,minmax(0,1fr)); gap:4px 6px; align-items:center}
+.gcell.m2g{width:auto; height:36px; font-size:15px}
+.m2emr{gap:6px; margin:2px 0}
+.m2emr .gae{min-width:44px}
+.m2sec.lk,.m2blk.lk .bx,.mcode span.lk{border-color:var(--orange)}
+.m2sec.lk{box-shadow:0 0 0 2.5px var(--orange)}
+.m2right{display:flex; flex-direction:column; gap:8px; min-width:0}
+svg.m2d{max-width:620px; margin:0 auto}
+svg.m2d .bx{fill:none; stroke:var(--ink); stroke-width:1.7; stroke-linejoin:round}
+svg.m2d .bf{stroke:none}
+svg.m2d .m2blk.lk .bx{stroke:var(--orange); stroke-width:3.4}
+svg.m2d text.lb{font-family:'Gaegu'; font-weight:700; font-size:15px}
+svg.m2d text.sm{font-family:'Gaegu'; font-weight:700; font-size:12.5px; fill:var(--ink2)}
+svg.m2d text.xs{font-family:'Gaegu'; font-weight:700; font-size:11px; fill:var(--ink3)}
+svg.m2d text.mo{font-family:'Courier Prime'; font-weight:700; font-size:12.5px}
+svg.m2d text.odo{font-family:'Courier Prime'; font-weight:700; font-size:30px; fill:var(--blue)}
+svg.m2d .m2w{fill:none; stroke:var(--ink3); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:stroke .2s, opacity .2s}
+svg.m2d .m2w.off{opacity:.3; stroke-dasharray:3 4}
+svg.m2d .m2w.on{stroke:var(--blue); stroke-width:2.6; opacity:1}
+svg.m2d .m2w.flow{stroke:var(--hi); stroke-dasharray:7 5; animation:flow .5s linear infinite}
+svg.m2d .m2lamp{fill:#5a5560; stroke:var(--ink); stroke-width:2}
+svg.m2d .m2lamp.on{fill:#ffd23f; filter:drop-shadow(0 0 6px #ffd23f)}
+svg.m2d .m2led{fill:var(--faint); stroke:var(--ink); stroke-width:1.4}
+svg.m2d .m2led.g.on{fill:#3fd47a; filter:drop-shadow(0 0 4px #3fd47a)} svg.m2d .m2led.r.on{fill:var(--hi); filter:drop-shadow(0 0 4px var(--hi))}
+svg.m2d .m2out{fill:#7d3a40; stroke:var(--ink); stroke-width:2}
+svg.m2d .m2out.on{fill:var(--led); filter:drop-shadow(0 0 8px var(--led-glow))}
+svg.m2d circle.bx.hit{fill:var(--hl-y)!important; stroke:var(--red); stroke-width:3}
+svg.m2d .m2pin{cursor:pointer}
+svg.m2d .m2pin .pad{fill:#e6c15a; stroke:var(--ink); stroke-width:1.6}
+svg.m2d .m2pin.hi .pad{fill:var(--hi)}
+svg.m2d .m2pin:hover .pad{stroke-width:2.6}
+.m2time{gap:8px 12px}
+.m2time .rl{min-width:200px}
+svg.m2scope{margin-top:10px; background:var(--paper); border:1.6px solid var(--faint); border-radius:10px}
+svg.m2scope text.lb{font-family:'Gaegu'; font-weight:700; font-size:15px}
+svg.m2scope text.sm{font-family:'Gaegu'; font-weight:700; font-size:12.5px; fill:var(--ink2)}
+svg.m2scope text.xs{font-family:'Gaegu'; font-weight:700; font-size:11.5px; fill:var(--ink3)}
+svg.m2scope .tcl{fill:none; stroke:var(--blue); stroke-width:2.2; stroke-linejoin:round}
+svg.m2scope .mrl0{stroke:var(--red); stroke-width:1.3; stroke-dasharray:4 4} svg.m2scope .mrl1{stroke:var(--purple); stroke-width:1.3; stroke-dasharray:4 4}
+svg.m2scope .mrt0{fill:var(--red)} svg.m2scope .mrt1{fill:var(--purple)}
+svg.m2scope .em{fill:none; stroke:var(--red); stroke-width:2} svg.m2scope .cp{fill:none; stroke:var(--green); stroke-width:1.8}
+.m2bottom{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px 20px; margin-top:12px; align-items:start}
+.m2f{font-size:.95em; line-height:1.35}
+.m2f b{font-family:'Courier Prime'; font-weight:700}
+.m2code .mcode{font-size:13.5px; line-height:1.45}
+.m2code .mcode span[data-blk]{display:inline-block; border-radius:4px; border:1.5px solid transparent; padding:0 3px}
+.m2code .mcode span.lk{background:var(--hl-o); border-color:var(--orange)}
+@media (max-width:980px){ .m2wrap{grid-template-columns:minmax(0,1fr)} .m2right{order:-1} svg.m2d{max-width:520px} .m2panel{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr))} }
+@media (max-width:640px){ .m2bottom{grid-template-columns:minmax(0,1fr)} .m2panel{grid-template-columns:minmax(0,1fr)} .m2code .mcode{font-size:12px} }
+svg.m2d text.cpu{fill:var(--purple); font-size:13.5px}
+@media (max-width:640px){
+  .m2right{position:sticky; top:0; z-index:6; background:var(--card); margin:0 -12px; padding:4px 12px 6px; border-bottom:2px dashed var(--faint); box-shadow:0 10px 14px -12px var(--shadow)}
+  .m2time .rl{min-width:100%}
+  svg.m2d{max-height:52vh}
+}
+
+/* =========================================================
+   M3 · six-program time machine
+   ========================================================= */
+.m3tabs{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin-bottom:12px}
+.m3tab{display:flex; flex-direction:column; align-items:center; gap:0; padding:6px 4px 5px; border:1.8px solid var(--ink); border-radius:10px 13px 9px 12px/12px 9px 13px 10px; background:var(--paper); cursor:pointer; color:var(--ink); box-shadow:2px 3px 0 var(--faint); transition:transform .15s, background .15s; line-height:1.15; min-width:0}
+.m3tab svg{width:30px; height:30px}
+.m3tab b{font-family:'Gaegu'; font-weight:700; font-size:18px}
+.m3tab span{font-family:'Caveat'; font-size:16px; color:var(--ink2); text-align:center}
+.m3tab:hover{transform:translateY(-2px) rotate(-1deg)}
+.m3tab.on{background:var(--n-g); box-shadow:2px 3px 0 var(--ink); transform:rotate(-1.5deg)}
+.m3knob{margin-bottom:10px}
+.m3knob .rl{max-width:520px}
+.m3rib{display:grid; grid-template-columns:1fr 1.5fr 1fr 1.6fr; gap:0; margin-bottom:12px; border:1.6px solid var(--ink); border-radius:10px; overflow:hidden}
+.m3ph{position:relative; padding:4px 10px 4px 16px; font-size:15px; line-height:1.25; background:var(--paper); color:var(--ink2); border-right:1.4px dashed var(--faint); transition:background .2s, color .2s}
+.m3ph:last-child{border-right:0}
+.m3ph.on{background:var(--hl-g); color:var(--ink)}
+.m3ph.on::before{content:"▶"; position:absolute; left:3px; top:5px; font-size:10px; color:var(--green)}
+.m3ph b{font-family:'Courier Prime'; font-size:13px}
+.m3main{display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:16px 20px; align-items:start}
+.m3left{display:flex; flex-direction:column; gap:8px; min-width:0}
+svg.m3tl{background:var(--paper); border:1.6px solid var(--faint); border-radius:10px; touch-action:none; cursor:ew-resize; user-select:none}
+svg.m3tl .grid{stroke:var(--faint); stroke-width:1; stroke-dasharray:2 4}
+svg.m3tl text.ax{font-family:'Courier Prime'; font-size:11px; fill:var(--ink3)}
+svg.m3tl text.lb{font-family:'Gaegu'; font-weight:700; font-size:15px}
+svg.m3tl text.sm{font-family:'Gaegu'; font-weight:700; font-size:12.5px; fill:var(--ink2)}
+svg.m3tl .cpu{stroke:var(--ink); stroke-width:.8}
+svg.m3tl .cpu.setup{fill:var(--purple)} svg.m3tl .cpu.write{fill:var(--pink)}
+svg.m3tl .cpu.poll{fill:url(#hatch-y); stroke:var(--orange)} svg.m3tl .cpu.idle{fill:var(--hl-g); stroke:var(--green)}
+svg.m3tl text.cpt{font-family:'Caveat'; font-size:16px; fill:var(--ink)}
+svg.m3tl .mrl{fill:none; stroke:var(--red); stroke-width:1.4; stroke-dasharray:5 4}
+svg.m3tl text.mrt{font-family:'Gaegu'; font-weight:700; font-size:12px; fill:var(--red)}
+svg.m3tl .tcl{fill:none; stroke:var(--blue); stroke-width:2.4; stroke-linejoin:round}
+svg.m3tl .ln{fill:none; stroke-width:2.4; stroke-linejoin:round}
+svg.m3tl .ln.out{stroke:var(--red)} svg.m3tl .ln.in{stroke:var(--green)} svg.m3tl .ln.em{stroke:var(--purple); stroke-width:1.8}
+svg.m3tl text.star{fill:var(--orange); font-size:14px}
+svg.m3tl .segm{fill:#26232b; stroke:var(--ink)} svg.m3tl text.segt{font-family:'Courier Prime'; font-weight:700; font-size:16px; fill:var(--led)}
+svg.m3tl text.capt{font-family:'Caveat'; font-size:16px; fill:var(--blue)}
+svg.m3tl .phl{stroke:var(--pink); stroke-width:2.4}
+svg.m3tl .phk{fill:var(--pink); stroke:var(--ink); stroke-width:1.6}
+.m3ctl{gap:8px}
+.m3ctl .ro{font-size:14px}
+.m3now{font-size:15.5px; line-height:1.35; display:flex; flex-direction:column; gap:3px}
+.m3now b{font-family:'Courier Prime'; font-weight:700}
+.m3now .mlab{display:inline-block; min-width:44px}
+.m3pin{display:inline-flex; align-items:center; gap:6px; font-family:'Courier Prime'; font-size:13.5px; margin-right:14px}
+.m3pin i{width:13px; height:13px; border-radius:50%; border:1.6px solid var(--ink); background:var(--faint)}
+.m3pin.hi i{background:var(--led); box-shadow:0 0 8px var(--led-glow)}
+.m3cr{font-family:'Caveat'; font-size:19px; color:var(--blue)}
+.m3right{min-width:0}
+.m3right .code{max-height:400px; overflow:auto; margin-top:10px; padding-top:30px}
+.m3right .code .ctitle{top:6px}
+.m3busy{margin-top:8px; font-size:15.5px}
+@media (max-width:980px){ .m3main{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:700px){
+  .m3tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .m3rib{grid-template-columns:1fr 1fr}
+  .m3ph{font-size:13.5px; border-bottom:1.4px dashed var(--faint)}
+  .m3right .code{max-height:300px}
+}
+
+/* =========================================================
+   M4 · LCD X-ray
+   ========================================================= */
+.m4top{display:flex; flex-direction:column; gap:8px; margin-bottom:14px}
+.m4top .inp{width:12em}
+.m4top .chip small{font-family:'Gaegu'; font-weight:700; font-size:13px; color:var(--ink3)}
+.m4top .chip.mn{font-size:13px; padding:1px 8px}
+.m4grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); grid-template-areas:"a b" "c c" "d f" "e e"; gap:16px 18px}
+.m4c{position:relative; background:var(--card); border:1.8px solid var(--ink); border-radius:10px 14px 9px 13px/13px 9px 14px 10px; padding:6px 12px 10px; box-shadow:2px 3px 0 var(--faint); transition:box-shadow .2s; min-width:0}
+.m4c.act{box-shadow:0 0 0 3px var(--purple), 3px 4px 0 var(--ink)}
+.m4c.a{grid-area:a} .m4c.b{grid-area:b} .m4c.c{grid-area:c} .m4c.d{grid-area:d} .m4c.e{grid-area:e} .m4c.f{grid-area:f}
+.m4h{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin:-6px -12px 8px; padding:3px 12px; background:var(--n-l); border-bottom:1.5px solid var(--ink); border-radius:9px 13px 0 0}
+.m4h i{font-style:normal; display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--paper); border:1.5px solid var(--ink); font-family:'Gaegu'; font-weight:700; font-size:13px; align-self:center}
+.m4h b{font-family:'Gaegu'; font-weight:700; font-size:18px; color:var(--ink)}
+.m4h small{font-family:'Caveat'; font-size:17px; color:var(--ink2)}
+.m4byte{min-height:120px; display:flex; flex-direction:column; gap:6px}
+.m4bx{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-family:'Courier Prime'; font-weight:700; font-size:20px}
+.m4bx .hx{font-size:28px; color:var(--purple)}
+.m4nib{display:flex; gap:10px}
+.m4nib span{display:flex; flex-direction:column; align-items:center; font-family:'Courier Prime'; font-weight:700; font-size:22px; letter-spacing:3px; padding:2px 12px; border:1.8px dashed var(--faint); border-radius:8px; color:var(--ink3); transition:all .2s}
+.m4nib span small{font-family:'Gaegu'; font-size:13px; letter-spacing:0; font-weight:700}
+.m4nib span.on{border-style:solid; border-color:var(--ink); background:var(--hl-g); color:var(--ink)}
+.m4nib span.skip{text-decoration:line-through; opacity:.5}
+.m4small{font-size:15px; line-height:1.3; color:var(--ink2)}
+.m4q{display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-top:6px; min-height:26px}
+.m4q span{font-family:'Courier Prime'; font-weight:700; font-size:13px; padding:0 6px; border-radius:6px; border:1.4px solid var(--ink)}
+.m4q span.d{background:var(--n-y)} .m4q span.c{background:var(--n-l)}
+.m4q small{font-family:'Caveat'; font-size:15px; color:var(--ink3)}
+.m4pins{display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 8px}
+.m4pin{display:flex; flex-direction:column; align-items:center; gap:1px; min-width:44px}
+.m4pin b{font-family:'Gaegu'; font-weight:700; font-size:15px; color:var(--ink)}
+.m4pin small{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
+.m4pin:nth-child(1) .led{--ledc:#ffd23f; --ledg:rgba(255,210,63,.75); --ledoff:#6b5a22}
+.m4pin:nth-child(2) .led{--ledc:#4aa8ff; --ledg:rgba(74,168,255,.75); --ledoff:#24476e}
+svg.m4la{background:var(--paper); border:1.5px solid var(--faint); border-radius:8px}
+svg.m4la text.lb{font-family:'Gaegu'; font-weight:700; font-size:14px}
+svg.m4la .t{fill:none; stroke-width:2.2; stroke-linejoin:round}
+svg.m4la .t.rs{stroke:var(--blue)} svg.m4la .t.en{stroke:var(--orange)} svg.m4la .t.d{stroke:var(--green)}
+svg.m4la text.lat{font-family:'Courier Prime'; font-weight:700; font-size:12px; fill:var(--pink)}
+svg.m4la .latl{stroke:var(--pink); stroke-width:1.2; stroke-dasharray:2 3}
+svg.m4la text.tag{font-family:'Caveat'; font-size:14px; fill:var(--purple)}
+.m4ctl{display:flex; flex-direction:column; gap:6px; font-size:15px}
+.m4half{font-family:'Caveat'; font-size:19px; color:var(--purple); line-height:1.15}
+.m4last{padding:5px 8px; border-left:4px solid var(--purple); background:var(--faint2); border-radius:4px; line-height:1.3; min-height:2.6em}
+.m4kv{font-size:14.5px}
+.m4kv b{font-family:'Courier Prime'}
+.m4c.f .lcdbox{max-width:100%}
+.m4dd{overflow-x:auto; padding-bottom:4px; display:flex; flex-direction:column; gap:4px}
+.m4ddr{display:flex; gap:2px; align-items:center; min-width:max-content}
+.m4ddl{width:48px; flex:none; font-family:'Gaegu'; font-weight:700; font-size:14px; color:var(--ink2)}
+.m4ddc{width:21px; height:34px; flex:none; display:flex; flex-direction:column; align-items:center; justify-content:space-between; border:1.2px solid var(--faint); border-radius:4px; background:var(--paper); transition:background .25s}
+.m4ddc b{font-family:'Courier Prime'; font-weight:700; font-size:15px; line-height:20px; color:var(--ink)}
+.m4ddc small{font-family:'Courier Prime'; font-size:8.5px; color:var(--ink3); line-height:11px}
+.m4ddc.vis{background:var(--n-g); border-color:var(--green)}
+.m4ddc.cur{box-shadow:inset 0 -4px 0 var(--purple)}
+.m4ddc.new{animation:m0chg .6s ease}
+.m4ddc.n1{opacity:.75}
+@media (max-width:760px){
+  .m4grid{grid-template-columns:minmax(0,1fr); grid-template-areas:"a" "b" "c" "d" "e" "f"}
+}
+.m4t2{font-family:'Courier Prime'; font-size:13.5px; margin-bottom:4px} .m4t2 b{color:var(--purple)}
+@media (max-width:640px){ .m4byte{min-height:64px} .m4pins{gap:2px; justify-content:space-between} .m4pin{min-width:40px} .m4pin small{font-size:9.5px} }
+
+/* =========================================================
+   M5 · trainer board + cartridges
+   ========================================================= */
+.m5shelf{display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; margin-bottom:14px}
+.m5cart{position:relative; display:flex; flex-direction:column; align-items:center; width:118px; padding:16px 6px 20px; border:2px solid var(--ink); border-radius:8px 8px 4px 4px; background:linear-gradient(var(--n-o) 0 calc(100% - 14px), #6d6a75 calc(100% - 14px)); cursor:pointer; color:var(--ink); box-shadow:2px 3px 0 var(--ink); transition:transform .2s, box-shadow .2s; line-height:1.1}
+.m5cart i{position:absolute; top:5px; left:16px; right:16px; height:5px; border-radius:3px; background:repeating-linear-gradient(90deg,var(--ink3) 0 3px, transparent 3px 6px)}
+.m5cart b{font-family:'Gaegu'; font-weight:700; font-size:20px}
+.m5cart span{font-family:'Caveat'; font-size:16px; color:var(--ink2); text-align:center}
+.m5cart:hover{transform:translateY(-3px) rotate(-1deg)}
+.m5cart.on{transform:translateY(8px); box-shadow:0 0 0 var(--ink); background:linear-gradient(var(--n-y) 0 calc(100% - 14px), #6d6a75 calc(100% - 14px))}
+.m5main{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:16px 22px; align-items:start}
+.m5board{position:relative; padding:14px 14px 12px; border:2.4px solid var(--ink); border-radius:14px; background:radial-gradient(circle at 12px 12px, #d8d8de 4px, transparent 5px) 0 0/100% 100% no-repeat, linear-gradient(135deg,#2d7a3d,#215c2e); box-shadow:3px 4px 0 var(--ink); color:#e9ffe0; display:flex; flex-direction:column; gap:10px}
+.m5board::before{content:""; position:absolute; inset:6px; border:1.5px dashed rgba(233,255,224,.25); border-radius:10px; pointer-events:none}
+.m5slot{position:relative; align-self:center; min-width:200px; text-align:center; padding:3px 14px; border:2px solid #111; border-radius:4px; background:#1b1d22; font-family:'Gaegu'; font-weight:700; font-size:16px; color:#ffe9a8}
+.m5slot b{color:#fff}
+.m5slot.in{animation:m5in .5s cubic-bezier(.3,1.4,.5,1)}
+@keyframes m5in{from{transform:translateY(-14px); opacity:.2}}
+.m5lcd{display:flex; justify-content:center}
+.m5row{display:flex; gap:14px; align-items:center; justify-content:center; flex-wrap:wrap}
+.m5kp .kpad{margin:0}
+.m5kp.off,.m5key.off,.m5hb.off{opacity:.35; filter:grayscale(.6)}
+.m5side{display:flex; flex-direction:column; gap:10px; align-items:center}
+.m5hb{display:flex; gap:6px; align-items:center}
+.m5hb small{font-family:'Gaegu'; font-size:13px; line-height:1.05; color:#e9ffe0}
+.m5spd .chip{font-size:13px; padding:1px 8px; color:#e9ffe0; border-color:rgba(233,255,224,.5)}
+.m5spd .chip.on{color:var(--ink)}
+.m5spd .chips{flex-direction:column; gap:4px}
+.m5bus{font-family:'Courier Prime'; font-size:12.5px; line-height:1.7; background:rgba(0,0,0,.28); border-radius:8px; padding:4px 8px; min-height:2.2em}
+.m5bus .mlab{color:#e9ffe0; font-size:14px}
+.m5bus span.c,.m5bus span.d{display:inline-block; padding:0 5px; border-radius:5px; margin:1px 0; color:#1b1a20}
+.m5bus span.c{background:#d9cdfa} .m5bus span.d{background:#fff3a3}
+.m5right{display:flex; flex-direction:column; gap:6px; min-width:0}
+.m5flow{display:flex; flex-wrap:wrap; gap:4px 2px; align-items:center}
+.m5fn{font-size:14.5px; padding:2px 9px; border:1.6px solid var(--ink); border-radius:999px; background:var(--paper); transition:background .2s, transform .2s}
+.m5fn.on{background:var(--hl-o); transform:translateY(-2px); box-shadow:1.5px 2px 0 var(--ink)}
+.m5flow i{font-style:normal; color:var(--ink3); font-size:16px; padding:0 2px}
+.m5flow i.loop{color:var(--orange); font-size:20px}
+.m5blocks{display:flex; flex-direction:column; gap:6px}
+.m5b{display:flex; gap:10px; align-items:flex-start; padding:6px 10px; border:1.6px solid var(--ink); border-radius:10px 13px 9px 12px/12px 9px 13px 10px; background:var(--card); transition:opacity .3s, box-shadow .2s, transform .2s}
+.m5b.off{opacity:.33; border-style:dashed}
+.m5b.hot{box-shadow:0 0 0 3px var(--orange), 3px 3px 0 var(--ink); transform:translateX(-4px)}
+.m5i{width:30px; height:30px; flex:none; margin-top:2px}
+.m5bn{font-family:'Gaegu'; font-weight:700; font-size:17px; line-height:1.2}
+.m5bn .pill{font-size:12px; margin-left:4px}
+.m5bd{font-size:13.5px; color:var(--ink2); line-height:1.25}
+.m5bv{font-family:'Courier Prime'; font-size:13px; color:var(--purple); line-height:1.3; min-height:1.3em; overflow-wrap:anywhere}
+.m5spin{font-family:'Courier Prime'; font-size:16px; color:var(--orange)}
+@media (max-width:980px){ .m5main{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:640px){ .m5cart{width:calc(33% - 8px); min-width:92px} .m5board{padding:12px 8px} .m5row{gap:10px} }
+@media (max-width:640px){ .m5shelf > .cav{flex-basis:100%} }
+.m5dice{display:flex; flex-direction:column; align-items:center; padding:2px 12px; border:1.6px dashed rgba(233,255,224,.6); border-radius:10px; font-family:'Gaegu'; line-height:1.05}
+.m5dice small{font-size:13px} .m5dice b{font-family:'Courier Prime'; font-size:26px; color:#ffd23f}
+
 </style>
 </head>
 <body>
@@ -973,6 +1431,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
   <ul class="b">
     <li><b>GPIO</b> = General Purpose Input/Output: a pin you drive HIGH/LOW yourself (output) or read (input).</li>
     <li>Pin names: <b>P0.2</b> = port 0, pin 2. A port has 32 pins, so each port register is 32 bits: <span class="hl-y">bit n ↔ pin n</span>.</li>
+    <li>In C every port has its own copy of the registers: <code>LPC_GPIO0-&gt;FIOSET</code> = FIOSET of port 0, <code>LPC_GPIO2-&gt;FIODIR</code> = FIODIR of port 2. The PINSEL registers live in <code>LPC_PINCON</code>.</li>
   </ul>
   <p class="mnote o">FIOSET / FIOCLR only touch the 1-bits → safe. <br>FIOPIN = x writes the <u>whole</u> port!</p>
   <div class="tblwrap"><table class="tbl">
@@ -985,12 +1444,20 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
     <tr><td class="m">FIOMASK</td><td><b>1 = protected</b>: writes via FIOPIN / FIOSET / FIOCLR skip that pin, and FIOPIN reads it as 0. 0 = normal.</td></tr>
   </table></div>
   <div class="wg" id="w-gpio"></div>
+  <div class="h4" style="--hc:var(--orange)">PINSEL — which job does the pin do?</div>
   <ul class="b arrow">
     <li>Each PINSEL register covers 16 pins: <b>PINSEL0</b> = P0.0–15, <b>PINSEL1</b> = P0.16–31, <b>PINSEL2</b> = P1.0–15, <b>PINSEL3</b> = P1.16–31, <b>PINSEL4</b> = P2.0–15.</li>
     <li>Pin Px.n uses bits <span class="hl-g">2×(n mod 16)+1 : 2×(n mod 16)</span>. Example P1.28 → (28−16)×2 = 24 → bits 25:24 → <code>3&lt;&lt;24</code> picks function 3.</li>
     <li>After reset every PINSEL is 0 → every pin starts as GPIO.</li>
   </ul>
   <div class="wg" id="w-pinsel"></div>
+  <div class="icard"><div class="ih">using any pin = 3 steps (always in this order)</div>
+    <ol class="b">
+      <li><b>PINSEL</b> → give the pin its job (<code>00</code> = GPIO — already true after reset, so GPIO programs often skip it).</li>
+      <li><b>FIODIR</b> → 1 = output, 0 = input.</li>
+      <li><b>FIOSET / FIOCLR</b> to drive an output — or read <b>FIOPIN</b> for an input.</li>
+    </ol>
+  </div>
 
   <h3 class="bub jit" style="--bc:var(--hl-y);--bc2:var(--n-y)"><span class="num">0.3</span>The heartbeat: PCLK</h3>
   <div class="icard"><div class="ih">peripheral clock (as used in all these slides)</div>
@@ -999,8 +1466,12 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
   </div>
   <ul class="b">
     <li><code>SystemInit();</code> + <code>SystemCoreClockUpdate();</code> start most programs: they set up the clock system and record the CPU frequency. Just copy them.</li>
-    <li><code>#include &lt;LPC17xx.h&gt;</code> gives the names <code>LPC_GPIO0</code> … <code>LPC_GPIO4</code> (one per port), <code>LPC_PINCON</code> (PINSEL), <code>LPC_TIM0</code> … Each points to a block of registers; <code>-&gt;</code> picks one: <code>LPC_TIM0-&gt;TC</code> = "the TC register of Timer0".</li>
+    <li><code>#include &lt;LPC17xx.h&gt;</code> gives all these names: <code>LPC_GPIO0</code> … <code>LPC_GPIO4</code>, <code>LPC_PINCON</code>, <code>LPC_TIM0</code> … Each points to a block of registers; <code>-&gt;</code> picks one: <code>LPC_TIM0-&gt;TC</code> = "the TC register of Timer0".</li>
   </ul>
+  <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-y);--bc2:var(--n-y)"><span class="num">★</span>chapter 0 in one widget</h3>
+  <p class="mlede">Pick a pin, build a C line from the tiles and press <b>run</b>. Watch the line turn into bits, land in a register, and travel through the pin's insides to the LED — or get stopped on the way.</p>
+  <div class="wg master" id="w-m0"></div>
 </article>
 
 <!-- ===================== CH 1 : KEYPAD ===================== -->
@@ -1025,7 +1496,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
 
   <h3 class="bub jit" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">1.1</span>The circuit</h3>
   <ul class="b">
-    <li><b>Rows R1–R4 → P2.10–P2.13</b> = <span class="hl-p">outputs</span> (we drive them), each through a diode (D6–D9, IN5819).</li>
+    <li><b>Rows R1–R4 → P2.10–P2.13</b> = <span class="hl-p">outputs</span> (we drive them), each through a diode (D6–D9, 1N5819).</li>
     <li><b>Columns C1–C4 → P1.23–P1.26</b> = <span class="hl-b">inputs</span> (we read them), each pulled down to GND by 15 kΩ (R63–R66).</li>
     <li>Keys SW3 … SW18 = push-buttons, each joining one row to one column.</li>
   </ul>
@@ -1034,7 +1505,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
 
   <h3 class="bub jit" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">1.2</span>Scanning, step by step</h3>
   <ol class="b">
-    <li>Make <b>one</b> row HIGH, the other three LOW: <code>LPC_GPIO2-&gt;FIOPIN = 1&lt;&lt;10;</code> (row 0) … <code>1&lt;&lt;13</code> (row 3).</li>
+    <li>Make <b>one</b> row HIGH, the other three LOW: <code>LPC_GPIO2-&gt;FIOPIN = 1&lt;&lt;10;</code> (row 0) … <code>1&lt;&lt;13</code> (row 3). The code counts rows and columns from <b>0</b>: row 0 = R1 = P2.10, col 0 = C1 = P1.23.</li>
     <li>Read the columns: <code>LPC_GPIO1-&gt;FIOPIN &amp; 0x07800000</code> — the mask keeps only bits 23–26 (the 4 column pins).</li>
     <li>Result 0 → no key pressed in this row → go to the next row.</li>
     <li>Result ≠ 0 → the HIGH column tells <b>col</b>; the current row tells <b>row</b> → key found! <span class="hl-p">keycode = 4 × row + col</span> (0 … F).</li>
@@ -1082,6 +1553,10 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
       <li>Two keys in one row pressed together → temp3 has two bits set → no <code>if</code> matches → col unchanged.</li>
     </ul>
   </div>
+  <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">★</span>chapter 1 in one widget</h3>
+  <p class="mlede">Hold a key (tap it in the matrix). The scan loop carries your key-press station by station — row driver → columns → <code>scan()</code> → keycode → <code>SEVEN_CODE</code> → <code>&lt;&lt;4</code> → FIOMASK → decoder → digit. Flip the fault switches to see where each mistake breaks the chain.</p>
+  <div class="wg master" id="w-m1"></div>
 </article>
 
 <!-- ===================== CH 2 : TIMER ===================== -->
@@ -1177,6 +1652,10 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.9</span>The whole timer in one picture</h3>
   <p>This is the slide's block diagram, redrawn. Tap any block, or play the signal flow.</p>
   <div class="wg" id="w-block"></div>
+  <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">★</span>chapter 2 in one widget</h3>
+  <p class="mlede">The block diagram, switched on. Change any register on the left and the wires it controls light up; pulses flow PCLK → PC → TC → comparators → MCR / EMR → pins, bell and capture snapshots. Load a scenario to see a whole program's setup at once.</p>
+  <div class="wg master" id="w-m2"></div>
 </article>
 
 <!-- ===================== CH 3 : TIMER PROGRAMS ===================== -->
@@ -1196,7 +1675,7 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
     <li>Writing <code>EMR = 0x20</code> at the start of every delay also writes <b>EM0 = 0</b> — that re-arms the flag for the next wait.</li>
   </ul>
   <div class="wg" id="w-p1" style="--tilt:0deg"></div>
-  <p class="small p-soft">Slide's one-line alternative to the FIOSET/FIOCLR pair: <code>LPC_GPIO0-&gt;FIOPIN = ~(LPC_GPIO0-&gt;FIOPIN &amp; 0x00000004);</code> — if P0.2 was 1 the result has bit 2 = 0, if it was 0 → 1. A toggle in one line.</p>
+  <p class="small p-soft">Slide's one-line alternative to the FIOSET/FIOCLR pair: <code>LPC_GPIO0-&gt;FIOPIN = ~(LPC_GPIO0-&gt;FIOPIN &amp; 0x00000004);</code> — if P0.2 was 1 the result has bit 2 = 0, if it was 0 → 1. A toggle in one line. (It also writes 1 to every other port-0 pin — harmless here, because only P0.2 is an output.)</p>
 
   <h3 class="bub jit" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">P2</span>75 % duty cycle</h3>
   <p><span class="pill p">question</span> Square wave of period 2 s with 75 % duty cycle on P0.2.</p>
@@ -1239,6 +1718,10 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
     <li>TC counts ms (PR = 3000) from 0 to 1000 in each <code>delay()</code> → <b>CR0 = how many ms into the current second the edge arrived</b>.</li>
   </ul>
   <div class="wg" id="w-p6"></div>
+  <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">★</span>chapter 3 in one widget</h3>
+  <p class="mlede">All six programs on one time machine. Pick a program, turn its knob, then drag the playhead: you see which line the CPU is on, what TC is doing and what every pin does at that instant.</p>
+  <div class="wg master" id="w-m3"></div>
 </article>
 
 <!-- ===================== CH 4 : LCD ===================== -->
@@ -1319,6 +1802,10 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
       <li><code>FIOPIN = temp2</code> in <code>port_write()</code> writes the whole port 0 — fine here because RS/EN are set again right after, and nothing else is on port 0.</li>
     </ul>
   </div>
+  <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">★</span>chapter 4 in one widget</h3>
+  <p class="mlede">An X-ray of the LCD. Power it on, send the init sequence (or forget to!), then type. Each byte is split into nibbles, clocked in with RS/EN, decoded by the LCD's controller, stored in DDRAM and finally drawn as pixels.</p>
+  <div class="wg master" id="w-m4"></div>
 </article>
 
 <!-- ===================== CH 5 : LCD QUESTIONS ===================== -->
@@ -1421,6 +1908,10 @@ void lcd_str(char *s)          { while (*s) lcd_char(*s++); }
     <li>÷ by 0 → print "ERR".</li>
   </ul>
   <div class="wg" id="w-q5" style="--tilt:0deg"></div>
+    <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-o);--bc2:var(--n-o)"><span class="num">★</span>chapter 5 in one widget</h3>
+  <p class="mlede">One trainer board, five program cartridges. Slide a cartridge in and use the board: the building blocks that program needs light up, and every key press or timer tick flows through them to the LCD.</p>
+  <div class="wg master" id="w-m5"></div>
   <div class="note green" style="max-width:640px"><div class="nh"><svg><use href="#st-heart"/></svg>done with notebook ①!</div>
     Next: notebook ② — interrupts (timer, external, GPIO), ADC, DAC, stepper motor, PWM and UART.
   </div>
@@ -2065,8 +2556,7 @@ BUILD.push(function wScan() {
     rowW0[r] = sv('path', { d: `M115 ${y} H140`, class: 'wire' }, g);
     rowW[r] = sv('path', { d: Pen.line(160, y, 562, y, R, .6), class: 'wire' }, g);
     const dg = sv('g', { class: 'dio' }, g); dio[r] = dg;
-    sv('path', { d: `M140 ${y - 8} L140 ${y + 8} L158 ${y} Z`, class: 'ink', style: 'fill:var(--card)' }, dg);
-    sv('path', { d: `M159 ${y - 8} V${y + 8}`, class: 'ink' }, dg);
+    sv('path', { d: `M140 ${y - 8} L140 ${y + 8} L158 ${y} Z M159.5 ${y - 9} V${y + 9}`, class: 'ink', style: 'fill:var(--card)' }, dg); // bar in the same path: a lone vertical line has a 0-width box and the wobble filter would hide it
     const by = sv('path', { d: `M140 ${y} H160`, class: 'wire bypass', style: 'display:none' }, g); dg._by = by;
   });
   sv('text', { x: 150, y: 352, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:12px;fill:var(--ink3)' }, g).textContent = 'diodes';
@@ -2138,9 +2628,9 @@ BUILD.push(function wScan() {
     if (ones.length === 1) { colTxt = ones[0]; key = row * 4 + ones[0]; }
     kv.innerHTML = `<span>row</span><span>${row} → temp = 1&lt;&lt;${10 + row} = ${hx(1 << (10 + row), 4)}</span><span>temp3</span><span>${hex(t3)}</span><span>flag, col</span><span>${flag}, ${colTxt}</span>`;
     if (shorts.length) { now.className = 'say r'; now.textContent = `⚡ short! R${row + 1} (HIGH) is joined to R${shorts[0][1].find(r => r !== row) + 1} (LOW) through column C${shorts[0][0] + 1}`; }
-    else if (key !== null) { now.className = 'say g'; now.textContent = `row ${row} HIGH → column ${ones[0]} answers → key "${KEYLAB[key]}" (keycode ${row}×4+${ones[0]} = ${key})`; if (stepped !== false) { seg.set(SEVEN[key]); if (last !== key || stepped === true) addLog(`R${row + 1} → C${ones[0] + 1} → <b>${KEYLAB[key]}</b>`); last = key; } }
+    else if (key !== null) { now.className = 'say g'; now.textContent = `row ${row} (R${row + 1}) HIGH → column ${ones[0]} (C${ones[0] + 1}) answers → key "${KEYLAB[key]}" (keycode ${row}×4+${ones[0]} = ${key})`; if (stepped !== false) { seg.set(SEVEN[key]); if (last !== key || stepped === true) addLog(`R${row + 1} → C${ones[0] + 1} → <b>${KEYLAB[key]}</b>`); last = key; } }
     else if (ones.length > 1) { now.className = 'say r'; now.textContent = `${ones.length} columns HIGH at once — ${!pull ? 'floating inputs = ghost keys!' : 'two keys in this row: no if() matches'}`; }
-    else { now.className = 'say'; now.textContent = `row ${row} HIGH → all columns 0 → nothing here, next row`; }
+    else { now.className = 'say'; now.textContent = `row ${row} (R${row + 1}) HIGH → all columns 0 → nothing here, next row`; }
   }
   function addLog(h) { const d = el('div', {}, h); log.prepend(d); while (log.children.length > 4) log.lastChild.remove(); }
   const loop = Loop(svg, dt => { if (!pull && ++flick % 6 === 0) paint(false); if (!running) return; acc += dt * speed; if (acc >= 1) { acc = 0; advance(); } });
@@ -2372,19 +2862,24 @@ BUILD.push(function wEngine() {
   // PC dial
   const dial = sv('g', { transform: 'translate(150 78)' }, s);
   sv('circle', { r: 56, class: 'ink', style: 'fill:var(--paper);stroke-width:2.2' }, dial);
-  const marks = sv('g', {}, dial); const hand = sv('line', { x1: 0, y1: 0, x2: 0, y2: -44, class: 'hand' }, dial);
+  const hand = sv('line', { x1: 0, y1: 0, x2: 0, y2: -44, class: 'hand' }, dial); const marks = sv('g', {}, dial);
   sv('circle', { r: 5, style: 'fill:var(--pink)' }, dial);
   sv('text', { x: 150, y: 156, 'text-anchor': 'middle', class: 'lbl' }, s).textContent = 'PC (prescale counter)';
   const pcTxt = sv('text', { x: 150, y: 176, 'text-anchor': 'middle', class: 'mono' }, s);
-  sv('path', { d: 'M212 78 Q232 60 250 78', class: 'ink', 'marker-end': 'url(#ah)' }, s);
-  sv('text', { x: 232, y: 50, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:12px;fill:var(--ink2)' }, s).textContent = 'every PR+1';
+  const arW = sv('g', {}, s);
+  sv('path', { d: 'M212 78 Q232 60 250 78', class: 'ink', 'marker-end': 'url(#ah)' }, arW);
+  sv('text', { x: 232, y: 50, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:12px;fill:var(--ink2)' }, arW).textContent = 'every PR+1';
+  const arN = sv('g', { style: 'display:none' }, s); // narrow layout: TC ruler moves under the dial
+  sv('path', { d: 'M206 100 Q292 150 262 238', class: 'ink', 'marker-end': 'url(#ah)' }, arN);
+  sv('text', { x: 268, y: 118, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:13px;fill:var(--ink2)' }, arN).textContent = 'every PR+1';
   // TC ruler
-  const rg = sv('g', {}, s); const bead = sv('g', {}, s);
+  const tcG = sv('g', {}, s);
+  const rg = sv('g', {}, tcG); const bead = sv('g', {}, tcG);
   sv('circle', { r: 12, class: 'bead' }, bead); const beadT = sv('text', { y: 5, 'text-anchor': 'middle', class: 'mono', style: 'font-size:12px' }, bead);
-  const flag = sv('g', {}, s); sv('path', { d: 'M0 0 V-40 L18 -33 L0 -26', style: 'fill:var(--red);stroke:var(--ink);stroke-width:1.5' }, flag); sv('text', { x: 0, y: 14, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:13px;fill:var(--red)' }, flag).textContent = 'MR0';
-  const bell = sv('g', { class: 'bellg' }, s); sv('use', { href: '#st-bell', x: -16, y: -16, width: 32, height: 32 }, bell);
-  sv('text', { x: 410, y: 156, 'text-anchor': 'middle', class: 'lbl' }, s).textContent = 'TC (timer counter)';
-  const tcTxt = sv('text', { x: 410, y: 176, 'text-anchor': 'middle', class: 'mono' }, s);
+  const flag = sv('g', {}, tcG); sv('path', { d: 'M0 0 V-40 L18 -33 L0 -26', style: 'fill:var(--red);stroke:var(--ink);stroke-width:1.5' }, flag); sv('text', { x: 0, y: 14, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:13px;fill:var(--red)' }, flag).textContent = 'MR0';
+  const bell = sv('g', { class: 'bellg' }, tcG); sv('use', { href: '#st-bell', x: -16, y: -16, width: 32, height: 32 }, bell);
+  sv('text', { x: 410, y: 156, 'text-anchor': 'middle', class: 'lbl' }, tcG).textContent = 'TC (timer counter)';
+  const tcTxt = sv('text', { x: 410, y: 176, 'text-anchor': 'middle', class: 'mono' }, tcG);
   const X0 = 270, X1 = 580;
   // status lamps
   const lamps = el('div', { class: 'row small' }); vis.appendChild(lamps);
@@ -2407,7 +2902,7 @@ BUILD.push(function wEngine() {
   const stat = el('div', { class: 'say b' }); w.appendChild(stat);
   // timing diagram
   const td = sv('svg', { class: 'dg td', viewBox: '0 0 640 178' }); w.appendChild(td);
-  const NT = 22, DX = 25, LX = 62;
+  let NT = 22; const DX = 25, LX = 62;
   ['PCLK', 'PC', 'TC', 'match', 'EM0'].forEach((t, i) => sv('text', { x: 4, y: 22 + i * 34, class: 'lbl', style: 'font-size:13px' }, td).textContent = t);
   const tdG = sv('g', {}, td);
   function reset() { pc = 0; tc = 0; en = true; rstPend = false; em = 0; ir = 0; ticks = 0; hist = []; draw(); }
@@ -2423,7 +2918,7 @@ BUILD.push(function wEngine() {
   function draw() {
     // PC dial
     marks.innerHTML = ''; const n = PR + 1;
-    for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 - Math.PI / 2; sv('circle', { cx: Math.cos(a) * 46, cy: Math.sin(a) * 46, r: 3.2, style: `fill:${i === pc ? 'var(--pink)' : 'var(--ink3)'}` }, marks); sv('text', { x: Math.cos(a) * 32, y: Math.sin(a) * 32 + 4, 'text-anchor': 'middle', class: 'mono', style: 'font-size:10px' }, marks).textContent = i; }
+    for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 - Math.PI / 2; sv('circle', { cx: Math.cos(a) * 46, cy: Math.sin(a) * 46, r: 3.2, style: `fill:${i === pc ? 'var(--pink)' : 'var(--ink3)'}` }, marks); sv('text', { x: Math.cos(a) * 31, y: Math.sin(a) * 31 + 4, 'text-anchor': 'middle', class: 'mono', style: 'font-size:11px;paint-order:stroke;stroke:var(--paper);stroke-width:3px' }, marks).textContent = i; }
     hand.setAttribute('transform', `rotate(${pc / n * 360})`);
     pcTxt.textContent = `PC = ${pc}  (PR = ${PR})`;
     // TC ruler
@@ -2452,6 +2947,11 @@ BUILD.push(function wEngine() {
     });
     if (hist.length) sv('path', { d: `M${base + hist.length * DX - DX / 2} 2 V172`, style: 'stroke:var(--pink);stroke-width:1.5;stroke-dasharray:3 4' }, tdG);
   }
+  widthWatch(w, 600, narrow => { // phone: stack the TC ruler under the PC dial, show fewer columns in the timing diagram
+    s.setAttribute('viewBox', narrow ? '0 0 340 384' : '0 0 600 210'); tcG.setAttribute('transform', narrow ? 'translate(-250 190)' : '');
+    arW.style.display = narrow ? 'none' : ''; arN.style.display = narrow ? '' : 'none';
+    NT = narrow ? 11 : 22; td.setAttribute('viewBox', `0 0 ${narrow ? 350 : 640} 178`); while (hist.length > NT) hist.shift(); draw();
+  });
   const lp = Loop(s, dt => { flash = Math.max(0, flash - dt * 4); ring = Math.max(0, ring - dt * 1.4); if (run) { acc += dt * speed; while (acc >= 1) { acc -= 1; tick(); } } draw(); });
   lp.start(); reset();
 });
@@ -2579,7 +3079,7 @@ BUILD.push(function wEmr() {
   const emc = n => ({ lo: 4 + 2 * n, hi: 5 + 2 * n, name: 'EMC' + n, desc: `what EM${n} does when MR${n} matches`, opts: { 0: '00 nothing', 1: '01 clear', 2: '10 set', 3: '11 toggle' }, say: x => [null, `on MR${n} match: EM${n} → <b>0</b> (MATn.${n} LOW)`, `on MR${n} match: EM${n} → <b>1</b> (MATn.${n} HIGH)`, `on MR${n} match: EM${n} <b>toggles</b>`][x] });
   const em = n => ({ bit: n, name: 'EM' + n, desc: `current level of external match ${n} (drives MATn.${n} if pinned out)`, opts: { 0: '0', 1: '1' }, say: x => x ? `EM${n} is 1 right now` : null });
   RegBuilder(w, { name: 'EMR', reg: 'LPC_TIM0->EMR', width: 12, value: 0x20, fields: [em(0), em(1), em(2), em(3), emc(0), emc(1), emc(2), emc(3)], presets: [[0x20, 'P1/P2: set EM0'], [0x30, 'P3: toggle EM0'], [0xC0, 'P4: toggle EM1'], [0x00, 'nothing']], onchange: pick });
-  w.appendChild(el('div', { class: 'gae mt' }, 'EM0 over 5 matches for each EMC0 option (starting at 0):'));
+  w.appendChild(el('div', { class: 'gae mt' }, 'EM0 over 5 matches, for each EMC0 option (EM0 starts at 0 — at 1 for "clear", so you can see it drop):'));
   w.appendChild(demo); pick(0x20);
 });
 
@@ -2617,7 +3117,8 @@ BUILD.push(function wCcr() {
 /* ---------- block diagram explorer ---------- */
 BUILD.push(function wBlock() {
   const w = W('w-block', 'timer block diagram', 'tap a block · or play the flow');
-  const s = sv('svg', { class: 'dg blk', viewBox: '0 0 720 480' }); w.appendChild(s);
+  const sc = el('div', { class: 'hscroll' }); w.appendChild(sc); w.appendChild(el('div', { class: 'swipe-hint' }, '← swipe the diagram →'));
+  const s = sv('svg', { class: 'dg blk', viewBox: '0 0 720 480' }); sc.appendChild(s);
   const info = el('div', { class: 'note blue', style: 'margin:14px 0 0' }, '<div class="nh">tap a block</div>Each box is one register or part of the timer.'); w.appendChild(info);
   const B = {};
   const box = (id, x, y, ww, hh, t, d, fill) => { const g = sv('g', { class: 'hov bk', 'data-id': id }, s); sv('rect', { x, y, width: ww, height: hh, rx: 6, class: 'ink', style: `fill:${fill || 'var(--card)'}` }, g); t.split('\n').forEach((ln, i, a) => sv('text', { x: x + ww / 2, y: y + hh / 2 + 5 + (i - (a.length - 1) / 2) * 15, 'text-anchor': 'middle', style: 'font-size:13px' }, g).textContent = ln); g.addEventListener('click', () => sel(id)); B[id] = { g, d, t }; return g; };
@@ -2630,7 +3131,7 @@ BUILD.push(function wBlock() {
     wire(`M${x} 48 V80`, 'm' + i); wire(`M${x} 166 V116`, 'tcb'); wire(`M${x + 15} 98 H${x + 30} V230`, 'cmpo');
   });
   B.cmp = { d: '<b>Comparators (=)</b> — one per match register. Output goes HIGH the moment TC = MRx → a <b>match event</b> for the control logic.', t: 'comparator' };
-  sv('path', { d: 'M250 166 H660', class: 'ink', 'data-w': 'tcb', style: 'stroke-width:2.6' }, s);
+  sv('path', { d: 'M250 166 H660', class: 'ink wr', 'data-w': 'tcb', style: 'stroke-width:2.6' }, s); // .wr = no wobble filter (a flat line has a 0-height box → filtered away)
   box('tc', 110, 150, 140, 34, 'TIMER COUNTER', '<b>TC</b> — the 32-bit count. +1 each time the prescaler overflows (CE pulse), or on CAP edges in counter mode.', 'var(--n-b)');
   box('pc', 110, 268, 140, 34, 'PRESCALE COUNTER', '<b>PC</b> — counts PCLK ticks. When PC = PR it sends a <b>TCI</b> pulse and starts again from 0.', 'var(--n-g)');
   box('pr', 110, 350, 140, 34, 'PRESCALE REG', '<b>PR</b> — the max value for PC (MAXVAL). TC moves once every PR + 1 ticks.', 'var(--n-g)');
@@ -2902,7 +3403,7 @@ BUILD.push(function wP4() {
       const x = X(e); const shown = e <= n;
       if (!shown) break;
       d += `H${x - 13}V44 H${x}`; if (e < 16) d += `V20`;
-      sv('text', { x: x - 13, y: 58, 'text-anchor': 'middle', class: 'mono', style: `font-size:10px;fill:${ev[e - 1].m ? 'var(--red)' : 'var(--ink3)'}` }, g).textContent = ev[e - 1].tc;
+      sv('text', { x: x - 13, y: 58, 'text-anchor': 'middle', class: 'mono', style: `font-size:13px;fill:${ev[e - 1].m ? 'var(--red)' : 'var(--ink3)'}` }, g).textContent = ev[e - 1].tc;
       if (ev[e - 1].m) { od += `H${x - 13}V${ev[e - 1].out ? 84 : 114}`; sv('path', { d: `M${x - 13} 62 V78`, style: 'stroke:var(--red);stroke-width:1.5;stroke-dasharray:2 3' }, g); }
     }
     od += `H${X(n) - 13 + (n ? 13 : 0)}`;
@@ -2973,10 +3474,10 @@ BUILD.push(function wP5() {
     v._kv.innerHTML = `TC1 = <b>${s.gate === 1 ? '…counting' : (s.tc1 ?? '–')}</b>${s.gate === 2 ? ` → f = ${s.show} Hz` : ''}`;
     const g = v._svg; g.innerHTML = ''; const X = t => 40 + t * 460; const ph = .37 / f;
     sv('rect', { x: X(0), y: 6, width: 460, height: 70, rx: 4, style: `fill:${s.gate ? 'var(--hl-g)' : 'transparent'};stroke:var(--faint)` }, g);
-    sv('text', { x: X(.5), y: 96, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:12px' }, g).textContent = s.gate ? '← 1 second gate (Timer0 delay) →' : 'the 1 s window';
+    sv('text', { x: X(.5), y: 97, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:15px' }, g).textContent = s.gate ? '← 1 second gate (Timer0 delay) →' : 'the 1 s window';
     const pts = [[-0.05, 0]]; for (let k2 = 0; k2 < f + 1; k2++) { const tr = ph + k2 / f; pts.push([tr, 1], [tr + .5 / f, 0]); } pts.push([1.05, pts[pts.length - 1][1]]);
     sv('path', { d: digi(pts.filter(p => p[0] <= 1.05), x => X(Math.max(-0.05, Math.min(1.05, x))), 20, 60), style: 'fill:none;stroke:var(--blue);stroke-width:2.2' }, g);
-    if (s.gate) for (let k2 = 0; k2 < f; k2++) { const x = X(ph + k2 / f); sv('text', { x, y: 16, 'text-anchor': 'middle', style: 'fill:var(--orange);font-size:13px' }, g).textContent = '★' + (k2 + 1); }
+    if (s.gate) for (let k2 = 0; k2 < f; k2++) { const x = X(ph + k2 / f); sv('text', { x, y: 17, 'text-anchor': 'middle', style: 'fill:var(--orange);font-size:15px' }, g).textContent = '★' + (k2 + 1); }
   };
   const st = Stepper(host, { code: P5_CODE, title: 'freq_meter.c', steps: build(), init: () => ({}), view });
   ruler(gen, 'frequency', 1, 9, f, 1, v => v + ' Hz', v => { f = v; st.setSteps(build(), Math.min(st.k, 99)); });
@@ -3048,29 +3549,39 @@ BUILD.push(function wP6() {
 
 /* ---------- LCD pin explorer ---------- */
 BUILD.push(function wLcdPins() {
-  const w = W('w-lcdpins', 'LCD module · 16 pins', 'tap a pin');
-  const P = [['VSS', 'Ground', 'GND pin of the display.', 'GND'], ['VCC', '+5 V', 'Supply voltage pin of the display.', '+V'], ['VEE', 'contrast', 'Adjusts the contrast — connected to a potentiometer.', '10 kΩ pot'], ['RS', 'register select', '<b>0 = command register</b>, <b>1 = data register</b>.', 'P0.27'], ['RW', 'read / write', '0 = write, 1 = read.', 'GND → always write'], ['E', 'enable', 'A LOW→HIGH(→LOW) pulse makes the LCD perform the read/write.', 'P0.28'],
-    ['D0', 'data 0', 'Data bit 0 — only used in 8-bit mode.', 'GND'], ['D1', 'data 1', 'Data bit 1 — only used in 8-bit mode.', 'GND'], ['D2', 'data 2', 'Data bit 2 — only used in 8-bit mode.', 'GND'], ['D3', 'data 3', 'Data bit 3 — only used in 8-bit mode.', 'GND'], ['D4', 'data 4', 'Data bit 4 (used in 4-bit mode).', 'P0.23'], ['D5', 'data 5', 'Data bit 5 (used in 4-bit mode).', 'P0.24'], ['D6', 'data 6', 'Data bit 6 (used in 4-bit mode).', 'P0.25'], ['D7', 'data 7', 'Data bit 7 (used in 4-bit mode).', 'P0.26'], ['LED+', 'backlight +', '+ve pin of the backlight LED → +5 V.', '+V'], ['LED−', 'backlight −', '−ve pin of the backlight LED → GND.', 'GND']];
-  const s = sv('svg', { class: 'dg lcdmod', viewBox: '0 0 640 260' }); w.appendChild(s);
-  sv('rect', { x: 30, y: 60, width: 580, height: 180, rx: 12, style: 'fill:#2e8b3a;stroke:var(--ink);stroke-width:2' }, s);
-  [[44, 74], [596, 74], [44, 226], [596, 226]].forEach(([x, y]) => sv('circle', { cx: x, cy: y, r: 6, style: 'fill:#d8d8de;stroke:#1d1d22' }, s));
-  sv('rect', { x: 86, y: 118, width: 470, height: 96, rx: 6, style: 'fill:#1d2a12' }, s);
-  sv('rect', { x: 98, y: 128, width: 446, height: 76, rx: 3, style: 'fill:#a5d63c' }, s);
-  const txt = sv('text', { x: 321, y: 176, 'text-anchor': 'middle', style: 'font-family:Courier Prime;font-weight:700;font-size:26px;fill:#1d3a10;letter-spacing:4px' }, s); txt.textContent = 'tap a pin ↑';
+  const w = W('w-lcdpins', 'LCD module · 16 pins', 'tap a pin — on the board or in the list');
+  const P = [['VSS', 'Ground', 'GND pin of the display.', 'GND'], ['VCC', '+5 V', 'Supply voltage pin of the display.', '+5V'], ['VEE', 'contrast', 'Adjusts the contrast — connected to a potentiometer.', 'pot'], ['RS', 'register select', '<b>0 = command register</b>, <b>1 = data register</b>.', 'P0.27'], ['RW', 'read / write', '0 = write, 1 = read.', 'GND'], ['E', 'enable', 'A LOW→HIGH(→LOW) pulse makes the LCD perform the read/write.', 'P0.28'],
+    ['D0', 'data 0', 'Data bit 0 — only used in 8-bit mode.', 'GND'], ['D1', 'data 1', 'Data bit 1 — only used in 8-bit mode.', 'GND'], ['D2', 'data 2', 'Data bit 2 — only used in 8-bit mode.', 'GND'], ['D3', 'data 3', 'Data bit 3 — only used in 8-bit mode.', 'GND'], ['D4', 'data 4', 'Data bit 4 (used in 4-bit mode).', 'P0.23'], ['D5', 'data 5', 'Data bit 5 (used in 4-bit mode).', 'P0.24'], ['D6', 'data 6', 'Data bit 6 (used in 4-bit mode).', 'P0.25'], ['D7', 'data 7', 'Data bit 7 (used in 4-bit mode).', 'P0.26'], ['LED+', 'backlight +', '+ve pin of the backlight LED → +5 V.', '+5V'], ['LED−', 'backlight −', '−ve pin of the backlight LED → GND.', 'GND']];
+  const NOTE = { 4: 'RW is tied to GND → <b>always write</b>.', 7: 'D3–D0 are tied to GND — 4-bit mode needs only D7–D4.' };
+  const s = sv('svg', { class: 'dg lcdmod', viewBox: '0 0 640 300', role: 'img', 'aria-label': '16-pin LCD module and its wiring' }); w.appendChild(s);
+  const R = rng(16), X = i => 104 + i * 27.5;
+  // the LPC1768 side: a bus bar that the 6 used pins climb up to
+  sv('path', { d: Pen.line(X(3) - 6, 34, X(13) + 6, 34, R, .6), style: 'fill:none;stroke:var(--purple);stroke-width:3;stroke-linecap:round' }, s);
+  sv('text', { x: X(8), y: 24, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:16px;fill:var(--purple)' }, s).textContent = 'LPC1768 · port 0';
+  sv('rect', { x: 30, y: 122, width: 580, height: 170, rx: 12, style: 'fill:#2e8b3a;stroke:var(--ink);stroke-width:2' }, s);
+  [[44, 136], [596, 136], [44, 278], [596, 278]].forEach(([x, y]) => sv('circle', { cx: x, cy: y, r: 6, style: 'fill:#d8d8de;stroke:#1d1d22' }, s));
+  sv('rect', { x: 86, y: 190, width: 470, height: 90, rx: 6, style: 'fill:#1d2a12' }, s);
+  sv('rect', { x: 98, y: 199, width: 446, height: 72, rx: 3, style: 'fill:#a5d63c' }, s);
+  const txt = sv('text', { x: 321, y: 244, 'text-anchor': 'middle', style: 'font-family:Courier Prime;font-weight:700;font-size:26px;fill:#1d3a10;letter-spacing:4px' }, s); txt.textContent = 'tap a pin ↑';
+  const list = el('div', { class: 'lpgrid' }); w.appendChild(list);
   const info = el('div', { class: 'note lav', style: 'margin:14px 0 0' }); w.appendChild(info);
-  const pins = P.map((p, i) => {
-    const x = 104 + i * 27.5; const g = sv('g', { class: 'hov lpin', tabindex: 0 }, s);
-    sv('rect', { x: x - 9, y: 66, width: 18, height: 18, rx: 3, style: 'fill:#e6c15a;stroke:#5a4410' }, g);
-    sv('circle', { cx: x, cy: 75, r: 4, style: 'fill:#3a2a08' }, g);
-    sv('text', { x, y: 102, 'text-anchor': 'middle', class: 'mono', style: 'font-size:10px;fill:#e9ffe0' }, g).textContent = i + 1;
-    const lt = sv('text', { x, y: 52, 'text-anchor': 'end', transform: `rotate(-60 ${x} 52)`, class: 'lbl', style: 'font-size:12.5px' }, g); lt.textContent = p[0];
-    const ct = sv('text', { x: x + 4, y: 40, 'text-anchor': 'end', transform: `rotate(-60 ${x + 4} 40)`, style: `font-size:11px;font-family:Caveat;fill:var(--purple)` }, s);
-    if (/^P0/.test(p[3])) ct.textContent = p[3] + ' ·';
-    const pick = () => { $$('.lpin', s).forEach(e => e.classList.remove('selb')); g.classList.add('selb'); info.innerHTML = `<div class="nh">pin ${i + 1} · ${p[0]} <span class="p-soft small">(${p[1]})</span></div>${p[2]}<br><span class="p-purple">our circuit: <b>${p[3]}</b></span>`; txt.textContent = `${i + 1}: ${p[0]}`; };
-    g.addEventListener('click', pick); g.addEventListener('keydown', e => { if (e.key === 'Enter') pick(); });
-    return g;
+  const gs = [], bs = [];
+  P.forEach((p, i) => {
+    const x = X(i), lpc = /^P0/.test(p[3]);
+    const g = sv('g', { class: 'hov lpin', tabindex: 0, role: 'button', 'aria-label': `pin ${i + 1} ${p[0]}` }, s);
+    if (lpc) sv('path', { d: `M${x} 118 V103 M${x} 55 V34`, style: 'fill:none;stroke:var(--purple);stroke-width:2.2' }, g);
+    else sv('path', { d: `M${x} 118 V104`, style: 'stroke:var(--ink3);stroke-width:1.6' }, g);
+    const lt = sv('text', { x: x + 4, y: lpc ? 98 : 100, transform: `rotate(-90 ${x + 4} ${lpc ? 98 : 100})`, style: `font-family:Courier Prime;font-weight:700;font-size:${lpc ? 12.5 : 11}px;fill:${lpc ? 'var(--purple)' : 'var(--ink3)'}` }, g); lt.textContent = p[3];
+    sv('rect', { x: x - 9, y: 118, width: 18, height: 18, rx: 3, style: 'fill:#e6c15a;stroke:#5a4410' }, g);
+    sv('circle', { cx: x, cy: 127, r: 4, style: 'fill:#3a2a08' }, g);
+    sv('text', { x, y: 156, 'text-anchor': 'middle', class: 'mono', style: 'font-size:11px;fill:#e9ffe0' }, g).textContent = i + 1;
+    sv('text', { x, y: 175, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:11px;fill:#fff8d8' }, g).textContent = p[0];
+    const b = el('button', { class: 'lpb' + (lpc ? ' lpc' : ''), type: 'button' }, `<i>${i + 1}</i><b>${p[0]}</b><span>${p[3]}</span>`); list.appendChild(b);
+    const pick = () => { gs.forEach(e => e.classList.remove('selb')); bs.forEach(e => e.classList.remove('on')); g.classList.add('selb'); b.classList.add('on'); info.innerHTML = `<div class="nh">pin ${i + 1} · ${p[0]} <span class="p-soft small">(${p[1]})</span></div>${p[2]}<br><span class="p-purple">our circuit: <b>${p[3] === 'pot' ? '10 kΩ potentiometer' : p[3]}</b></span>${NOTE[i] || (i >= 6 && i <= 9 ? ' ' + NOTE[7] : '')}`; txt.textContent = `${i + 1}: ${p[0]}`; };
+    g.addEventListener('click', pick); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } }); b.onclick = pick;
+    gs.push(g); bs.push(b);
   });
-  info.innerHTML = '<div class="nh">16 pins</div>Pins 1–3 power &amp; contrast · 4–6 control (RS, RW, E) · 7–14 data D0–D7 · 15–16 backlight.';
+  info.innerHTML = '<div class="nh">16 pins</div>Pins 1–3 power &amp; contrast · 4–6 control (RS, RW, E) · 7–14 data D0–D7 · 15–16 backlight. <span class="p-purple">Purple = wired to the LPC1768.</span>';
 });
 
 /* ---------- instruction builder ---------- */
@@ -3194,11 +3705,11 @@ BUILD.push(function wNibble() {
   const pwSteps = (half, x, f1) => {
     const t2 = half === 'high' ? ((x & 0xF0) << 19) >>> 0 : ((x & 0x0F) << 23) >>> 0;
     return [
-      { l: L('FIOPIN = temp2'), t: `port_write(): <b>FIOPIN = ${hex(t2)}</b> → P0.26–P0.23 = <b>${bin(half === 'high' ? x >> 4 : x & 15, 4)}</b>; RS and EN are 0 in temp2, so they go LOW too.`, f: s => set(s, { pins: t2, rs: 0, en: 0 }) },
-      { l: f1 ? [L('else'), L('FIOSET = RS_CTRL')] : [L('if (flag1 == 0)'), L('FIOCLR = RS_CTRL')], t: f1 ? '<b>RS = 1</b> → this goes to the <b>data</b> register.' : '<b>RS = 0</b> → this goes to the <b>command</b> register.', f: s => set(s, { rs: f1 }) },
-      { l: L('FIOSET = EN_CTRL'), t: '<b>EN HIGH</b> …', f: s => set(s, { en: 1, tl: s.tl.concat([[s.ti++, 'hi']]) }) },
+      { l: L('FIOPIN = temp2'), t: `port_write(): <b>FIOPIN = ${hex(t2)}</b> → P0.26–P0.23 = <b>${bin(half === 'high' ? x >> 4 : x & 15, 4)}</b>; RS and EN are 0 in temp2, so they go LOW too.`, f: s => set(s, { pins: t2, rs: 0, en: 0, k: s.k + 1 }) },
+      { l: f1 ? [L('else'), L('FIOSET = RS_CTRL')] : [L('if (flag1 == 0)'), L('FIOCLR = RS_CTRL')], t: f1 ? '<b>RS = 1</b> → this goes to the <b>data</b> register.' : '<b>RS = 0</b> → this goes to the <b>command</b> register.', f: s => set(s, { rs: f1, k: s.k + 1 }) },
+      { l: L('FIOSET = EN_CTRL'), t: '<b>EN HIGH</b> …', f: s => set(s, { en: 1, k: s.k + 1 }) },
       { l: L('delay_lcd(25)'), t: '… hold it a moment (delay_lcd(25)) so the LCD sees the data steady …' },
-      { l: L('FIOCLR = EN_CTRL'), t: `… <b>EN LOW</b> → falling edge → the LCD <b>latches</b> the ${half} nibble <b>${hx(half === 'high' ? x >> 4 : x & 15, 1)}</b>.`, f: s => { s.en = 0; s.got = s.got.concat([half === 'high' ? x >> 4 : x & 15]); s.tl = s.tl.concat([[s.ti++, 'lo']]); } },
+      { l: L('FIOCLR = EN_CTRL'), t: `… <b>EN LOW</b> → falling edge → the LCD <b>latches</b> the ${half} nibble <b>${hx(half === 'high' ? x >> 4 : x & 15, 1)}</b>.`, f: s => { s.en = 0; s.k++; s.got = s.got.concat([half === 'high' ? x >> 4 : x & 15]); } },
       { l: L('delay_lcd(5000)'), t: 'delay_lcd(5000): give the LCD time to finish (we can\'t read its busy flag — RW is grounded).' }
     ];
   };
@@ -3223,23 +3734,36 @@ BUILD.push(function wNibble() {
       v.innerHTML = '';
       v._byte = miniBits(v, ['b7', 'b6', 'b5', 'b4', 'b3', 'b2', 'b1', 'b0'], 'temp1 (the byte)');
       v._port = miniBits(v, ['EN·28', 'RS·27', 'D7·26', 'D6·25', 'D5·24', 'D4·23'], 'port 0 pins P0.28 … P0.23');
-      v._td = sv('svg', { class: 'dg', viewBox: '0 0 420 96' }); v.appendChild(v._td);
+      v._td = sv('svg', { class: 'dg nibtd', viewBox: '0 0 420 128' }); v.appendChild(v._td);
       const r = el('div', { class: 'row' }); v.appendChild(r);
       v._lcd = new HD44780().ready(); v._lcd.print('>'); v._lv = LCDView(r, v._lcd);
       v._got = el('div', { class: 'say' }); r.appendChild(v._got);
     }
     v._byte.set([7, 6, 5, 4, 3, 2, 1, 0].map(b => (s.x >> b) & 1));
     const p = s.pins || 0; v._port.set([s.en ? 1 : 0, s.rs ? 1 : 0, (p >>> 26) & 1, (p >>> 25) & 1, (p >>> 24) & 1, (p >>> 23) & 1]);
-    const g = v._td; g.innerHTML = '';
-    ['EN', 'RS', 'D7–D4'].forEach((n, i) => sv('text', { x: 2, y: 22 + i * 30, class: 'lbl', style: 'font-size:12px' }, g).textContent = n);
-    let d = 'M50 30'; let x = 50; s.tl.forEach(([i, e]) => { x = 70 + i * 70; d += `H${x}V${e === 'hi' ? 10 : 30}`; }); d += `H${Math.max(x + 30, 80)}`;
-    sv('path', { d, style: 'fill:none;stroke:var(--red);stroke-width:2.4' }, g);
-    sv('path', { d: `M50 ${s.rs ? 40 : 60} H410`, style: 'fill:none;stroke:var(--blue);stroke-width:2.2' }, g);
-    s.got.forEach((n, i) => { const xx = 70 + i * 140; sv('rect', { x: xx - 20, y: 68, width: 110, height: 22, rx: 8, style: 'fill:var(--hl-y);stroke:var(--ink)' }, g); sv('text', { x: xx + 35, y: 84, 'text-anchor': 'middle', class: 'mono', style: 'font-size:12px' }, g).textContent = (i ? 'low ' : 'high ') + bin(n, 4); sv('path', { d: `M${xx + 70} 34 v30`, style: 'stroke:var(--pink);stroke-width:1.5;stroke-dasharray:2 3' }, g); });
+    drawTrace(v._td, s);
     v._lcd.ready(); v._lcd.cmd(0x0E); v._lcd.print('>'); if (s.done) { if (s.f1) v._lcd.data(s.x); else if (s.f2) v._lcd.print(' (8-bit cmd)'); else v._lcd.cmd(s.x); } v._lv.draw();
     v._got.innerHTML = s.got.length ? `LCD received: ${s.got.map(n => hx(n, 1)).join(' + ')}${s.got.length === 2 ? ` = <b>${hx(s.x)}</b>` : s.f2 && s.done ? ' (8-bit mode reads it as 0x30)' : ' … waiting for the other half'}` : 'LCD waiting…';
   };
-  const st = Stepper(host, { code: LW_CODE, title: 'lcd_write + port_write', steps: build(), init: () => ({ x: opts[cur][2], tl: [], ti: 0, got: [] }), view });
+  /* timing trace: the whole transfer is drawn faint, the part already done in colour */
+  function drawTrace(g, s) {
+    g.innerHTML = ''; const nib = s.f2 ? 1 : 2, W0 = 66, WW = nib === 1 ? 300 : 172, x = s.x, ns = [x >> 4, x & 15];
+    const T = (i, ph) => W0 + i * WW + [8, 22, 62, 128, WW - 4][ph]; // phases: data, RS, EN↑, EN↓, end
+    [['RS', 22], ['EN', 60], ['D7–D4', 104]].forEach(([n, y]) => sv('text', { x: 2, y: y + 5, class: 'lbl', style: 'font-size:15px' }, g).textContent = n);
+    const done = s.k || 0, ev = (i, ph) => i * 4 + ph < done; // has event (nibble i, phase ph) happened?
+    for (let i = 0; i < nib; i++) {
+      const pal = ev(i, 0) ? '' : ' fut';
+      // RS: FIOPIN = temp2 drops it to 0, then FIOSET/FIOCLR sets it
+      const rsHi = 10, rsLo = 34; const prevRS = i ? (s.f1 ? rsHi : rsLo) : rsLo;
+      sv('path', { d: `M${T(i, 0) - 8} ${prevRS} H${T(i, 0)} V${rsLo} H${T(i, 1)} V${s.f1 ? rsHi : rsLo} H${T(i, 4)}`, class: 'tr rs' + (ev(i, 1) ? '' : ' fut') }, g);
+      sv('path', { d: `M${T(i, 0) - 8} 72 H${T(i, 2)} V48 H${T(i, 3)} V72 H${T(i, 4)}`, class: 'tr en' + (ev(i, 2) ? '' : ' fut') }, g);
+      sv('path', { d: `M${T(i, 0)} 104 l6 -12 H${T(i, 4) - 6} l6 12 l-6 12 H${T(i, 0) + 6} Z`, class: 'tr bus' + pal }, g);
+      sv('text', { x: (T(i, 0) + T(i, 4)) / 2, y: 109, 'text-anchor': 'middle', class: 'mono', style: 'font-size:13px' + (ev(i, 0) ? '' : ';opacity:.35') }, g).textContent = `${i ? 'low' : 'high'} ${bin(ns[i], 4)}`;
+      if (ev(i, 3)) { sv('path', { d: `M${T(i, 3)} 44 V122`, style: 'stroke:var(--pink);stroke-width:1.6;stroke-dasharray:3 3' }, g); sv('text', { x: T(i, 3) + 3, y: 42, class: 'lbl', style: 'font-size:12px;fill:var(--pink)' }, g).textContent = '▼ latched'; }
+    }
+    if (done) { const k = done - 1, i = k >> 2, ph = k & 3; sv('path', { d: `M${T(i, ph) + 2} 2 V126`, style: 'stroke:var(--orange);stroke-width:2;opacity:.7' }, g); }
+  }
+  const st = Stepper(host, { code: LW_CODE, title: 'lcd_write + port_write', steps: build(), init: () => ({ x: opts[cur][2], k: 0, got: [] }), view });
   chipGroup(pick, opts.map((o, i) => [i, o[0]]), cur, v => { cur = +v; st.setSteps(build()); });
 });
 
@@ -3666,6 +4190,1269 @@ BUILD.push(function wQ5() {
     } else S.push({ l: [L('if(state == 0'), L('else if(state == 1'), L('else if(state == 2')], t: `Key "${LAB[k]}" doesn't fit state ${s0.state} → ignored.` });
     ex.fire(S);
   }
+});
+
+/* =========================================================
+   NOTEBOOK 1 · part F — master-widget helpers + M0 (toolkit)
+   ========================================================= */
+
+/* master widget shell: normal widget header + a star sticker */
+function MW(id, title, info) {
+  const w = W(id, title, info);
+  w.insertAdjacentHTML('afterbegin', '<svg class="sticker mst" aria-hidden="true"><use href="#st-star"/></svg>');
+  return w;
+}
+/* call cb(narrow) now and whenever the node crosses the width breakpoint */
+function widthWatch(node, bp, cb) {
+  let last = null;
+  const f = () => { const wd = node.clientWidth; if (!wd) return; const n = wd < bp; if (n !== last) { last = n; cb(n); } };
+  new ResizeObserver(f).observe(node); f();
+}
+/* little glowing dots that run along polylines [[x,y,name?],…]; on(name) fires as named points are passed */
+function Walker(svg) {
+  const L = [];
+  function go(pts, o = {}) {
+    const segs = []; let tot = 0;
+    for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); segs.push(d); tot += d; }
+    const c = sv('circle', { r: o.r || 6, class: 'mpulse ' + (o.cls || ''), cx: pts[0][0], cy: pts[0][1] }, svg);
+    const wk = { pts, segs, tot, s: 0, i: 0, c, o }; L.push(wk); return wk;
+  }
+  function step(dt) {
+    for (const wk of L.slice()) {
+      if (!L.includes(wk)) continue; // cleared by a callback
+      wk.s += dt * (wk.o.speed || 280);
+      let acc = 0, i = 0;
+      while (i < wk.segs.length && acc + wk.segs[i] <= wk.s) { acc += wk.segs[i]; i++; }
+      while (wk.i < i) { wk.i++; const nm = wk.pts[wk.i][2]; if (nm && wk.o.on) wk.o.on(nm, wk); if (!L.includes(wk)) break; }
+      if (!L.includes(wk)) continue;
+      if (i >= wk.segs.length) { wk.c.remove(); L.splice(L.indexOf(wk), 1); wk.o.end && wk.o.end(); continue; }
+      const f = (wk.s - acc) / (wk.segs[i] || 1), a = wk.pts[i], b = wk.pts[i + 1];
+      wk.c.setAttribute('cx', (a[0] + (b[0] - a[0]) * f).toFixed(1)); wk.c.setAttribute('cy', (a[1] + (b[1] - a[1]) * f).toFixed(1));
+    }
+  }
+  return { go, step, clear() { L.forEach(wk => wk.c.remove()); L.length = 0; }, kill(wk) { const i = L.indexOf(wk); if (i >= 0) { wk.c.remove(); L.splice(i, 1); } }, get busy() { return L.length > 0; } };
+}
+/* a red "stopped here" ring */
+function ringAt(svg, x, y, cls = '') { const c = sv('circle', { cx: x, cy: y, r: 4, class: 'mring ' + cls }, svg); setTimeout(() => c.remove(), 800); }
+/* one line of C, syntax-coloured (uses the core highlighter) */
+const cLine = t => hlC(t);
+const fmtN = n => String(Math.floor(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+/* =========================================================
+   M0 · the pin X-ray bench
+   ========================================================= */
+BUILD.push(function wM0() {
+  const w = MW('w-m0', 'pin X-ray bench', 'compose a C line → run it → follow it into the pin');
+  const FN = {
+    '0.2': { 1: ['TXD0', 'UART0 transmit', 'out'] }, '0.3': { 1: ['RXD0', 'UART0 receive', 'in'] },
+    '0.23': { 1: ['AD0.0', 'ADC input', 'an'], 3: ['CAP3.0', 'timer 3 capture in', 'in'] }, '0.26': { 1: ['AD0.3', 'ADC input', 'an'], 2: ['AOUT', 'DAC output', 'an'] },
+    '1.18': { 3: ['CAP1.0', 'timer 1 count / capture in', 'in'] }, '1.25': { 3: ['MAT1.1', 'timer 1 match out', 'out'] },
+    '1.26': { 3: ['CAP0.0', 'timer 0 capture in', 'in'] }, '1.27': { 3: ['CAP0.1', 'timer 0 capture in', 'in'] },
+    '1.28': { 3: ['MAT0.0', 'timer 0 match out', 'mat'] }, '2.10': { 1: ['EINT0', 'external interrupt', 'in'] }, '2.12': { 1: ['EINT2', 'external interrupt', 'in'] }
+  };
+  const st = { port: 0, pin: 2, psel: [0, 0, 0, 0, 0], dir: [0, 0, 0], mask: [0, 0, 0], lat: [0, 0, 0], ext: [0, 0, 0], x: null };
+  let reg = 'FIODIR', op = '|=', em0 = 0, ticks = 0, blink = false, blinkPh = 0;
+  const pIdx = () => st.port * 2 + (st.pin >= 16 ? 1 : 0), pLo = () => 2 * (st.pin % 16);
+  const fnOf = () => (st.psel[pIdx()] >>> pLo()) & 3;
+  const fnInfo = f => (FN[st.port + '.' + st.pin] || {})[f] || null;
+  const bit = (v, b) => (v >>> b) & 1;
+  function level() { // the real level on our pin
+    const f = fnOf(), n = st.pin, p = st.port;
+    if (f) { const k = (fnInfo(f) || [0, 0, 'x'])[2]; return k === 'mat' ? em0 : k === 'out' ? 1 : bit(st.ext[p], n); }
+    return bit(st.dir[p], n) ? bit(st.lat[p], n) : bit(st.ext[p], n);
+  }
+  const portLevels = () => { const p = st.port; let L = ((st.dir[p] & st.lat[p]) | (~st.dir[p] & st.ext[p])) >>> 0; L = (L & ~(1 << st.pin)) | (level() << st.pin); return L >>> 0; };
+  // what the X-ray currently shows (it lags the model until the dot arrives)
+  const vis = { lat: 0, dir: 0, mask: 0, fn: 0, lvl: 0, x: null, ext: 0 };
+  const syncVis = (...k) => { const p = st.port, n = st.pin; const all = { lat: bit(st.lat[p], n), dir: bit(st.dir[p], n), mask: bit(st.mask[p], n), fn: fnOf(), lvl: level(), x: st.x, ext: bit(st.ext[p], n) }; (k.length ? k : Object.keys(all)).forEach(q => vis[q] = all[q]); paintX(); };
+
+  /* ---------- layout ---------- */
+  const top = el('div', { class: 'm0top' }); w.appendChild(top);
+  const pick = el('div', { class: 'm0pick col' }); top.appendChild(pick);
+  pick.appendChild(el('div', { class: 'mlab' }, '① the pin under the X-ray'));
+  const pr = el('div', { class: 'row', style: 'gap:8px 12px' }); pick.appendChild(pr);
+  const portG = chipGroup(pr, [[0, 'P0'], [1, 'P1'], [2, 'P2']], st.port, v => { st.port = +v; newPin(); });
+  const pinR = ruler(pr, 'pin', 0, 31, st.pin, 1, v => 'P' + st.port + '.' + v, v => { st.pin = v; newPin(); });
+  const qp = el('div', { class: 'chips' }); pick.appendChild(qp);
+  [[0, 2, 'P0.2 · LED in the programs'], [1, 28, 'P1.28 · can be MAT0.0'], [2, 12, 'P2.12 · a key'], [1, 23, 'P1.23 · keypad column']].forEach(([a, b, t]) => { const c = el('button', { class: 'chip', type: 'button', style: '--cc:var(--n-g)' }, t); c.onclick = () => { st.port = a; st.pin = b; portG.set(a); pinR.value = b; pinR.dispatchEvent(new Event('input')); newPin(); }; qp.appendChild(c); });
+  pick.appendChild(el('div', { class: 'mlab', style: 'margin-top:6px' }, '③ quick recipes for this pin'));
+  const rec = el('div', { class: 'chips m0recipe' }); pick.appendChild(rec);
+
+  const bench = el('div', { class: 'm0bench mbox' }); top.appendChild(bench);
+  bench.appendChild(el('div', { class: 'mlab' }, '② build one C line from the tiles'));
+  const tl = el('div', { class: 'm0tiles' }); bench.appendChild(tl);
+  const REGS = [['PINSEL', 'PINSELn'], ['FIODIR', 'FIODIR'], ['FIOMASK', 'FIOMASK'], ['FIOSET', 'FIOSET'], ['FIOCLR', 'FIOCLR'], ['FIOPIN', 'FIOPIN ='], ['READ', 'x = FIOPIN']];
+  const regG = chipGroup(tl, REGS, reg, v => { reg = v; fixOp(); showLine(); });
+  const tl2 = el('div', { class: 'm0tiles' }); bench.appendChild(tl2);
+  const opG = chipGroup(tl2, [['=', '='], ['|=', '|=  (switch on)'], ['&=~', '&= ~  (switch off)']], op, v => { op = v; showLine(); });
+  const ln = el('div', { class: 'm0line' }); bench.appendChild(ln);
+  const inp = el('input', { class: 'inp', value: '1<<2', 'aria-label': 'value', spellcheck: 'false' });
+  const vch = el('div', { class: 'chips' });
+  ln.append(el('span', { class: 'gae' }, 'value'), inp, vch);
+  const ln2 = el('div', { class: 'm0line' }); bench.appendChild(ln2);
+  const code = el('div', { class: 'mcode' }); const run = el('button', { class: 'btn p', type: 'button' }, 'run ▶');
+  ln2.append(code, run);
+  const err = el('div', { class: 'msay r', style: 'min-height:0' }); bench.appendChild(err);
+
+  // the bit-maths sheet
+  const sheetBox = el('div', { class: 'mbox', style: 'margin-top:14px' }); w.appendChild(sheetBox);
+  sheetBox.appendChild(el('div', { class: 'mlab' }, '④ the bit maths — every 32 bits of the register (pink frame = our pin\'s bit)'));
+  const sheet = el('div', { class: 'm0sheet' }); sheetBox.appendChild(sheet);
+  const expl = el('div', { class: 'm0expl' }); sheetBox.appendChild(expl);
+
+  // X-ray + register file
+  const mid = el('div', { class: 'm0mid' }); w.appendChild(mid);
+  const xr = el('div'); mid.appendChild(xr);
+  xr.appendChild(el('div', { class: 'mlab' }, '⑤ inside the chip, around our pin'));
+  const xs = el('div', { class: 'm0xs' }); xr.appendChild(xs); xr.appendChild(el('div', { class: 'swipe-hint' }, '← swipe: the pin and its LED are on the right →'));
+  const S = sv('svg', { class: 'dg m0x', viewBox: '0 0 520 320', role: 'img', 'aria-label': 'cut-away of one GPIO pin' }); xs.appendChild(S);
+  const follow = right => { if (xs.scrollWidth > xs.clientWidth + 4) xs.scrollTo({ left: right ? xs.scrollWidth : 0, behavior: REDUCED ? 'auto' : 'smooth' }); };
+  const say = el('div', { class: 'msay' }); xr.appendChild(say);
+  const side = el('div', { class: 'col' }); mid.appendChild(side);
+  side.appendChild(el('div', { class: 'mlab' }, 'register file (tap to pick)'));
+  const regsBox = el('div', { class: 'm0regs mbox' }); side.appendChild(regsBox);
+  const beat = el('div', { class: 'm0beat mbox' }); side.appendChild(beat);
+
+  /* ---------- the X-ray drawing ---------- */
+  const R = rng(5), g = sv('g', {}, S), D = (d, cls, par = g) => sv('path', { d, class: cls }, par), T = (x, y, t, cls = 't', a = 'middle', par = g) => { const e = sv('text', { x, y, 'text-anchor': a, class: cls }, par); e.textContent = t; return e; };
+  T(210, 314, 'inside the chip', 's'); T(474, 314, 'outside', 's');
+  D(`M430 6 V300`, 'ink2').setAttribute('style', 'stroke-dasharray:6 5');
+  // CPU bubbles
+  sv('rect', { x: 6, y: 30, width: 96, height: 42, rx: 14, class: 'blk', style: 'fill:var(--n-b)' }, g);
+  T(54, 47, 'CPU writes', 's'); const tW = T(54, 64, '—', 'm');
+  sv('rect', { x: 6, y: 106, width: 96, height: 44, rx: 14, class: 'blk', style: 'fill:var(--n-g)' }, g);
+  T(54, 123, 'x = FIOPIN', 's'); const tR = T(54, 141, 'x = ?', 'm');
+  // wires
+  const wW = D('M102 51 H118 M146 51 H166 M224 51 H246', 'w'), wB = D('M276 51 H318 V90 H338', 'w');
+  const wR = D('M318 90 V128 H276 M246 128 H146 M118 128 H102', 'w'), wEn = D('M262 24 V40', 'w');
+  // mask gates
+  const gW = sv('rect', { x: 118, y: 37, width: 28, height: 28, rx: 4, class: 'gate' }, g), gR = sv('rect', { x: 118, y: 114, width: 28, height: 28, rx: 4, class: 'gate' }, g);
+  T(132, 28, 'FIOMASK', 's'); const tMW = T(132, 56, '0', 'm'), tMR = T(132, 133, '0', 'm');
+  // latch
+  sv('rect', { x: 166, y: 29, width: 58, height: 44, rx: 6, class: 'blk' }, g); T(195, 43, 'latch', 's'); const tQ = T(195, 64, 'Q = 0', 'm');
+  // buffers
+  const bOut = sv('path', { d: 'M246 35 L246 67 L277 51 Z', class: 'blk' }, g), bIn = sv('path', { d: 'M276 112 L276 144 L245 128 Z', class: 'blk' }, g);
+  sv('rect', { x: 192, y: 2, width: 140, height: 22, rx: 6, class: 'blk', style: 'fill:var(--n-y)' }, g); const tD = T(262, 18, 'FIODIR bit = 0', 'm');
+  T(262, 84, 'out buffer ↑', 's'); T(262, 104, 'in buffer ↓', 's');
+  sv('circle', { cx: 318, cy: 90, r: 3.5, style: 'fill:var(--ink)' }, g);
+  // sockets
+  const SY = [90, 170, 212, 254], socks = [], sockT = [];
+  SY.forEach((y, f) => { socks[f] = sv('circle', { cx: 346, cy: y, r: 8, class: 'sock' }, g); sockT[f] = T(f ? 338 : 346, f ? y - 11 : y + 24, '', 's', f ? 'end' : 'middle'); });
+  const wF = [1, 2, 3].map(f => D(`M262 ${SY[f]} H338`, 'w off'));
+  // peripheral box (only for a known job)
+  const per = sv('g', {}, g); sv('rect', { x: 104, y: 232, width: 158, height: 44, rx: 8, class: 'blk', style: 'fill:var(--n-o)' }, per);
+  const tPer = T(183, 250, '', 't', 'middle', per), tPer2 = T(183, 268, '', 's', 'middle', per);
+  // PINSEL tag
+  const tPS = T(274, 297, '', 'm');
+  // cord
+  const cord = D('', 'cord'), cordi = D('', 'cordi'), plug = sv('rect', { width: 14, height: 10, rx: 3, class: 'plug' }, g);
+  // pad
+  sv('rect', { x: 421, y: 80, width: 18, height: 20, rx: 3, style: 'fill:#e6c15a;stroke:var(--ink);stroke-width:1.6' }, g);
+  const tPad = T(430, 74, 'P0.2', 'm');
+  const wPad = D('M439 90 H476', 'w');
+  // outside: LED (for outputs) or a switch (for inputs)
+  const gLed = sv('g', {}, g);
+  D('M476 90 V106 l-7 3 l14 5 l-14 5 l14 5 l-14 5 l7 3 V144', 'w', gLed);
+  const bulb = sv('circle', { cx: 476, cy: 156, r: 11, class: 'ledbulb' }, gLed);
+  D('M466 149 H486 L476 163 Z M466 164 H486', 'ink', gLed); D('M476 164 V188 M466 188 H486 M470 193 H482 M474 198 H478', 'ink', gLed);
+  T(500, 160, 'LED', 's', 'start', gLed);
+  const gSw = sv('g', { class: 'swk', role: 'button', tabindex: 0, 'aria-label': 'flip the outside switch' }, g);
+  T(476, 22, '3.3 V', 's', 'middle', gSw); D('M476 28 V46', 'w', gSw);
+  const lever = D('M476 74 L476 48', 'ink', gSw); lever.style.strokeWidth = '3';
+  sv('circle', { cx: 476, cy: 46, r: 3, style: 'fill:var(--ink)' }, gSw); sv('circle', { cx: 476, cy: 74, r: 3, style: 'fill:var(--ink)' }, gSw);
+  D('M476 74 V90 M476 90 V112 l-7 3 l14 5 l-14 5 l14 5 l-14 5 l7 3 V158 M466 158 H486 M470 163 H482 M474 168 H478', 'ink', gSw);
+  T(476, 188, 'tap to flip', 's', 'middle', gSw); const tSw = T(476, 206, 'open', 's', 'middle', gSw);
+  const flipSw = () => { st.ext[st.port] ^= 1 << st.pin; syncVis('ext', 'lvl'); paintRegs(); say.innerHTML = `outside world: P${st.port}.${st.pin} is now <b>${bit(st.ext[st.port], st.pin) ? 'HIGH' : 'LOW'}</b>. Only an input pin listens to it — run <b>x = FIOPIN</b> to read it.`; };
+  gSw.addEventListener('click', flipSw); gSw.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flipSw(); } });
+  const walker = Walker(S);
+
+  function cordPts(f) { const y = SY[f]; return f ? [[421, 90], [408, 120], [392, y - 14], [372, y + 6], [356, y]] : [[421, 90], [404, 100], [380, 102], [356, 90]]; }
+  function paintX() {
+    const n = st.pin, f = vis.fn, out = !f && vis.dir, info = f ? fnInfo(f) : null, lv = vis.lvl;
+    tPad.textContent = `P${st.port}.${n}`;
+    tMW.textContent = vis.mask; tMR.textContent = vis.mask; gW.setAttribute('class', 'gate' + (vis.mask ? '' : ' open')); gR.setAttribute('class', 'gate' + (vis.mask ? '' : ' open'));
+    tQ.textContent = 'Q = ' + vis.lat;
+    tD.textContent = `FIODIR bit ${n} = ${vis.dir}`;
+    bOut.setAttribute('class', 'blk' + (vis.dir ? '' : ' dim'));
+    const hl = v => v ? 'w on' : 'w lo';
+    wW.setAttribute('class', hl(vis.lat)); wEn.setAttribute('class', vis.dir ? 'w on' : 'w lo');
+    wB.setAttribute('class', !vis.dir ? 'w off' : f ? 'w off' : hl(vis.lat));
+    wR.setAttribute('class', f ? 'w off' : hl(lv)); wPad.setAttribute('class', hl(lv));
+    socks.forEach((c, i) => c.setAttribute('class', 'sock' + (i === f ? ' on' : '')));
+    sockT[0].textContent = '00 GPIO';
+    [1, 2, 3].forEach(k => { const fi = fnInfo(k); sockT[k].textContent = `${bin(k, 2)} · ${fi ? fi[0] : 'fn ' + k}`; wF[k - 1].setAttribute('class', k === f ? (info && info[2] === 'in' ? hl(lv) : hl(lv)) : 'w off'); });
+    const cp = cordPts(f); cord.setAttribute('d', Pen.catmull(cp)); cordi.setAttribute('d', Pen.catmull(cp));
+    plug.setAttribute('x', 349); plug.setAttribute('y', SY[f] - 5);
+    const kn = Object.entries(FN[st.port + '.' + n] || {}); const shownF = f || (kn.length ? +kn[kn.length - 1][0] : 0);
+    const pi = shownF ? fnInfo(shownF) : null;
+    per.style.display = pi ? '' : 'none';
+    if (pi) { per.setAttribute('transform', `translate(0 ${SY[shownF] - 254})`); tPer.textContent = pi[0] + (pi[2] === 'mat' ? ' · Timer0' : ''); tPer2.textContent = pi[2] === 'mat' ? `EM0 = ${em0} · flips every 1 s` : pi[1]; }
+    tPS.textContent = `PINSEL${pIdx()} · bits ${pLo() + 1}:${pLo()} = ${bin(f, 2)} → socket ${bin(f, 2)}`;
+    // outside thing: LED when the pin drives it, switch when the outside drives the pin
+    const drives = f ? (info && (info[2] === 'mat' || info[2] === 'out')) : vis.dir;
+    gLed.style.display = drives ? '' : 'none'; gSw.style.display = drives ? 'none' : '';
+    bulb.setAttribute('class', 'ledbulb' + (lv ? ' on' : ''));
+    lever.setAttribute('d', vis.ext ? 'M476 74 L476 48' : 'M476 74 L496 54'); tSw.textContent = vis.ext ? 'closed → HIGH' : 'open → LOW';
+    tR.textContent = vis.x == null ? 'x = ?' : `bit ${n} = ${bit(vis.x, n)}`;
+  }
+
+  /* ---------- the bench ---------- */
+  function fixOp() {
+    const lock = reg === 'FIOSET' || reg === 'FIOCLR' || reg === 'FIOPIN' || reg === 'READ';
+    if (lock) { op = '='; opG.set('='); }
+    $$('.chip', opG.el).forEach(c => { c.disabled = lock && c.dataset.v !== '='; c.style.opacity = c.disabled ? .35 : 1; });
+    inp.disabled = reg === 'READ'; inp.style.opacity = reg === 'READ' ? .4 : 1;
+    vch.innerHTML = ''; const k = pLo(), n = st.pin;
+    const opts = reg === 'PINSEL' ? [`3<<${k}`, `1<<${k}`, `2<<${k}`] : reg === 'READ' ? [] : [`1<<${n}`, '0xFF', '0'];
+    opts.forEach(t => { const c = el('button', { class: 'chip mn', type: 'button' }, esc(t)); c.onclick = () => { inp.value = t; showLine(); }; vch.appendChild(c); });
+  }
+  function lineText() {
+    const v = inp.value.trim() || '0';
+    if (reg === 'READ') return `x = LPC_GPIO${st.port}->FIOPIN;`;
+    const lhs = reg === 'PINSEL' ? `LPC_PINCON->PINSEL${pIdx()}` : `LPC_GPIO${st.port}->${reg}`;
+    return op === '&=~' ? `${lhs} &= ~(${v});` : `${lhs} ${op} ${v};`;
+  }
+  function showLine() { code.innerHTML = cLine(lineText()); err.textContent = ''; }
+  inp.addEventListener('input', showLine);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') doRun(); });
+  run.onclick = () => doRun();
+
+  /* ---------- the maths sheet ---------- */
+  function bitsRow(lab, v, cls, prev) {
+    const r = el('div', { class: 'm0r ' + (cls || '') }); r.appendChild(el('span', { class: 'lab' }, lab));
+    const bx = el('div', { class: 'm0bits' }); r.appendChild(bx);
+    const pins = reg === 'PINSEL' ? [pLo(), pLo() + 1] : [st.pin];
+    for (let h = 1; h >= 0; h--) {
+      const hf = el('div', { class: 'm0half' }); bx.appendChild(hf);
+      for (let b = h * 16 + 15; b >= h * 16; b--) {
+        const one = bit(v, b), c = el('i', { class: (one ? 'one' : '') + (pins.includes(b) ? ' pin' : '') + (prev != null && bit(prev, b) !== one ? ' chg' : '') }, one); c.title = 'bit ' + b; hf.appendChild(c);
+      }
+    }
+    r.appendChild(el('span', { class: 'hx' }, hex(v))); sheet.appendChild(r);
+  }
+  function hdrRow(v) {
+    const r = el('div', { class: 'm0r hdr' }); r.appendChild(el('span', { class: 'lab' }, 'hex digit'));
+    const bx = el('div', { class: 'm0bits' }); r.appendChild(bx);
+    const pinNib = (reg === 'PINSEL' ? pLo() : st.pin) >> 2;
+    for (let h = 1; h >= 0; h--) { const hf = el('div', { class: 'm0half' }); bx.appendChild(hf); for (let k = h * 4 + 3; k >= h * 4; k--) hf.appendChild(el('b', { class: k === pinNib ? 'pinnib' : '' }, ((v >>> (k * 4)) & 15).toString(16).toUpperCase())); }
+    r.appendChild(el('span', { class: 'hx p-faint' }, '4 bits each')); sheet.appendChild(r);
+  }
+  function sheetFor(rows, result, text) {
+    sheet.innerHTML = ''; hdrRow(result); rows.forEach(r => bitsRow(...r)); expl.innerHTML = text;
+  }
+
+  /* ---------- running a line ---------- */
+  function doRun() {
+    let v = 0;
+    if (reg !== 'READ') { try { v = safeEval(inp.value || '0'); } catch (e) { err.textContent = '✗ ' + e.message; return; } }
+    const p = st.port, n = st.pin, mk = st.mask[p];
+    walker.clear(); err.textContent = ''; follow(reg === 'READ' || reg === 'PINSEL');
+    tW.textContent = reg === 'READ' ? '—' : (reg === 'PINSEL' ? 'PINSEL' : reg) + (op === '&=~' ? ' &=~' : ' ' + op);
+    const wpath = [[102, 51], [132, 51, 'mask'], [195, 51, 'latch'], [261, 51, 'buf'], [318, 51], [318, 90], [346, 90, 'sock0']].concat(cordPts(0).slice().reverse().slice(1).map(q => [q[0], q[1]])).concat([[430, 90, 'pad'], [476, 90], [476, 152, 'out']]);
+    const stopRing = (x, y, msg) => { ringAt(S, x, y); say.innerHTML = msg; };
+    if (reg === 'PINSEL') {
+      const k = pIdx(), old = st.psel[k], nw = op === '=' ? v : op === '|=' ? (old | v) >>> 0 : (old & ~v) >>> 0;
+      st.psel[k] = nw;
+      sheetFor([[`PINSEL${k} before`, old], [op === '&=~' ? '~(value)' : 'value', op === '&=~' ? (~v) >>> 0 : v, 'op'], [`PINSEL${k} after`, nw, 'res', old]], nw,
+        `${op === '|=' ? '<b>|=</b> keeps every old 1 and adds the value\'s 1s.' : op === '&=~' ? '<b>&= ~</b>: ~ flips the value, then AND keeps only bits that are 1 in both → the value\'s bits are switched <b>off</b>.' : '<b>=</b> overwrites all 32 bits — other pins\' jobs too!'} Our pin uses <b>bits ${pLo() + 1}:${pLo()}</b> = ${bin(fnOf(), 2)}.`);
+      const f = fnOf();
+      walker.go([[54, 72], [54, 296], [118, 296, 'ps']], { cls: 'p', on: nm => { if (nm === 'ps') { syncVis('fn', 'lvl'); cord.classList.remove('flash'); void cord.getBBox(); cord.classList.add('flash'); } }, end: () => { const fi = fnInfo(f); say.innerHTML = f ? `The cord now plugs P${p}.${n} into socket <b>${bin(f, 2)}</b> = ${fi ? `<b>${fi[0]}</b> (${fi[1]})` : `function ${f}`}. GPIO writes no longer reach the pin.` : `Socket <b>00</b>: P${p}.${n} is a plain <b>GPIO</b> pin again.`; } });
+    } else if (reg === 'FIODIR' || reg === 'FIOMASK') {
+      const key = reg === 'FIODIR' ? 'dir' : 'mask', old = st[key][p], nw = op === '=' ? v : op === '|=' ? (old | v) >>> 0 : (old & ~v) >>> 0;
+      st[key][p] = nw;
+      sheetFor([[`${reg} before`, old], [op === '&=~' ? '~(value)' : 'value', op === '&=~' ? (~v) >>> 0 : v, 'op'], [`${reg} after`, nw, 'res', old]], nw,
+        `${op === '|=' ? '<b>|=</b> switches on the value\'s bits, the rest stay.' : op === '&=~' ? '<b>&= ~</b> switches off the value\'s bits, the rest stay.' : '<b>=</b> overwrites every bit of the port.'} ${reg === 'FIODIR' ? 'FIODIR: 1 = output, 0 = input.' : 'FIOMASK: 1 = protected (writes skip it, reads give 0).'}`);
+      if (key === 'dir') walker.go([[54, 30], [54, 13], [206, 13, 'dir']], { cls: 'b', on: () => syncVis('dir', 'lvl'), end: () => { say.innerHTML = bit(nw, n) ? `FIODIR bit ${n} = 1 → the <b>out buffer</b> switches on: the latch now drives P${p}.${n}. Outside: an LED.` : `FIODIR bit ${n} = 0 → out buffer off: P${p}.${n} is an <b>input</b>; the outside world sets its level (flip the switch).`; } });
+      else { walker.go([[102, 51], [132, 51, 'm']], { cls: 'b', on: () => syncVis('mask'), end: () => { say.innerHTML = bit(nw, n) ? `Mask bit ${n} = 1 → both shutters <b>close</b>: FIOSET / FIOCLR / FIOPIN writes stop at the shutter, and x = FIOPIN reads 0 here.` : `Mask bit ${n} = 0 → shutters open, P${p}.${n} works normally.`; } }); walker.go([[102, 128], [132, 128]], { cls: 'b' }); }
+    } else if (reg === 'READ') {
+      const lv = portLevels(), x = (lv & ~mk) >>> 0; st.x = x;
+      sheetFor([['pin levels', lv], ['FIOMASK', mk, 'op'], ['x = levels & ~mask', x, 'res']], x, `x gets the level of every pin of port ${p} — except masked pins, which read 0. Test our pin with <code>if (x &amp; (1&lt;&lt;${n}))</code>.`);
+      const rp = [[476, 90], [430, 90]].concat(cordPts(vis.fn).slice(1).map(q => [q[0], q[1]])).concat(vis.fn ? [] : [[318, 90], [318, 128], [261, 128], [132, 128, 'mask'], [102, 128, 'cpu']]);
+      walker.go(rp, { cls: 'g', on: nm => { if (nm === 'mask' && vis.mask) { walker.clear(); stopRing(132, 128, `Mask bit ${n} = 1 → the read is blocked: x has <b>0</b> at bit ${n} whatever the pin does.`); vis.x = x; paintX(); } if (nm === 'cpu') { vis.x = x; paintX(); } }, end: () => { if (vis.fn) { stopRing(346, SY[vis.fn], `The cord is in socket ${bin(vis.fn, 2)}, not GPIO — this drawing stops here (the level still shows in FIOPIN: x bit ${n} = ${bit(x, n)}).`); vis.x = x; paintX(); } else if (!vis.mask) say.innerHTML = `x = <b>${hex(x)}</b> → bit ${n} = <b>${bit(x, n)}</b>: P${p}.${n} is ${bit(x, n) ? 'HIGH' : 'LOW'}${bit(st.dir[p], n) ? ' (an output reads back its own level)' : ''}.`; } });
+    } else { // FIOSET / FIOCLR / FIOPIN write
+      const old = st.lat[p], eff = (v & ~mk) >>> 0;
+      const nw = reg === 'FIOSET' ? (old | eff) >>> 0 : reg === 'FIOCLR' ? (old & ~eff) >>> 0 : ((old & mk) | (v & ~mk)) >>> 0;
+      st.lat[p] = nw;
+      const rows = [['latch before', old], [reg === 'FIOPIN' ? 'value (all bits!)' : `value (1 = ${reg === 'FIOSET' ? 'HIGH' : 'LOW'})`, v, 'op']];
+      if (mk) rows.push(['FIOMASK', mk, 'op']);
+      rows.push(['latch after', nw, 'res', old]);
+      sheetFor(rows, nw, reg === 'FIOPIN' ? '<b>FIOPIN =</b> copies <b>every</b> unmasked bit: the 0s pull other pins LOW too!' : `<b>${reg}</b> only acts on the 1-bits; 0-bits mean "no change" — safe for the other pins.`);
+      const blockedMask = bit(mk, n), touched = reg === 'FIOPIN' || bit(v, n);
+      if (!touched) { say.innerHTML = `Bit ${n} of the value is 0 → ${reg} leaves P${p}.${n} alone (only the other pins' bits did something).`; syncVis(); return; }
+      walker.go(wpath, {
+        cls: 'r', on: (nm, wk) => {
+          if (nm === 'mask' && blockedMask) { walker.clear(); stopRing(132, 51, `Stopped at the shutter: FIOMASK bit ${n} = 1 → this write <b>can't reach</b> P${p}.${n}.`); return; }
+          if (nm === 'latch') { syncVis('lat'); follow(true); }
+          if (nm === 'buf' && !vis.dir) { walker.clear(); stopRing(261, 51, `Latch Q = ${vis.lat}, but FIODIR bit ${n} = 0 → the out buffer is <b>off</b>: an input pin ignores writes. (Set FIODIR first!)`); return; }
+          if (nm === 'sock0' && vis.fn) { walker.clear(); stopRing(346, 90, `Reached socket 00 — but PINSEL plugged the pin into socket ${bin(vis.fn, 2)}. GPIO can't drive it now.`); return; }
+          if (nm === 'pad') syncVis('lvl');
+        }, end: () => { syncVis(); say.innerHTML = `${reg} → latch Q = ${vis.lat} → buffer on → socket 00 → P${p}.${n} <b>${vis.lvl ? 'HIGH' : 'LOW'}</b> → LED ${vis.lvl ? 'on' : 'off'}.`; }
+      });
+    }
+    paintRegs();
+  }
+
+  /* ---------- register file + heartbeat ---------- */
+  function paintRegs() {
+    const p = st.port, n = st.pin, k = pIdx(), lo = pLo();
+    const rows = [['PINSEL', `PINSEL${k}`, st.psel[k], `bits ${lo + 1}:${lo} = ${bin(fnOf(), 2)}`], ['FIODIR', `FIODIR${p}`, st.dir[p], `bit ${n} = ${bit(st.dir[p], n)}`], ['FIOMASK', `FIOMASK${p}`, st.mask[p], `bit ${n} = ${bit(st.mask[p], n)}`], ['FIOSET', 'latch', st.lat[p], `bit ${n} = ${bit(st.lat[p], n)}`], ['READ', `FIOPIN${p} (read)`, portLevels(), `bit ${n} = ${level()}`]];
+    regsBox.innerHTML = '';
+    rows.forEach(([r, lab, v, b]) => { const bt = el('button', { type: 'button', class: reg === r ? 'on' : '' }, lab); bt.onclick = () => { reg = r; regG.set(r); fixOp(); showLine(); paintRegs(); }; regsBox.append(bt, el('span', {}, `${hex(v)} · <em>${b}</em>`)); });
+  }
+  const beatH = el('div', { class: 'mlab' }); const odo = el('div', { class: 'odo' }, '0'); const bt = el('div', { class: 'small' }); const bB = el('button', { class: 'btn sm y', type: 'button' }, '▶ blink this pin (1 s)');
+  beat.append(beatH, odo, bt, bB);
+  bB.onclick = () => { blink = !blink; bB.textContent = blink ? '❚❚ stop blinking' : '▶ blink this pin (1 s)'; if (blink) { ticks = 0; blinkPh = 0; } paintBeat(); };
+  function paintBeat() {
+    const mat = fnOf() && (fnInfo(fnOf()) || [])[2] === 'mat';
+    beatH.textContent = mat ? 'Timer0 counts PCLK for MAT0.0 (like program P3)' : 'PCLK heartbeat · 3 MHz';
+    odo.textContent = fmtN(ticks % 3000000);
+    bt.innerHTML = mat ? `3 000 000 ticks = 1 s → EM0 toggles → <b>P1.28 = ${em0}</b>. No CPU writes needed.` : blink ? `loop: <code>FIOSET</code> → wait 3 000 000 ticks (1 s) → <code>FIOCLR</code> → wait …` : '3 000 ticks = 1 ms · 3 000 000 ticks = 1 s. Press blink to run a delay loop on this pin.';
+    bB.style.display = mat ? 'none' : '';
+  }
+  const loop = Loop(w, dt => { // runs while any part of the widget is on screen
+    walker.step(dt);
+    const mat = fnOf() && (fnInfo(fnOf()) || [])[2] === 'mat';
+    if (mat || blink) {
+      const before = Math.floor(ticks / 3e6); ticks += dt * 3e6; const now = Math.floor(ticks / 3e6);
+      if (now !== before) {
+        if (mat) { em0 ^= 1; syncVis('lvl'); paintRegs(); }
+        else if (blink) { reg = blinkPh ? 'FIOCLR' : 'FIOSET'; op = '='; inp.value = '1<<' + st.pin; regG.set(reg); fixOp(); showLine(); doRun(); blinkPh ^= 1; }
+      }
+      paintBeat();
+    }
+  });
+  loop.start();
+
+  function newPin() {
+    walker.clear(); blink = false; bB.textContent = '▶ blink this pin (1 s)';
+    if (reg === 'FIOPIN' || reg === 'FIOSET' || reg === 'FIOCLR') inp.value = '1<<' + st.pin;
+    else if (reg === 'PINSEL') inp.value = '3<<' + pLo();
+    else if (reg !== 'READ') inp.value = '1<<' + st.pin;
+    pinR.parentElement.querySelector('output').textContent = `P${st.port}.${st.pin}`;
+    fixOp(); showLine(); syncVis(); paintRegs(); paintBeat();
+    rec.innerHTML = ''; const n = st.pin, k = pLo(), p = st.port;
+    const R = [['① GPIO job', 'PINSEL', '&=~', `3<<${k}`], ['② output', 'FIODIR', '|=', `1<<${n}`], ['HIGH', 'FIOSET', '=', `1<<${n}`], ['LOW', 'FIOCLR', '=', `1<<${n}`], ['input', 'FIODIR', '&=~', `1<<${n}`], ['read', 'READ', '=', ''], ['protect', 'FIOMASK', '|=', `1<<${n}`], ['unprotect', 'FIOMASK', '&=~', `1<<${n}`]];
+    Object.entries(FN[p + '.' + n] || {}).forEach(([f, fi]) => R.push([`★ ${fi[0]} job`, 'PINSEL', '|=', `${f}<<${k}`]));
+    R.forEach(([t, r, o, v]) => { const c = el('button', { class: 'chip', type: 'button' }, t); c.onclick = () => { reg = r; regG.set(r); fixOp(); op = o; opG.set(o); if (v) inp.value = v; showLine(); doRun(); }; rec.appendChild(c); });
+    sheetFor([], 0, 'Run a line to see its bit maths here.'); sheet.innerHTML = '';
+    say.innerHTML = `P${p}.${n}: PINSEL${pIdx()} bits ${k + 1}:${k} choose its job · bit ${n} of the port-${p} registers is its switch. Try the recipes ② then HIGH.`;
+  }
+  newPin();
+});
+
+/* =========================================================
+   NOTEBOOK 1 · part G — M1: the key-press conveyor (chapter 1)
+   ========================================================= */
+BUILD.push(function wM1() {
+  const w = MW('w-m1', 'key-press conveyor', 'hold a key in the matrix · the scan loop carries it to the display');
+  const KL = KEYLAB, held = new Set([6]);
+  let row = 0, colVar = 0, stn = 0, acc = 0, dur = 1.0, run = true, pull = true, diodes = true, bug = false;
+  let pass = null, last = null; // pass = this row's trip, last = last trip that found a key (the display keeps it)
+
+  /* ---------- controls ---------- */
+  const ctl = el('div', { class: 'm1ctl' }); w.appendChild(ctl);
+  const sc = el('div', { class: 'chips' }); ctl.appendChild(sc);
+  sc.appendChild(el('span', { class: 'cav p-soft' }, 'hold:'));
+  [['6', [6]], ['7 (column 3)', [7]], ['5 + 7 (same row)', [5, 7]], ['2 + 6 (same column)', [2, 6]], ['F', [15]], ['nothing', []]].forEach(([t, ks]) => { const c = el('button', { class: 'chip', type: 'button' }, t); c.onclick = () => { held.clear(); ks.forEach(k => held.add(k)); paintAll(); }; sc.appendChild(c); });
+  const fc = el('div', { class: 'chips' }); ctl.appendChild(fc);
+  fc.appendChild(el('span', { class: 'cav p-soft' }, 'faults:'));
+  const tgl = (t, f) => { const c = el('button', { class: 'chip', type: 'button', style: '--cc:var(--n-p)' }, t); c.onclick = () => { c.classList.toggle('on'); f(c.classList.contains('on')); paintAll(); }; fc.appendChild(c); return c; };
+  tgl('✗ remove pull-downs', v => pull = !v); tgl('✗ remove diodes', v => diodes = !v); tgl('✗ slide bug (1<<25 twice)', v => bug = v);
+  const rc = el('div', { class: 'row', style: 'gap:8px 14px' }); ctl.appendChild(rc);
+  ruler(rc, 'conveyor speed', 1, 10, 4, 1, v => ['', 'crawl', 'slow', 'slow', 'normal', 'normal', 'quick', 'quick', 'fast', 'fast', 'scan!'][v], v => { dur = 2.4 / Math.pow(1.45, v - 1); });
+  dur = 2.4 / Math.pow(1.45, 3);
+  const bP = el('button', { class: 'btn sm y', type: 'button' }, '❚❚ pause'), bS = el('button', { class: 'btn sm', type: 'button' }, 'next station ▸');
+  rc.append(bP, bS);
+  bP.onclick = () => { run = !run; bP.textContent = run ? '❚❚ pause' : '▶ run'; };
+  bS.onclick = () => { run = false; bP.textContent = '▶ run'; advance(); };
+
+  /* ---------- the stations ---------- */
+  const grid = el('div', { class: 'm1grid' }); w.appendChild(grid);
+  const belt = sv('svg', { class: 'm1belt', 'aria-hidden': 'true' }); grid.appendChild(belt);
+  const tok = el('div', { class: 'm1tok' }, 'row 0'); grid.appendChild(tok);
+  const ticker = el('div', { class: 'm1tick mbox' }); w.appendChild(ticker);
+  const STN = [];
+  function station(name, sticker, hue) {
+    const c = el('div', { class: 'm1st', style: `--sh:var(${hue})` });
+    c.innerHTML = `<div class="m1h"><i>${STN.length + 1}</i><span>${name}</span>${sticker ? `<svg class="m1stk"><use href="#${sticker}"/></svg>` : ''}</div>`;
+    const body = el('div', { class: 'm1b' }), val = el('div', { class: 'm1v' }); c.append(body, val); grid.appendChild(c);
+    const o = { c, body, val }; STN.push(o); return o;
+  }
+  // 1 row driver
+  const s0 = station('row driver', 'st-bolt', '--n-p');
+  const rLamps = [0, 1, 2, 3].map(r => { const d = el('div', { class: 'm1lamp' }, `<span class="led"></span><small>R${r + 1}<br>P2.${10 + r}</small>`); s0.body.appendChild(d); return d; });
+  s0.body.classList.add('m1lamps');
+  // 2 matrix (also the keypad you tap)
+  const s1 = station('keypad matrix', 'st-keypad', '--n-p');
+  const mx = sv('svg', { class: 'dg m1mx', viewBox: '0 0 176 150', role: 'group', 'aria-label': '4 by 4 key matrix — tap keys to hold them' }); s1.body.appendChild(mx);
+  const MX = c => 34 + c * 38, MY = r => 22 + r * 34, Rr = rng(7);
+  const rowW = [0, 1, 2, 3].map(r => sv('path', { d: Pen.line(4, MY(r), 172, MY(r), Rr, .5), class: 'mw' }, mx));
+  const colW = [0, 1, 2, 3].map(c => sv('path', { d: Pen.line(MX(c), 6, MX(c), 146, Rr, .5), class: 'mw' }, mx));
+  const kb = [];
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+    const k = r * 4 + c, g = sv('g', { class: 'm1k', tabindex: 0, role: 'button', 'aria-label': 'key ' + KL[k] }, mx);
+    sv('rect', { x: MX(c) - 14, y: MY(r) - 12, width: 28, height: 24, rx: 6 }, g); const t = sv('text', { x: MX(c), y: MY(r) + 5, 'text-anchor': 'middle' }, g); t.textContent = KL[k];
+    const tog = e => { e && e.preventDefault(); held.has(k) ? held.delete(k) : held.add(k); paintAll(); };
+    g.addEventListener('click', tog); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') tog(e); }); kb[k] = g;
+  }
+  const spark = sv('text', { class: 'm1spark', 'text-anchor': 'middle', style: 'display:none' }, mx); spark.textContent = '⚡';
+  // 3 column read
+  const s2 = station('column read', 'st-meter', '--n-b');
+  s2.body.classList.add('m1lamps');
+  const cLamps = [3, 2, 1, 0].map(c => { const d = el('div', { class: 'm1lamp' }, `<span class="led b"></span><small>C${c + 1}<br>P1.${23 + c}</small>`); s2.body.appendChild(d); return d; }).reverse();
+  const pdn = el('div', { class: 'm1note' }); s2.body.appendChild(pdn);
+  // 4 scan()
+  const s3 = station('scan()', 'st-q', '--n-b');
+  const ifs = [0, 1, 2, 3].map(c => { const d = el('div', { class: 'm1if' }); s3.body.appendChild(d); return d; });
+  // 5 keycode
+  const s4 = station('keycode', 'st-sparkle', '--n-y');
+  const kc = el('div', { class: 'm1big' }); s4.body.appendChild(kc);
+  // 6 SEVEN_CODE
+  const s5 = station('SEVEN_CODE[row][col]', 'st-gear', '--n-y');
+  const tb = el('div', { class: 'm1tab' }); s5.body.appendChild(tb);
+  const cells = SEVEN.map((v, i) => { const d = el('span', {}, `<b>${KL[i]}</b>${hx(v, 2).slice(2)}`); tb.appendChild(d); return d; });
+  // 7 shift
+  const s6 = station('temp2 << 4', 'st-wave', '--n-g');
+  const sh = el('div', { class: 'm1sh' }); s6.body.appendChild(sh);
+  // 8 FIOMASK
+  const s7 = station('FIOMASK stencil', 'st-cam', '--n-g');
+  const mk = el('div', { class: 'm1mk' }); s7.body.appendChild(mk);
+  // 9 decoder + digits
+  const s8 = station('decoder → Digit 1', 'st-check', '--n-l');
+  const dg = el('div', { class: 'm1dg' }); s8.body.appendChild(dg);
+  const digs = [3, 2, 1, 0].map(i => { const d = el('div', { class: 'col center' }); dg.appendChild(d); const s = SevenSeg(d); d.appendChild(el('small', {}, 'D' + (i + 1))); return { d, s, i }; });
+
+  /* ---------- physics + the C logic ---------- */
+  function readCols(r) {
+    const bits = [], why = []; let short = false, ghost = false;
+    for (let c = 0; c < 4; c++) {
+      const rs = [0, 1, 2, 3].filter(q => held.has(q * 4 + c));
+      if (rs.includes(r)) { if (!diodes && rs.length > 1) { short = true; bits[c] = Math.random() < .5 ? 1 : 0; why[c] = 'short'; } else { bits[c] = 1; why[c] = 'key'; } }
+      else if (!pull) { if (!diodes && rs.length) { bits[c] = 0; why[c] = 'low'; } else { bits[c] = Math.random() < .5 ? 1 : 0; why[c] = 'float'; if (bits[c]) ghost = true; } }
+      else { bits[c] = 0; why[c] = 'pd'; }
+    }
+    const t3 = bits.reduce((a, b, c) => a | (b << (23 + c)), 0) >>> 0;
+    return { bits, why, short, ghost, t3 };
+  }
+  function newPass() { pass = { row, temp: 1 << (10 + row), cols: null }; }
+  function enter(i) { // the token arrives at station i: work out its value
+    const p = pass;
+    if (i === 2) Object.assign(p, readCols(p.row));
+    if (i === 3) {
+      p.flag = p.t3 ? 1 : 0; p.hit = -1;
+      const tests = [1 << 23, 1 << 24, 1 << 25, bug ? 1 << 25 : 1 << 26];
+      if (p.flag) { for (let c = 0; c < 4; c++) if (p.t3 === tests[c] >>> 0) { p.hit = c; break; } if (p.hit >= 0) colVar = p.hit; }
+      p.col = colVar;
+    }
+    if (i === 4) { p.key = p.row * 4 + p.col; p.real = [...held].filter(k => (k >> 2) === p.row); }
+    if (i === 5) p.code = SEVEN[p.key];
+    if (i === 6) p.t2 = p.code << 4;
+    if (i === 8) last = Object.assign({}, p);
+  }
+  function advance() {
+    if (!pass) newPass();
+    if (stn === 3 && !pass.flag) { row = (row + 1) % 4; stn = 0; newPass(); enter(0); }
+    else if (stn === 8) { row = 0; stn = 0; newPass(); enter(0); }
+    else { stn++; enter(stn); }
+    acc = 0; paintAll(); moveTok();
+  }
+
+  /* ---------- painting ---------- */
+  const CODE = ['temp = 1<<(10+row);  LPC_GPIO2->FIOPIN = temp;', '/* hardware: a pressed key joins its row wire to its column wire */', 'temp3 = LPC_GPIO1->FIOPIN;  temp3 &= 0x07800000;', 'if(temp3 != 0) { flag = 1; if(temp3 == 1<<23) col=0; … }', '/* SEVEN_CODE[row][col] is entry 4*row + col of the 16 codes */', 'temp2 = SEVEN_CODE[row][col];', 'temp2 = temp2 << 4;', 'FIOMASK = 0xFFF87FFF; FIOPIN = FIRST_SEG; FIOMASK = 0xFFFFF00F; FIOPIN = temp2;', 'break;   // → while(1) scans again from row 0'];
+  function paintAll() {
+    if (!pass) { newPass(); enter(0); }
+    const p = pass, L = last, reached = i => i <= stn;
+    STN.forEach((s, i) => { s.c.classList.toggle('act', i === stn); s.c.classList.toggle('wait', i > stn && !(i >= 4 && L)); s.c.classList.remove('bad'); });
+    // 1 row driver
+    rLamps.forEach((d, r) => d.firstChild.classList.toggle('on', r === p.row));
+    s0.val.innerHTML = `row = ${p.row} → temp = 1&lt;&lt;${10 + p.row} = <b>${hx(p.temp, 4)}</b>`;
+    // 2 matrix
+    rowW.forEach((e, r) => e.setAttribute('class', 'mw ' + (r === p.row ? 'hi' : 'lo')));
+    const cr = reached(2) && p.bits ? p : null;
+    colW.forEach((e, c) => { const live = held.has(p.row * 4 + c); e.setAttribute('class', 'mw ' + (live ? 'hi' : !pull ? 'fl' : 'lo')); });
+    kb.forEach((g, k) => { g.classList.toggle('down', held.has(k)); g.classList.toggle('live', held.has(k) && (k >> 2) === p.row); });
+    const shortCol = [0, 1, 2, 3].find(c => !diodes && [0, 1, 2, 3].filter(q => held.has(q * 4 + c)).length > 1 && held.has(p.row * 4 + c));
+    spark.style.display = shortCol != null ? '' : 'none'; if (shortCol != null) { spark.setAttribute('x', MX(shortCol) + 14); spark.setAttribute('y', MY(p.row) + 22); }
+    const inRow = [...held].filter(k => (k >> 2) === p.row);
+    s1.val.innerHTML = inRow.length ? `R${p.row + 1} HIGH → key${inRow.length > 1 ? 's' : ''} <b>${inRow.map(k => KL[k]).join(' + ')}</b> pass${inRow.length > 1 ? '' : 'es'} it to C${inRow.map(k => (k & 3) + 1).join(' + C')}` : `R${p.row + 1} HIGH → no key held in this row`;
+    if (shortCol != null) { s1.c.classList.add('bad'); s1.val.innerHTML = `⚡ short! R${p.row + 1} (HIGH) meets a LOW row through C${shortCol + 1} — no diodes`; }
+    // 3 column read
+    cLamps.forEach((d, c) => { const v = cr ? cr.bits[c] : 0, why = cr ? cr.why[c] : 'pd'; d.firstChild.classList.toggle('on', !!v); d.classList.toggle('fl', why === 'float' || why === 'short'); });
+    pdn.innerHTML = pull ? '15 kΩ pull-downs hold idle columns at 0' : '<span class="p-red">no pull-downs: idle columns float → random bits!</span>';
+    s2.val.innerHTML = cr ? `temp3 = <b>${hex(cr.t3)}</b>` : 'temp3 = …';
+    if (cr && (cr.ghost || cr.short)) s2.c.classList.add('bad');
+    // 4 scan()
+    const tests = ['1<<23', '1<<24', '1<<25', bug ? '1<<25' : '1<<26'];
+    ifs.forEach((d, c) => { d.innerHTML = `== ${tests[c]} → col=${c}`; d.className = 'm1if' + (bug && c === 3 ? ' bug' : '') + (reached(3) && p.hit === c ? ' hit' : ''); });
+    s3.val.innerHTML = reached(3) && p.flag != null ? (p.flag ? `flag = 1 · col = <b>${p.col}</b>${p.hit < 0 ? ' <span class="p-red">(no test matched — old col kept!)</span>' : ''}` : 'temp3 = 0 → flag = 0 → <b>next row</b>') : 'flag = 0 …';
+    if (reached(3) && p.flag && p.hit < 0) s3.c.classList.add('bad');
+    // stations 5..9: this trip once the token got there, otherwise the last trip that found a key (the display keeps it)
+    const src = i => (stn >= i ? p : L), q4 = src(4), q5 = src(5), q6 = src(6), q7 = src(7), q8 = src(8);
+    kc.innerHTML = q4 && q4.key != null ? `4×${q4.row} + ${q4.col} = <b>${q4.key}</b><small>key "${KL[q4.key]}"</small>` : '—';
+    let m4 = 'row + column → which key', bad4 = false;
+    if (q4 && q4.key != null && q4.real) {
+      if (!q4.real.length) { m4 = '<span class="p-red">ghost key — nothing is held in this row!</span>'; bad4 = true; }
+      else if (q4.real.length > 1) { m4 = '<span class="p-red">two keys in one row → temp3 has 2 bits → wrong key</span>'; bad4 = true; }
+      else if (q4.real[0] !== q4.key) { m4 = `<span class="p-red">but you hold "${KL[q4.real[0]]}"!</span>`; bad4 = true; }
+    }
+    s4.val.innerHTML = q4 && q4.key != null ? m4 : 'waiting for a key';
+    if (q4 === p && bad4) s4.c.classList.add('bad');
+    cells.forEach((d, i) => d.classList.toggle('on', !!q5 && q5.key === i));
+    s5.val.innerHTML = q5 && q5.code != null ? `temp2 = <b>${hx(q5.code, 2)}</b> = ${bin(q5.code, 8)}` : 'temp2 = …';
+    sh.innerHTML = !q6 || q6.t2 == null ? '<span class="p-faint">—</span>' : `<div>${bitsHtml(q6.code, 12)}<span>${hx(q6.code, 3)}</span></div><div class="m1arrow">↙ every bit moves 4 places left</div><div>${bitsHtml(q6.t2, 12, true)}<span>${hx(q6.t2, 3)}</span></div>`;
+    s6.val.innerHTML = !q6 || q6.t2 == null ? 'temp2 &lt;&lt; 4 …' : 'bit 0 (segment a) now sits on <b>P0.4</b>';
+    mk.innerHTML = `<div class="${q7 ? 'ok' : ''}">① FIOMASK = 0xFFF87FFF<br>&nbsp;&nbsp;FIOPIN = FIRST_SEG → <b>P0.15–18 = 0000</b></div><div class="${q7 ? 'ok' : ''}">② FIOMASK = 0xFFFFF00F<br>&nbsp;&nbsp;FIOPIN = temp2 → <b>P0.4–11 = ${q7 ? bin(q7.code, 8) : '…'}</b></div>`;
+    s7.val.innerHTML = 'each write only changes the mask\'s 0-bits';
+    const show = q8 ? q8.code : null;
+    digs.forEach(d => { d.s.set(d.i === 0 && show != null ? show : 0); d.d.classList.toggle('sel', d.i === 0); });
+    s8.val.innerHTML = show != null ? `decoder input 0 → Y0 → <b>Digit 1</b> shows "${KL[q8.key]}"${q8 !== p ? ' (kept from the last key found)' : ''}` : 'display still blank';
+    ticker.innerHTML = `<span class="mlab">now: station ${stn + 1}</span> <span class="mcode">${hlC(CODE[stn])}</span>`;
+    tok.textContent = [`row ${p.row}`, inRow.length ? `R${p.row + 1}→C${(inRow[0] & 3) + 1}` : 'no key', cr ? hx(cr.t3 >>> 23, 1) + '<<23' : '…', p.flag ? `col ${p.col}` : 'flag 0', `key ${p.key ?? ''}`, hx(p.code ?? 0, 2), hx(p.t2 ?? 0, 3), 'mask ✓', `"${KL[p.key ?? 0]}"`][stn];
+  }
+  const bitsHtml = (v, n, sh) => { let s = ''; for (let b = n - 1; b >= 0; b--) s += `<i class="${(v >> b) & 1 ? 'one' : ''}${sh && b < 4 ? ' new' : ''}${b === 3 || b === 7 ? ' nb' : ''}">${(v >> b) & 1}</i>`; return s; };
+
+  /* ---------- the belt (arrows between stations) + token ---------- */
+  let cols = 3;
+  function layout() {
+    const W = grid.clientWidth; cols = W > 820 ? 3 : 2;
+    grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0,1fr))`;
+    STN.forEach((s, i) => { const r = Math.floor(i / cols); let c = i % cols; if (r % 2) c = cols - 1 - c; s.c.style.gridRow = r + 1; s.c.style.gridColumn = c + 1; s.c.dataset.dir = r % 2 ? 'l' : 'r'; });
+    requestAnimationFrame(drawBelt);
+  }
+  function box(i) { const c = STN[i].c; return { x: c.offsetLeft, y: c.offsetTop, w: c.offsetWidth, h: c.offsetHeight }; }
+  function drawBelt() {
+    const W = grid.clientWidth, H = grid.clientHeight; belt.setAttribute('viewBox', `0 0 ${W} ${H}`); belt.style.width = W + 'px'; belt.style.height = H + 'px';
+    const R = rng(3); let d = '';
+    for (let i = 0; i < 8; i++) {
+      const a = box(i), b = box(i + 1);
+      if (Math.abs(a.y - b.y) < 4) { const y = a.y + 22, x1 = a.x < b.x ? a.x + a.w : a.x, x2 = a.x < b.x ? b.x : b.x + b.w, dir = x2 > x1 ? 1 : -1; d += Pen.line(x1 + 2 * dir, y, x2 - 3 * dir, y, R, .5) + `M${x2 - 3 * dir - 7 * dir} ${y - 5}L${x2 - 3 * dir} ${y}L${x2 - 3 * dir - 7 * dir} ${y + 5}`; }
+      else { const x = a.x + a.w / 2, y1 = a.y + a.h, y2 = b.y; d += Pen.line(x, y1 + 2, x, y2 - 3, R, .5) + `M${x - 5} ${y2 - 10}L${x} ${y2 - 3}L${x + 5} ${y2 - 10}`; }
+    }
+    // the "no key → next row" loop from scan() back to the row driver
+    const a = box(3), b = box(0); let rp;
+    if (cols === 3) { const x0 = a.x + a.w - 30, y0 = a.y + a.h, yb = a.y + a.h + 14; rp = `M${x0} ${y0} V${yb} H${b.x - 12} V${b.y + 44} H${b.x - 2}`; }
+    else { const x0 = a.x - 2, y0 = a.y + a.h - 26; rp = `M${x0} ${y0} H${a.x - 14} V${b.y + 44} H${b.x - 2}`; }
+    const lab = cols === 3 ? `<text class="m1rett" x="${a.x + a.w - 34}" y="${a.y + a.h + 30}" text-anchor="end">flag = 0 → next row</text>` : `<text class="m1rett" x="${a.x - 18}" y="${(b.y + 44 + a.y + a.h - 26) / 2}" text-anchor="middle" transform="rotate(-90 ${a.x - 18} ${(b.y + 44 + a.y + a.h - 26) / 2})">flag = 0 → next row</text>`;
+    belt.innerHTML = `<path d="${d}" class="m1arr"/><path d="${rp}" class="m1ret"/>${lab}`;
+    moveTok(true);
+  }
+  function moveTok(now) { const b = box(stn); tok.style.transition = now ? 'none' : ''; tok.style.transitionDuration = now ? '' : Math.min(.45, dur * .7).toFixed(2) + 's'; grid.style.setProperty('--m1t', Math.min(.25, dur * .5).toFixed(2) + 's'); tok.style.left = (b.x + b.w - 8) + 'px'; tok.style.top = (b.y - 12) + 'px'; }
+  let lastW = 0; new ResizeObserver(() => { const W = grid.clientWidth; if (W && W !== lastW) { lastW = W; layout(); } }).observe(w);
+
+  const loop = Loop(w, dt => { if (!run) return; acc += dt; if (acc >= dur) advance(); });
+  newPass(); enter(0); layout(); paintAll(); loop.start();
+});
+
+/* =========================================================
+   NOTEBOOK 1 · part H — M2: the living timer board (chapter 2)
+   ========================================================= */
+BUILD.push(function wM2() {
+  const w = MW('w-m2', 'living timer board', 'set the registers · the block diagram runs · hover anything to see what controls it');
+  const F = 3e6; // PCLK
+  /* ---------- registers + hardware state ---------- */
+  const C = { tcr: 1, ctcr: 0, pr: 1, mr: [3, 6], mcr: 0x02, emr: 0x30, ccr: 0 };
+  const H = { pc: 0, tc: 0, rstPend: false, em: [0, 0], ir: 0, cr: [null, null], cap: [0, 0], t: 0, carry: 0 };
+  let spd = 1e-6 * 2.5, run = true, gen = 0, genPh = 0, cpuLoop = false, hist = [], flashM = [0, 0], ring = 0, capFlash = [0, 0];
+  const en = () => C.tcr & 1, rs = () => (C.tcr >> 1) & 1, mode = () => C.ctcr & 3, csel = () => (C.ctcr >> 2) & 3;
+  const mcrb = (k, b) => (C.mcr >> (k * 3 + b)) & 1, emc = k => (C.emr >> (4 + 2 * k)) & 3;
+
+  function incTC() {
+    if (H.rstPend) { H.tc = 0; H.rstPend = false; } else H.tc = (H.tc + 1) >>> 0;
+    for (let k = 0; k < 2; k++) if (H.tc === C.mr[k]) match(k);
+  }
+  function match(k) {
+    flashM[k] = 1; const a = emc(k);
+    if (a === 1) H.em[k] = 0; else if (a === 2) H.em[k] = 1; else if (a === 3) H.em[k] ^= 1;
+    C.emr = (C.emr & ~3) | H.em[0] | (H.em[1] << 1);
+    if (mcrb(k, 0)) { H.ir |= 1 << k; ring = 1; }
+    if (mcrb(k, 1)) H.rstPend = true;
+    if (mcrb(k, 2)) { C.tcr &= ~1; H.pc = 0; }
+    pulseMatch(k); rec();
+  }
+  function distToMatch() { let d = Infinity; for (let k = 0; k < 2; k++) if (C.mr[k] > H.tc) d = Math.min(d, C.mr[k] - H.tc); return d; }
+  function runTicks(n) { // timer mode: n PCLK ticks
+    while (n > 0 && en() && !rs()) {
+      const to = C.pr - H.pc + 1;
+      if (n < to) { H.pc += n; return; }
+      n -= to; H.pc = 0; incTC(); tickPulse();
+      const steps = Math.floor(n / (C.pr + 1));
+      if (steps > 1 && !H.rstPend) { const j = Math.min(steps - 1, distToMatch() - 1); if (j > 0) { H.tc = (H.tc + j) >>> 0; n -= j * (C.pr + 1); } }
+    }
+  }
+  function advance(dt) { // dt = simulated seconds
+    if (rs()) { H.pc = 0; H.tc = 0; H.rstPend = false; }
+    let left = dt;
+    while (left > 0) {
+      let step = left;
+      if (gen) { const half = .5 / gen, next = (Math.floor(genPh / half) + 1) * half; step = Math.min(left, next - genPh + 1e-12); }
+      if (mode() === 0) { const x = H.carry + step * F; const n = Math.floor(x); H.carry = x - n; runTicks(n); }
+      H.t += step; left -= step;
+      if (gen) { const half = .5 / gen, before = Math.floor(genPh / half); genPh += step; if (Math.floor(genPh / half) !== before) setCap(0, H.cap[0] ^ 1); }
+    }
+    if (cpuLoop && !en() && H.em[0]) { // the CPU's polling loop saw EM0 = 1 → it restarts the delay
+      C.tcr = 2; H.pc = 0; H.tc = 0; H.rstPend = false; C.tcr = 1; H.em[0] = 0; C.emr &= ~1; cpuKick = 1; paintPanel();
+    }
+  }
+  let cpuKick = 0;
+  function setCap(i, lv) {
+    if (H.cap[i] === lv) return; H.cap[i] = lv; capFlash[i] = 1;
+    const rise = lv === 1, m = mode();
+    if (m && csel() === i && en() && !rs() && (m === 3 || (m === 1 && rise) || (m === 2 && !rise))) { incTC(); tickPulse(true); }
+    if ((C.ccr >> (3 * i + (rise ? 0 : 1))) & 1) { H.cr[i] = H.tc; capPulse(i); if ((C.ccr >> (3 * i + 2)) & 1) { H.ir |= 1 << (4 + i); ring = 1; } }
+    rec();
+  }
+  function rec() { hist.push({ t: H.t, tc: H.tc, e0: H.em[0], e1: H.em[1], c0: H.cap[0], c1: H.cap[1] }); }
+
+  /* ---------- layout ---------- */
+  const scn = el('div', { class: 'chips mb' }); w.appendChild(scn);
+  const wrap = el('div', { class: 'm2wrap' }); w.appendChild(wrap);
+  const panel = el('div', { class: 'm2panel' }); wrap.appendChild(panel);
+  const right = el('div', { class: 'm2right' }); wrap.appendChild(right);
+  const S = sv('svg', { class: 'dg m2d', viewBox: '0 0 440 530', role: 'img', 'aria-label': 'live timer block diagram' }); right.appendChild(S);
+  const tctl = el('div', { class: 'row m2time' }); right.appendChild(tctl);
+  const scope = sv('svg', { class: 'dg m2scope', viewBox: '0 0 640 172' }); w.appendChild(scope);
+  const bottom = el('div', { class: 'm2bottom' }); w.appendChild(bottom);
+  const formula = el('div', { class: 'm2f mbox' }); bottom.appendChild(formula);
+  const codeBox = el('div', { class: 'm2code' }); bottom.appendChild(codeBox);
+
+  /* ---------- the panel ---------- */
+  const sec = (blk, title, sub) => { const d = el('div', { class: 'm2sec', 'data-blk': blk }); d.innerHTML = `<div class="m2st"><b>${title}</b><small>${sub}</small></div>`; panel.appendChild(d); return d; };
+  const UI = {};
+  const sT = sec('tcr', 'TCR', 'start / reset');
+  UI.tcr = chipGroup(sT, [[2, '2 · hold at 0'], [1, '1 · count'], [0, '0 · frozen']], C.tcr, v => { C.tcr = +v; if (C.tcr === 2) { H.pc = 0; H.tc = 0; H.rstPend = false; } changed(); });
+  const sC = sec('ctcr', 'CTCR', 'what moves TC');
+  UI.mode = chipGroup(sC, [[0, '00 PCLK (timer)'], [1, '01 CAP ↑'], [2, '10 CAP ↓'], [3, '11 CAP ↕']], 0, v => { C.ctcr = (C.ctcr & ~3) | +v; changed(); });
+  UI.sel = chipGroup(sC, [[0, 'CAPn.0'], [1, 'CAPn.1']], 0, v => { C.ctcr = (C.ctcr & 3) | (+v << 2); changed(); }, 'm2small');
+  const num = (blk, lab, get, setv, max) => { const r = el('div', { class: 'm2num' }); const i = el('input', { class: 'inp', type: 'number', min: 0, max, 'aria-label': lab }); r.append(el('span', { class: 'gae' }, lab), i); i.oninput = () => { const v = clamp(Math.floor(+i.value || 0), 0, max); setv(v); changed(true); }; blk.appendChild(r); return { i, upd() { if (document.activeElement !== i) i.value = get(); } }; };
+  const sP = sec('pr', 'PR', 'TC + 1 every PR+1 ticks');
+  UI.pr = num(sP, 'PR =', () => C.pr, v => { C.pr = v; H.pc = Math.min(H.pc, v); }, 4294967295);
+  const sM = sec('mr', 'MR0 · MR1', 'targets compared with TC');
+  UI.mr0 = num(sM, 'MR0 =', () => C.mr[0], v => C.mr[0] = v, 4294967295); UI.mr1 = num(sM, 'MR1 =', () => C.mr[1], v => C.mr[1] = v, 4294967295);
+  const sMC = sec('mcr', 'MCR', 'on a match: Interrupt · Reset · Stop');
+  const mg = el('div', { class: 'm2grid' }); sMC.appendChild(mg); UI.mcr = [];
+  ['MR0', 'MR1'].forEach((n, k) => { mg.appendChild(el('span', { class: 'gae' }, n)); ['I', 'R', 'S'].forEach((t, b) => { const c = el('button', { class: 'gcell m2g', type: 'button', 'aria-label': `${n} ${t}` }, `<span>${t}</span><small>bit ${k * 3 + b}</small>`); c.onclick = () => { C.mcr ^= 1 << (k * 3 + b); changed(); }; mg.appendChild(c); UI.mcr[k * 3 + b] = c; }); });
+  const sE = sec('emr', 'EMR', 'what EM0 / EM1 do on a match');
+  UI.emc = [0, 1].map(k => { const r = el('div', { class: 'row m2emr' }); sE.appendChild(r); r.appendChild(el('span', { class: 'gae' }, `EMC${k}`)); return chipGroup(r, [[0, 'nothing'], [1, 'clear'], [2, 'set'], [3, 'toggle']], emc(k), v => { C.emr = (C.emr & ~(3 << (4 + 2 * k))) | (+v << (4 + 2 * k)); changed(); }, 'm2small'); });
+  const sCC = sec('ccr', 'CCR', 'capture TC on a CAP edge');
+  const cg = el('div', { class: 'm2grid' }); sCC.appendChild(cg); UI.ccr = [];
+  ['CAP0', 'CAP1'].forEach((n, k) => { cg.appendChild(el('span', { class: 'gae' }, n)); ['RE ↑', 'FE ↓', 'I'].forEach((t, b) => { const c = el('button', { class: 'gcell m2g', type: 'button', 'aria-label': `${n} ${t}` }, `<span>${t}</span><small>bit ${k * 3 + b}</small>`); c.onclick = () => { C.ccr ^= 1 << (k * 3 + b); changed(); }; cg.appendChild(c); UI.ccr[k * 3 + b] = c; }); });
+  const sX = sec('cap', 'outside world', 'pins + the CPU');
+  const gx = el('div', { class: 'chips' }); sX.appendChild(gx);
+  UI.gen = chipGroup(gx, [[0, 'generator off'], [2, '2 Hz on CAPn.0'], [4, '4 Hz on CAPn.0']], 0, v => { gen = +v; }, 'm2small');
+  const px = el('div', { class: 'row', style: 'gap:6px' }); sX.appendChild(px);
+  [0, 1].forEach(i => { const b = el('button', { class: 'btn sm', type: 'button' }, `pulse CAPn.${i}`); b.onclick = () => { setCap(i, 1); setTimeout(() => setCap(i, 0), 260); }; px.appendChild(b); });
+  const irb = el('button', { class: 'btn sm g', type: 'button' }, 'IR = 0x33 (clear flags)'); irb.onclick = () => { H.ir = 0; paintAll(); }; px.appendChild(irb);
+  UI.cpu = el('button', { class: 'chip', type: 'button', style: '--cc:var(--n-o)' }, 'CPU loop: restart when EM0 = 1 (P1 / P6)'); sX.appendChild(UI.cpu);
+  UI.cpu.onclick = () => { cpuLoop = !cpuLoop; UI.cpu.classList.toggle('on', cpuLoop); };
+
+  /* ---------- time controls ---------- */
+  const fmtS = s => s >= 1 ? (+s.toPrecision(4)) + ' s' : s >= 1e-3 ? (+(s * 1e3).toPrecision(4)) + ' ms' : (+(s * 1e6).toPrecision(4)) + ' µs';
+  const spR = ruler(tctl, 'time lens', 0, 60, 4, 1, v => { const tps = 10 ** (-6 + v / 10) * F; return tps < 1e3 ? (+tps.toPrecision(2)) + ' PCLK ticks / s' : tps >= F * .99 ? 'real time (3 MHz)' : '×' + (+(10 ** (-6 + v / 10)).toPrecision(2)) + ' real time'; }, v => { spd = 10 ** (-6 + v / 10); });
+  const bRun = el('button', { class: 'btn sm y', type: 'button' }, '❚❚ pause'), b1 = el('button', { class: 'btn sm', type: 'button' }, '+1 PCLK');
+  tctl.append(bRun, b1);
+  bRun.onclick = () => { run = !run; bRun.textContent = run ? '❚❚ pause' : '▶ run'; };
+  b1.onclick = () => { run = false; bRun.textContent = '▶ run'; if (mode() === 0) { if (rs()) { H.pc = 0; H.tc = 0; } runTicks(1); H.t += 1 / F; } rec(); paintAll(); };
+  const setSpeed = v => { spR.value = v; spR.dispatchEvent(new Event('input')); };
+
+  /* ---------- the diagram ---------- */
+  const R = rng(22), g = sv('g', {}, S);
+  const B = (blk, x, y, ww, hh, fill) => { const e = sv('g', { class: 'm2blk', 'data-blk': blk }, g); sv('path', { d: Pen.rect(x, y, ww, hh, R, .9), class: 'bx' }, e); sv('rect', { x, y, width: ww, height: hh, rx: 6, class: 'bf', style: `fill:${fill}` }, e).parentNode.insertBefore(e.lastChild, e.firstChild); return e; };
+  const TX = (x, y, t, cls = '', a = 'middle', par = g) => { const e = sv('text', { x, y, 'text-anchor': a, class: cls }, par); e.textContent = t; return e; };
+  const WR = (id, d, mk = true) => { const p = sv('path', { d, class: 'm2w', 'data-w': id, 'marker-end': mk ? 'url(#ah)' : '' }, g); return p; };
+  // wires first (under the blocks)
+  const W = {
+    pclk: WR('pclk', 'M50 38 H150'), cap0: WR('cap0', 'M330 38 H272'), cap1: WR('cap1', 'M400 52 V64 H262'),
+    pcin: WR('pcin', 'M180 70 V88 H105 V102'), byp: WR('byp', 'M240 70 V108'), tci: WR('tci', 'M190 128 H220'), en: WR('en', 'M300 128 H266'),
+    ce: WR('ce', 'M242 146 V174'), bus: WR('bus', 'M170 232 V250 M124 250 H316 M124 250 V264 M316 250 V264', false),
+    mr0: WR('mr0', 'M92 280 H108'), mr1: WR('mr1', 'M348 280 H332'), m0: WR('m0', 'M124 296 V338'), m1: WR('m1', 'M316 296 V338'),
+    rst: WR('rst', 'M40 372 H20 V204 H58'), stop: WR('stop', 'M400 372 H426 V160 H332 V154'),
+    mat0: WR('mat0', 'M90 412 V448'), mat1: WR('mat1', 'M200 412 V448'), irq: WR('irq', 'M326 412 V440'),
+    cc0: WR('cc0', 'M340 52 V80 H404 V102'), cc1: WR('cc1', 'M400 66 V80'), tcv: WR('tcv', 'M280 204 H306 V186 H316 M306 204 V222 H316', false), load: WR('load', 'M404 154 V166', true)
+  };
+  // blocks
+  const bPCLK = sv('g', { 'data-blk': 'pclk', class: 'm2blk' }, g); const lamp = sv('circle', { cx: 34, cy: 38, r: 15, class: 'm2lamp' }, bPCLK); TX(34, 70, 'PCLK', 'lb', 'middle', bPCLK); TX(34, 86, '3 MHz', 'sm', 'middle', bPCLK);
+  const bMux = sv('g', { 'data-blk': 'ctcr', class: 'm2blk' }, g); sv('path', { d: 'M150 20 H272 L254 70 H168 Z', class: 'bx', style: 'fill:var(--n-l)' }, bMux); TX(211, 38, 'CTCR mux', 'lb', 'middle', bMux); const tMux = TX(211, 58, '', 'sm', 'middle', bMux);
+  const capG = [0, 1].map(i => { const e = sv('g', { 'data-blk': 'cap', class: 'm2blk m2pin', tabindex: 0, role: 'button', 'aria-label': `pulse CAPn.${i}` }, g); const x = i ? 400 : 340; sv('rect', { x: x - 12, y: 28, width: 24, height: 20, rx: 4, class: 'pad' }, e); TX(x, 20, `CAPn.${i}`, 'sm', 'middle', e); const pulse = ev => { ev && ev.preventDefault(); setCap(i, 1); setTimeout(() => setCap(i, 0), 260); }; e.addEventListener('click', pulse); e.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') pulse(ev); }); return e; });
+  B('pr', 20, 104, 170, 48, 'var(--n-g)'); const tPC = TX(105, 122, '', 'mo'); const pcBar = sv('rect', { x: 30, y: 131, width: 0, height: 11, rx: 3, style: 'fill:var(--green)' }, g); sv('rect', { x: 30, y: 131, width: 150, height: 11, rx: 3, style: 'fill:none;stroke:var(--ink3)' }, g);
+  TX(196, 122, 'TCI', 'sm', 'start');
+  const bAnd = sv('g', { 'data-blk': 'tcr', class: 'm2blk' }, g); sv('path', { d: 'M222 110 H262 V128 A20 18 0 0 1 242 146 A20 18 0 0 1 222 128 Z', class: 'bx', style: 'fill:var(--paper)' }, bAnd); TX(242, 130, '&', 'lb', 'middle', bAnd);
+  B('tcr', 300, 104, 64, 48, 'var(--n-p)'); TX(332, 120, 'TCR', 'lb'); const lEn = sv('circle', { cx: 318, cy: 138, r: 6, class: 'm2led g' }, g), lRs = sv('circle', { cx: 346, cy: 138, r: 6, class: 'm2led r' }, g); TX(318, 99, 'en', 'xs'); TX(346, 99, 'rst', 'xs');
+  B('ccr', 374, 104, 60, 48, 'var(--n-o)'); TX(404, 122, 'CCR', 'lb'); const tCCR = TX(404, 142, '', 'xs');
+  B('tc', 58, 176, 222, 56, 'var(--n-b)'); TX(72, 196, 'TC', 'lb', 'start'); const tTC = TX(268, 216, '0', 'odo', 'end');
+  const crT = [0, 1].map(i => { B('ccr', 316, 170 + i * 36, 104, 30, 'var(--card)'); return TX(368, 190 + i * 36, `CR${i} = —`, 'mo'); });
+  TX(420, 326, 'stop', 'xs', 'end'); TX(22, 196, 'reset', 'xs', 'start');
+  const cmp = [124, 316].map((x, k) => { const e = sv('g', { 'data-blk': 'mr', class: 'm2blk' }, g); const c = sv('circle', { cx: x, cy: 280, r: 15, class: 'bx', style: 'fill:var(--paper)' }, e); TX(x, 286, '=', 'lb', 'middle', e); return c; });
+  const mrT = [0, 1].map(k => { B('mr', k ? 348 : 6, 266, 86, 28, 'var(--n-y)'); return TX(k ? 391 : 49, 285, '', 'mo'); });
+  B('mcr', 40, 338, 360, 74, 'var(--n-l)'); TX(220, 356, 'match control  ·  MCR + EMR', 'lb');
+  const ctlT = [0, 1].map(k => TX(220, 380 + k * 22, '', 'mo'));
+  const matL = [0, 1].map(k => { const x = k ? 200 : 90, e = sv('g', { 'data-blk': 'emr', class: 'm2blk' }, g); const c = sv('circle', { cx: x, cy: 464, r: 15, class: 'm2out' }, e); TX(x, 498, `MAT0.${k}`, 'lb', 'middle', e); TX(x, 514, `= EM${k}`, 'xs', 'middle', e); return c; });
+  const bell = sv('g', { 'data-blk': 'mcr', class: 'm2blk' }, g); const bellU = sv('use', { href: '#st-bell', x: 306, y: 440, width: 40, height: 40 }, bell); const tIR = TX(326, 498, 'IR = 0x00', 'mo', 'middle', bell); TX(326, 514, 'interrupt → NVIC (nb ②)', 'xs', 'middle', bell);
+  const tCpu = TX(14, 527, '', 'sm cpu', 'start');
+  const walker = Walker(S);
+  function tickPulse(counter) { if (spd * F > 40) return; if (counter) walker.go([[mode() && csel() ? 400 : 340, 48], [240, 70], [242, 146], [242, 174]], { speed: 400 }); else if (H.pc === 0) walker.go([[190, 128], [222, 128], [242, 146], [242, 174]], { speed: 300, cls: 'g' }); }
+  function pulseMatch(k) { if (spd * F > 3e5 && Math.random() > .3) return; const x = k ? 316 : 124; walker.go([[x, 296], [x, 338]], { speed: 220, cls: 'r' }); }
+  function capPulse(i) { walker.go([[i ? 400 : 340, 48], [i ? 400 : 340, 80], [404, 80], [404, 104]], { speed: 300, cls: 'b' }); }
+
+  /* ---------- painting ---------- */
+  function paintPanel() {
+    UI.tcr.set(C.tcr); UI.mode.set(mode()); UI.sel.set(csel());
+    UI.pr.upd(); UI.mr0.upd(); UI.mr1.upd();
+    UI.mcr.forEach((c, b) => c.classList.toggle('on', !!((C.mcr >> b) & 1))); UI.ccr.forEach((c, b) => c.classList.toggle('on', !!((C.ccr >> b) & 1)));
+    UI.emc.forEach((u, k) => u.set(emc(k)));
+    const L = (blk, t) => `<span data-blk="${blk}">${hlC(t)}</span>`;
+    codeBox.innerHTML = `<div class="mlab">the setup this board is running</div><div class="mcode">${[
+      L('tcr', 'LPC_TIM0->TCR  = 2;       // reset'), L('ctcr', `LPC_TIM0->CTCR = ${hx(C.ctcr)};`), L('pr', `LPC_TIM0->PR   = ${C.pr};`), L('mr', `LPC_TIM0->MR0  = ${C.mr[0]};`), L('mr', `LPC_TIM0->MR1  = ${C.mr[1]};`),
+      L('mcr', `LPC_TIM0->MCR  = ${hx(C.mcr)};`), L('emr', `LPC_TIM0->EMR  = ${hx(C.emr & 0xFF0)};`), L('ccr', `LPC_TIM0->CCR  = ${hx(C.ccr)};`), L('tcr', `LPC_TIM0->TCR  = ${C.tcr};       // ${C.tcr === 1 ? 'go!' : C.tcr === 2 ? 'held at 0' : 'frozen'}`)].join('\n')}</div>`;
+    paintFormula();
+  }
+  function paintFormula() {
+    const st = (C.pr + 1) / F, m0 = C.mr[0];
+    formula.innerHTML = mode() ? `<b>counter mode</b>: TC + 1 on every ${['', 'rising', 'falling', 'rising and falling'][mode()]} edge of <b>CAPn.${csel()}</b> — PR is not used.${C.mr[1] && mcrb(1, 1) ? ` TC counts 0 … ${C.mr[1]} → ${C.mr[1] + 1} edges per round.` : ''}`
+      : `1 TC step = (PR+1) / 3 MHz = <b>${fmtS(st)}</b> · TC reaches MR0 after (PR+1)×MR0 = <b>${fmtS(st * m0)}</b>${mcrb(0, 1) ? ` · with reset, 1 cycle = (PR+1)(MR0+1) / 3 MHz = <b>${fmtS(st * (m0 + 1))}</b>${emc(0) === 3 ? ` → MAT0.0 square wave, period <b>${fmtS(2 * st * (m0 + 1))}</b>` : ''}` : mcrb(0, 2) ? ' · then it <b>stops</b>' : ''}`;
+  }
+  function wireOn(id, on, cls = 'on') { W[id].setAttribute('class', 'm2w' + (on ? ' ' + cls : ' off')); }
+  function paintAll() {
+    const m = mode(), tm = m === 0, go = en() && !rs(), fast = spd * F > 40;
+    lamp.classList.toggle('on', tm && go && (fast || H.pc === 0));
+    tMux.textContent = tm ? 'timer mode' : `count CAPn.${csel()} ${['', '↑', '↓', '↕'][m]}`;
+    wireOn('pclk', tm, fast && go ? 'on flow' : 'on'); wireOn('pcin', tm && go, fast ? 'on flow' : 'on'); wireOn('tci', tm && go); wireOn('byp', !tm && go);
+    wireOn('cap0', !tm && csel() === 0); wireOn('cap1', !tm && csel() === 1); wireOn('en', en()); wireOn('ce', go, fast && tm ? 'on flow' : 'on');
+    wireOn('bus', true); wireOn('mr0', true); wireOn('mr1', true); wireOn('m0', !!(C.mcr & 7) || emc(0)); wireOn('m1', !!(C.mcr & 0x38) || emc(1));
+    wireOn('rst', mcrb(0, 1) || mcrb(1, 1)); wireOn('stop', mcrb(0, 2) || mcrb(1, 2)); wireOn('mat0', emc(0) > 0); wireOn('mat1', emc(1) > 0); wireOn('irq', mcrb(0, 0) || mcrb(1, 0) || (C.ccr & 0x24));
+    wireOn('cc0', !!(C.ccr & 3)); wireOn('cc1', !!(C.ccr & 0x18)); wireOn('tcv', !!(C.ccr & 0x1B)); wireOn('load', !!(C.ccr & 0x1B));
+    tPC.textContent = tm ? `PC ${fmtN(H.pc)} / PR ${fmtN(C.pr)}` : 'PC not used';
+    pcBar.setAttribute('width', tm ? 150 * (H.pc + (fast && go ? .5 : 0)) / (C.pr + 1) : 0);
+    lEn.classList.toggle('on', !!en()); lRs.classList.toggle('on', !!rs());
+    tCCR.textContent = C.ccr ? hx(C.ccr) : 'off';
+    tTC.textContent = fmtN(H.tc);
+    crT.forEach((t, i) => t.textContent = `CR${i} = ${H.cr[i] == null ? '—' : fmtN(H.cr[i])}`);
+    cmp.forEach((c, k) => c.classList.toggle('hit', flashM[k] > 0));
+    mrT.forEach((t, k) => t.textContent = `MR${k} ${fmtN(C.mr[k])}`);
+    ctlT.forEach((t, k) => { const f = ['I', 'R', 'S'].map((x, b) => mcrb(k, b) ? x : '·').join(' '); t.textContent = `MR${k}:  ${f}   ·   EM${k} → ${['nothing', 'clear', 'set', 'toggle'][emc(k)]}`; });
+    matL.forEach((c, k) => c.classList.toggle('on', !!H.em[k]));
+    bellU.classList.toggle('ringing', ring > 0); tIR.textContent = `IR = ${hx(H.ir)}`;
+    capG.forEach((e, i) => e.classList.toggle('hi', !!H.cap[i]));
+    tCpu.textContent = cpuLoop ? (cpuKick > 0 ? 'CPU: TCR=2, EMR=0x20, TCR=1' : 'CPU: polling EMR & 1…') : '';
+    paintScope();
+  }
+  function paintScope() {
+    const WD = +scope.getAttribute('viewBox').split(' ')[2], X0 = 62, Wd = WD - X0 - 8, win = 6 * spd, t1 = H.t, t0 = t1 - win;
+    while (hist.length > 2 && hist[1].t < t0) hist.shift();
+    const top = Math.max(C.mr[0], C.mr[1], 1) * 1.12, X = t => X0 + (t - t0) / win * Wd, Y = v => 62 - Math.min(1, v / top) * 54;
+    let o = `<text x="4" y="40" class="lb">TC</text><text x="4" y="86" class="sm">MAT0.0</text><text x="4" y="108" class="sm">MAT0.1</text><text x="4" y="130" class="sm">CAPn.0</text><text x="4" y="146" class="sm">CAPn.1</text>`;
+    [0, 1].forEach(k => { const y = Y(C.mr[k]); o += `<path d="M${X0} ${y} H${X0 + Wd}" class="mrl${k}"/><text x="${X0 - 4}" y="${y + 4}" text-anchor="end" class="xs mrt${k}">MR${k}</text>`; });
+    const pts = hist.filter(h => h.t >= t0).concat([{ t: t1, tc: H.tc, e0: H.em[0], e1: H.em[1], c0: H.cap[0], c1: H.cap[1] }]);
+    if (pts.length > 1) {
+      let d = '', p0 = null; pts.forEach(h => { const x = X(Math.max(h.t, t0)).toFixed(1), y = Y(h.tc).toFixed(1); d += (p0 ? (h.tc < p0.tc ? `H${x}V${y}` : `L${x} ${y}`) : `M${x} ${y}`); p0 = h; });
+      o += `<path d="${d}" class="tcl"/>`;
+      [['e0', 92, 'em'], ['e1', 114, 'em'], ['c0', 136, 'cp'], ['c1', 152, 'cp']].forEach(([k, y, c]) => { const dd = digi(pts.map(h => [Math.max(h.t, t0), h[k]]), X, y - 12, y); o += `<path d="${dd}" class="${c}"/>`; });
+    }
+    o += `<text x="${X0 + Wd}" y="168" text-anchor="end" class="xs">← the last ${fmtS(win)} of simulated time · now →|</text>`;
+    scope.innerHTML = o;
+  }
+  function changed(soft) { paintPanel(); paintAll(); }
+
+  /* ---------- hover links: panel ↔ diagram ↔ code ---------- */
+  w.addEventListener('pointerover', e => { const t = e.target.closest('[data-blk]'); $$('.lk', w).forEach(x => x.classList.remove('lk')); if (t) $$(`[data-blk="${t.dataset.blk}"]`, w).forEach(x => x.classList.add('lk')); });
+  w.addEventListener('pointerleave', () => $$('.lk', w).forEach(x => x.classList.remove('lk')));
+
+  /* ---------- scenarios ---------- */
+  const SC = [
+    ['engine · PR 1, MR0 3, reset + toggle', { tcr: 1, ctcr: 0, pr: 1, mr: [3, 6], mcr: 0x02, emr: 0x30, ccr: 0 }, 4, 0, false],
+    ['P1 · 1 s delay (stop, set EM0)', { tcr: 1, ctcr: 0, pr: 1000, mr: [3000, 0], mcr: 0x04, emr: 0x20, ccr: 0 }, 58, 0, false],
+    ['P1 loop · CPU restarts it', { tcr: 1, ctcr: 0, pr: 1000, mr: [3000, 0], mcr: 0x04, emr: 0x20, ccr: 0 }, 58, 0, true],
+    ['P3 · square wave on MAT0.0', { tcr: 1, ctcr: 0, pr: 0, mr: [3000000, 0], mcr: 0x02, emr: 0x30, ccr: 0 }, 58, 0, false],
+    ['P4 · counter ÷ 8 (slide: Timer1)', { tcr: 1, ctcr: 0x02, pr: 0, mr: [0, 3], mcr: 0x10, emr: 0xC0, ccr: 0 }, 60, 4, false],
+    ['P6 · capture (tap CAP pins)', { tcr: 1, ctcr: 0, pr: 3000, mr: [1000, 0], mcr: 0x04, emr: 0x20, ccr: 0x09 }, 60, 0, true]
+  ];
+  SC.forEach(([t, c, sp, g2, cpu]) => { const b = el('button', { class: 'chip', type: 'button', style: '--cc:var(--n-b)' }, t); b.onclick = () => { $$('.chip', scn).forEach(x => x.classList.remove('on')); b.classList.add('on'); load(c, sp, g2, cpu); }; scn.appendChild(b); });
+  scn.insertAdjacentHTML('afterbegin', '<span class="cav p-soft">load a setup:</span>');
+  function load(c, sp, g2, cpu) {
+    Object.assign(C, JSON.parse(JSON.stringify(c))); Object.assign(H, { pc: 0, tc: 0, rstPend: false, em: [0, 0], ir: 0, cr: [null, null], cap: [0, 0], carry: 0 }); C.emr &= ~3;
+    hist = []; gen = g2; genPh = 0; UI.gen.set(g2); cpuLoop = cpu; UI.cpu.classList.toggle('on', cpu); walker.clear(); setSpeed(sp); rec(); changed();
+  }
+  widthWatch(w, 640, n => { scope.setAttribute('viewBox', `0 0 ${n ? 380 : 640} 172`); paintScope(); });
+
+  const loop = Loop(w, dt => {
+    flashM = flashM.map(f => Math.max(0, f - dt * 2.5)); ring = Math.max(0, ring - dt * 1.2); cpuKick = Math.max(0, cpuKick - dt);
+    if (run) { const before = H.tc; advance(dt * spd); if (H.tc !== before || dt) rec(); }
+    walker.step(dt); paintAll();
+    if (UI.pr.i !== document.activeElement) UI.pr.upd();
+  });
+  $$('.chip', scn)[0].classList.add('on'); load(SC[0][1], SC[0][2], 0, false); loop.start();
+});
+
+/* =========================================================
+   NOTEBOOK 1 · part I — M3: the six-program time machine (chapter 3)
+   ========================================================= */
+BUILD.push(function wM3() {
+  const w = MW('w-m3', 'six-program time machine', 'pick a program · turn its knob · drag the playhead (or tap a code line)');
+  const LN = 1e-6, WR = .3e-6; // real duration of one setup line / one pin write (a few CPU cycles)
+  function Seq() { const q = { segs: [], t: 0 }; q.add = (k, ph, l, dur) => { q.segs.push({ t0: q.t, t1: q.t + dur, k, ph, l: [].concat(l) }); q.t += dur; return q.t - dur; }; return q; }
+  const tPoll = (pr, mr) => (pr + 1) * mr / 3e6;
+  /* ----- the six programs: code (with the knob value) + a timeline model ----- */
+  const PROGS = [
+    { id: 'P1', name: 'blink 1 s', st: 'st-bulb', file: 'blink_1s.c', knob: ['MR0 (PR = 1000)', 1000, 6000, 500, 3000, v => v], wait: 'poll',
+      code: v => P1_CODE.replace('MR0 = 3000;         //for 1 second', `MR0 = ${v};${' '.repeat(Math.max(1, 9 - String(v).length))}//for ${(+(1001 * v / 3e6).toFixed(3))} second`),
+      model(v) {
+        const q = Seq(), half = tPoll(1000, v), pin = [[0, 0]], em = [[0, 0]], tc = [[0, 0]], marks = [];
+        q.add('setup', -1, 'FIODIR=0x00000004', LN);
+        for (let k = 0; k < 4; k++) {
+          const t = q.add('write', -1, ['while(1)', k % 2 ? 'FIOCLR=0x4' : 'FIOSET=0x4'], WR); pin.push([t, k % 2 ? 0 : 1]);
+          const nth = k % 2 + 1;
+          const t0 = q.add('setup', 0, [['delay();', nth], 'TCR = 0x00000002'], LN); tc.push([t0, tc[tc.length - 1][1]], [t0, 0]);
+          const t1 = q.add('setup', 1, [['delay();', nth], 'EMR = 0X20', 'PR = 1000', 'MR0 = ', 'MCR = 0x00000004'], 4 * LN); em.push([t1, 0]);
+          q.add('setup', 2, [['delay();', nth], 'TCR = 0x00000001'], LN);
+          const tp = q.add('poll', 3, [['delay();', nth], 'while ( !(LPC_TIM0->EMR & 0x01))'], half); tc.push([tp, 0], [tp + half, v]); em.push([tp + half, 1]); marks.push([tp + half, 'tc', '★']);
+        }
+        return { T: q.t, segs: q.segs, tc: { lab: 'TC', pts: tc, mr: [[0, v]], mrLab: 'MR0', top: v }, lanes: [{ lab: 'P0.2 LED', pts: pin, c: 'out' }, { lab: 'EM0', pts: em, c: 'em' }], marks };
+      } },
+    { id: 'P2', name: '75 % duty', st: 'st-wave', file: 'duty75.c', knob: ['duty cycle', 10, 90, 5, 75, v => v + ' %'], wait: 'poll',
+      code: v => { const hi = 20 * v, lo = 2000 - hi; return P2_CODE.replace('MR0 = 1500; //For 1.5 seconds', `MR0 = ${hi}; //For ${hi / 1000} seconds`).replace('MR0 = 500;  //For 0.5 seconds', `MR0 = ${lo};  //For ${lo / 1000} seconds`); },
+      model(v) {
+        const q = Seq(), hi = 20 * v, lo = 2000 - hi, pin = [[0, 0]], em = [[0, 0]], tc = [[0, 0]], mr = [[0, hi]], marks = [];
+        q.add('setup', -1, 'FIODIR=0x00000004', LN);
+        for (let k = 0; k < 4; k++) {
+          const m = k % 2 ? lo : hi, nth = k % 2 + 1;
+          const t = q.add('write', -1, ['while(1)', k % 2 ? 'FIOPIN=0x00000000' : 'FIOPIN=0x00000004'], WR); pin.push([t, k % 2 ? 0 : 1]);
+          const tm = q.add('write', 1, [['LPC_TIM0->MR0 = ', k % 2 + 1]], WR); mr.push([tm, m]);
+          const t0 = q.add('setup', 0, [['delay();', nth], 'TCR = 0x00000002'], LN); tc.push([t0, tc[tc.length - 1][1]], [t0, 0]);
+          const t1 = q.add('setup', 1, [['delay();', nth], 'EMR = 0X20', 'PR = 2999', 'MCR = 0x00000004'], 3 * LN); em.push([t1, 0]);
+          q.add('setup', 2, [['delay();', nth], 'TCR = 0x00000001'], LN);
+          const tp = q.add('poll', 3, [['delay();', nth], 'while ( !(LPC_TIM0->EMR & 0x01))'], tPoll(2999, m)); tc.push([tp, 0], [tp + tPoll(2999, m), m]); em.push([tp + tPoll(2999, m), 1]); marks.push([tp + tPoll(2999, m), 'tc', '★']);
+        }
+        return { T: q.t, segs: q.segs, tc: { lab: 'TC', pts: tc, mr, mrLab: 'MR0', top: Math.max(hi, lo) }, lanes: [{ lab: 'P0.2 LED', pts: pin, c: 'out' }, { lab: 'EM0', pts: em, c: 'em' }], marks };
+      } },
+    { id: 'P3', name: 'hardware square wave', st: 'st-star', file: 'mat00_square.c', knob: ['MR0 (PR = 0)', 750000, 6000000, 750000, 3000000, v => fmtN(v)], wait: 'idle',
+      code: v => P3_CODE.replace('MR0 = 3000000;', `MR0 = ${v};`),
+      model(v) {
+        const q = Seq(), half = (v + 1) / 3e6, pin = [[0, 0]], tc = [[0, 0]], marks = [];
+        q.add('setup', -1, 'PINSEL3 |= (3<<24)', LN);
+        q.add('setup', 0, ['delay();', 'TCR = 0x00000002'], LN);
+        q.add('setup', 1, ['delay();', 'CTCR = 0x00000000', 'EMR = 0X30', 'PR = 0', 'MR0 = ', 'MCR = 0x00000002'], 5 * LN);
+        q.add('setup', 2, ['delay();', 'TCR = 0x00000001'], LN);
+        const ti = q.add('idle', 3, ['while(1);'], 4 * half); let lv = 0;
+        for (let k = 0; k < 4; k++) { const a = ti + k * half; tc.push([a, 0], [a + half, v], [a + half, 0]); lv ^= 1; pin.push([a + half, lv]); marks.push([a + half, 'tc', '★']); }
+        return { T: q.t, segs: q.segs, tc: { lab: 'TC', pts: tc, mr: [[0, v]], mrLab: 'MR0', top: v }, lanes: [{ lab: 'P1.28 MAT0.0', pts: pin, c: 'out' }], marks };
+      } },
+    { id: 'P4', name: '÷ 8 counter', st: 'st-gear', file: 'divide_by_8.c', knob: ['MR1', 1, 5, 1, 3, v => `${v} → ÷ ${2 * (v + 1)}`], wait: 'idle',
+      code: v => P4_CODE.replace('MR1 = 0x03;   //To count 4 clock pulses', `MR1 = 0x0${v};   //To count ${v + 1} clock pulses`),
+      model(v) {
+        const q = Seq(), fin = 4, T = (v + 1), inp = [[0, 1]], out = [[0, 0]], tc = [[0, 0]], marks = [];
+        q.add('setup', -1, ['init_timer1();', 'PINSEL3 |='], LN);
+        q.add('setup', 0, ['init_timer1();', 'TCR = 2;'], LN);
+        q.add('setup', 1, ['init_timer1();', 'CTCR = 0x2', 'MR1 = 0x0', 'MCR = 0x10', 'EMR = 0xC0'], 4 * LN);
+        q.add('setup', 2, ['init_timer1();', 'TCR = 1;'], LN);
+        const ti = q.add('idle', 3, ['while(1);'], T - q.t); let c = 0, o = 0;
+        for (let k = 0; ; k++) { const tr = (k + .5) / fin; if (tr > T) break; inp.push([tr - .5 / fin, 1], [tr, 0]); if (tr > ti) { if (c === v) c = 0; else c++; tc.push([tr, tc[tc.length - 1][1]], [tr, c]); if (c === v) { o ^= 1; out.push([tr, o]); marks.push([tr, 'tc', '★']); } } }
+        return { T, segs: q.segs, tc: { lab: 'TC', pts: tc, mr: [[0, v]], mrLab: 'MR1', top: v, step: true }, lanes: [{ lab: 'P1.18 in', pts: inp, c: 'in' }, { lab: 'P1.25 out', pts: out, c: 'out' }], marks };
+      } },
+    { id: 'P5', name: 'frequency meter', st: 'st-meter', file: 'freq_meter.c', knob: ['generator', 1, 9, 1, 4, v => v + ' Hz'], wait: 'poll',
+      code: v => P5_CODE,
+      model(f) {
+        const q = Seq(), inp = [[0, 0]], tc = [[0, 0]], gate = [[0, 0]], marks = [], ph = .37 / f;
+        q.add('setup', -1, ['PINSEL0 = 0', 'FIODIR = 0x00000FF0'], 2 * LN);
+        q.add('setup', 1, ['init_counter1();', 'PINSEL3 = (3<<4)', 'CTCR = 0x01'], 2 * LN);
+        const runs = [], resets = [];
+        for (let k = 0; k < 2; k++) {
+          const r0 = q.add('setup', 0, ['while(1)', 'TCR=2'], WR); resets.push(r0);
+          const r1 = q.add('setup', 2, ['TCR=1'], WR);
+          q.add('setup', 0, ['wait for 1 second', 'LPC_TIM0->TCR = 0x00000002'], LN);
+          q.add('setup', 1, ['wait for 1 second', 'LPC_TIM0->EMR = 0X20', 'PR = 3000', 'MR0 = 1000', 'MCR = 0x00000004'], 4 * LN);
+          q.add('setup', 2, ['wait for 1 second', 'LPC_TIM0->TCR = 0x00000001'], LN);
+          const g = tPoll(3000, 1000), tp = q.add('poll', 3, ['wait for 1 second', 'while ( !(LPC_TIM0->EMR'], g); gate.push([tp, 1], [tp + g, 0]);
+          const tw = q.add('write', -1, ['seven_seg[LPC_TIM1->TC]'], WR); runs.push([r1, tw]);
+        }
+        const T = q.t, ev = runs.map(([a, b], i) => [resets[i], 'R']);
+        for (let k = 0; ; k++) { const tr = ph + k / f; if (tr > T) break; inp.push([tr, 1], [tr + .5 / f, 0]); if (runs.some(([a, b]) => tr > a && tr < b)) ev.push([tr, 'E']); }
+        ev.sort((a, b) => a[0] - b[0]); let c = 0;
+        ev.forEach(([tt, k]) => { if (k === 'R') { tc.push([tt, c], [tt, 0]); c = 0; } else { tc.push([tt, c], [tt, c + 1]); c++; } });
+        runs.forEach(([a, b]) => { const n = ev.filter(e => e[1] === 'E' && e[0] > a && e[0] < b).length; marks.push([b, 'seg', String(n)]); });
+        return { T, segs: q.segs, tc: { lab: 'TC1', pts: tc, mr: null, top: Math.max(9, f + 1), step: true }, lanes: [{ lab: 'P1.18 in', pts: inp, c: 'in' }, { lab: 'Timer0 1 s', pts: gate, c: 'em' }], marks, seg: true };
+      } },
+    { id: 'P6', name: 'capture', st: 'st-cam', file: 'capture.c', knob: ['edge on P1.26 at', 50, 950, 25, 450, v => v + ' ms'], wait: 'poll',
+      code: v => P6_CODE,
+      model(e) {
+        const q = Seq(), pin = [[0, 0]], tc = [[0, 0]], c0 = [[0, 0]], c1 = [[0, 0]], marks = [], g = tPoll(3000, 1000);
+        q.add('setup', -1, ['FIODIR = 0x00000004', 'PINSEL3 |= (3<<20)'], 2 * LN);
+        const polls = [];
+        for (let k = 0; k < 2; k++) {
+          const tw = q.add('write', -1, ['while(1)', 'toggle p0.2'], WR); pin.push([tw, k ? 0 : 1]);
+          q.add('setup', 1, ['delay();', 'CCR = 9'], LN);
+          const t0 = q.add('setup', 0, ['delay();', 'TCR = 0x00000002'], LN); tc.push([t0, tc[tc.length - 1][1]], [t0, 0]);
+          q.add('setup', 1, ['delay();', 'EMR = 0X20', 'PR = 3000', 'MR0 = 1000', 'MCR = 0x00000004'], 4 * LN);
+          q.add('setup', 2, ['delay();', 'TCR = 0x00000001'], LN);
+          const tp = q.add('poll', 3, ['delay();', 'while ( !(LPC_TIM0->EMR & 0x01))'], g); tc.push([tp, 0], [tp + g, 1000]); polls.push(tp);
+        }
+        const a = polls[0] + e / 1000 * g, b = polls[1] + .6 * g;
+        c0.push([a, 1], [a + .06, 0]); c1.push([b, 1], [b + .06, 0]);
+        marks.push([a, 1, `CR0 = ${Math.floor(e)}`], [b, 2, 'CR1 = 600']);
+        return { T: q.t, segs: q.segs, tc: { lab: 'TC', pts: tc, mr: [[0, 1000]], mrLab: 'MR0', top: 1000 }, lanes: [{ lab: 'P0.2 LED', pts: pin, c: 'out' }, { lab: 'P1.26 CAP0.0', pts: c0, c: 'in' }, { lab: 'P1.27 CAP0.1', pts: c1, c: 'in' }], marks };
+      } }
+  ];
+  /* ---------- layout ---------- */
+  let P = PROGS[0], kv = P.knob[4], M = null, code = '', lines = [], t = 0, xp = 0, playing = false, narrow = false, lastHL = '';
+  const tabs = el('div', { class: 'm3tabs' }); w.appendChild(tabs);
+  PROGS.forEach((p, i) => { const b = el('button', { class: 'm3tab', type: 'button' }, `<svg><use href="#${p.st}"/></svg><b>${p.id}</b><span>${p.name}</span>`); b.onclick = () => pick(i); tabs.appendChild(b); p.btn = b; });
+  const kr = el('div', { class: 'row m3knob' }); w.appendChild(kr);
+  let knobR = null;
+  const rib = el('div', { class: 'm3rib' }); w.appendChild(rib);
+  const main = el('div', { class: 'm3main' }); w.appendChild(main);
+  const left = el('div', { class: 'm3left' }); main.appendChild(left);
+  const S = sv('svg', { class: 'dg m3tl', role: 'img', 'aria-label': 'timeline of the program' }); left.appendChild(S);
+  const ctl = el('div', { class: 'row m3ctl' }); left.appendChild(ctl);
+  const bPlay = el('button', { class: 'btn sm y', type: 'button' }, '▶ play'), bBack = el('button', { class: 'btn sm g', type: 'button' }, '⟲ t = 0');
+  const tRead = el('span', { class: 'ro' }); ctl.append(bPlay, bBack, tRead);
+  let rate = 1; chipGroup(ctl, [[.5, '×½'], [1, '×1'], [2, '×2']], 1, v => rate = +v, 'm3rate');
+  const now = el('div', { class: 'm3now mbox' }); left.appendChild(now);
+  const right = el('div', { class: 'm3right' }); main.appendChild(right);
+  const codeHost = el('div'); right.appendChild(codeHost);
+  const busy = el('div', { class: 'm3busy' }); right.appendChild(busy);
+  bPlay.onclick = () => { if (!playing && xp >= X(M.T) - .5) setX(X(0)); playing = !playing; bPlay.textContent = playing ? '❚❚ pause' : '▶ play'; };
+  bBack.onclick = () => { playing = false; bPlay.textContent = '▶ play'; setX(X(0)); };
+
+  /* ---------- warped time axis: short setup bits get a fixed width so you can see them ---------- */
+  let X0 = 96, Wd = 520, map = []; // map: [{t0,t1,x0,x1}]
+  function buildMap() {
+    const segs = M.segs, short = s => s.k === 'setup' || s.k === 'write', fx = narrow ? 5 : 8;
+    const nS = segs.filter(short).length, longT = segs.filter(s => !short(s)).reduce((a, s) => a + s.t1 - s.t0, 0);
+    const sc = (Wd - nS * fx) / (longT || 1); let x = X0; map = [];
+    segs.forEach(s => { const ww = short(s) ? fx : (s.t1 - s.t0) * sc; map.push({ t0: s.t0, t1: s.t1, x0: x, x1: x + ww, s }); x += ww; });
+  }
+  function X(tt) { for (const m of map) if (tt <= m.t1) return m.x0 + (m.t1 > m.t0 ? (tt - m.t0) / (m.t1 - m.t0) : 0) * (m.x1 - m.x0); return X0 + Wd; }
+  function invX(x) { for (const m of map) if (x <= m.x1) return m.t0 + (m.x1 > m.x0 ? (x - m.x0) / (m.x1 - m.x0) : 0) * (m.t1 - m.t0); return M.T; }
+
+  /* ---------- drawing ---------- */
+  let LY = {}, H = 0, ph = null;
+  function draw() {
+    const VW = narrow ? 400 : 640; X0 = narrow ? 70 : 96; Wd = VW - X0 - 10; buildMap();
+    const lanes = M.lanes, R = rng(9);
+    LY = { cpu: 30, tc: 86 }; let y = 150; lanes.forEach((l, i) => { LY['l' + i] = y; y += 36; }); if (M.seg) { LY.seg = y; y += 30; } H = y + 18;
+    S.setAttribute('viewBox', `0 0 ${VW} ${H}`);
+    let o = '';
+    // axis ticks (real seconds)
+    const step = M.T > 3 ? 1 : M.T > 1.4 ? .5 : .25;
+    for (let s = 0; s <= M.T + 1e-9; s += step) { const x = X(s); o += `<path d="M${x.toFixed(1)} 14 V${H - 16}" class="grid"/><text x="${x.toFixed(1)}" y="${H - 3}" text-anchor="middle" class="ax">${+s.toFixed(2)} s</text>`; }
+    // CPU lane
+    o += `<text x="4" y="${LY.cpu + 5}" class="lb">CPU</text>`;
+    map.forEach(m => { const k = m.s.k; o += `<rect x="${m.x0.toFixed(1)}" y="${LY.cpu - 12}" width="${Math.max(.8, m.x1 - m.x0).toFixed(1)}" height="24" rx="3" class="cpu ${k} ph${m.s.ph}"/>`; if ((k === 'poll' || k === 'idle') && m.x1 - m.x0 > 70) o += `<text x="${((m.x0 + m.x1) / 2).toFixed(1)}" y="${LY.cpu + 5}" text-anchor="middle" class="cpt">${k === 'poll' ? (m.x1 - m.x0 > 130 ? 'polling EMR & 1 …' : 'polling …') : 'idle: while(1);'}</text>`; });
+    // TC lane
+    const tcT = M.tc.top * 1.15, TY = v => LY.tc + 40 - v / tcT * 72;
+    o += `<text x="4" y="${LY.tc + 5}" class="lb">${M.tc.lab}</text>`;
+    if (M.tc.mr) { let d = ''; M.tc.mr.forEach(([tt, v], i) => { const x = X(tt), yy = TY(v); d += i ? `H${x.toFixed(1)}V${yy.toFixed(1)}` : `M${X0} ${yy.toFixed(1)}`; }); d += `H${X0 + Wd}`; o += `<path d="${d}" class="mrl"/><text x="${X0 - 4}" y="${TY(M.tc.mr[0][1]) + 4}" text-anchor="end" class="mrt">${M.tc.mrLab}</text>`; }
+    o += `<path d="${M.tc.pts.map(([tt, v], i) => `${i ? 'L' : 'M'}${X(tt).toFixed(1)} ${TY(v).toFixed(1)}`).join('')}" class="tcl"/>`;
+    // pin lanes
+    lanes.forEach((l, i) => { const yy = LY['l' + i]; o += `<text x="4" y="${yy}" class="sm">${l.lab}</text><path d="${digi(l.pts.concat([[M.T, l.pts[l.pts.length - 1][1]]]), X, yy - 12, yy + 8)}" class="ln ${l.c}"/>`; });
+    if (M.seg) o += `<text x="4" y="${LY.seg + 4}" class="sm">7-seg</text>`;
+    // marks
+    M.marks.forEach(([tt, ln, txt]) => { const x = X(tt).toFixed(1); if (ln === 'tc') o += `<text x="${x}" y="${LY.tc - 36}" text-anchor="middle" class="star">★</text>`; else if (ln === 'seg') o += `<rect x="${(+x - 2).toFixed(1)}" y="${LY.seg - 12}" width="26" height="22" rx="4" class="segm"/><text x="${(+x + 11).toFixed(1)}" y="${LY.seg + 5}" text-anchor="middle" class="segt">${txt}</text>`; else { const yy = LY['l' + ln]; o += `<text x="${(+x + 6).toFixed(1)}" y="${yy - 14}" class="capt">${txt}</text>`; } });
+    o += `<g class="phd"><path d="M0 4 V${H - 16}" class="phl"/><circle cy="8" r="8" class="phk"/></g>`;
+    S.innerHTML = o; ph = $('.phd', S);
+  }
+  /* ---------- state at the playhead ---------- */
+  const at = (pts, tt) => { let v = pts[0][1]; for (const p of pts) { if (p[0] <= tt) v = p[1]; else break; } return v; };
+  const tcAt = tt => { const p = M.tc.pts; let v = 0; for (let i = 0; i < p.length; i++) { if (p[i][0] > tt) { const a = p[i - 1] || p[i]; if (p[i][0] > a[0] && p[i][1] !== a[1] && !M.tc.step) v = a[1] + (p[i][1] - a[1]) * (tt - a[0]) / (p[i][0] - a[0]); else v = a[1]; return Math.floor(v); } v = p[i][1]; } return v; };
+  const segAt = tt => M.segs.find(s => tt >= s.t0 && tt < s.t1) || M.segs[M.segs.length - 1];
+  const PH = ['① reset · TCR = 2', '② configure the registers', '③ start · TCR = 1', ''];
+  function setX(x) {
+    xp = clamp(x, X0, X0 + Wd); t = invX(xp); ph.setAttribute('transform', `translate(${xp.toFixed(1)} 0)`);
+    const s = segAt(t), lnNums = s.l.map(q => Array.isArray(q) ? lineOf(code, q[0], q[1]) : lineOf(code, q)).filter(Boolean), key = lnNums.join(',');
+    if (key !== lastHL) {
+      lastHL = key; lines.forEach(l => l.classList.remove('on'));
+      lnNums.forEach(n => lines[n - 1] && lines[n - 1].classList.add('on'));
+      const ln = lines[lnNums[lnNums.length - 1] - 1], box = codeHost.firstChild; if (ln && box.scrollHeight > box.clientHeight + 4) box.scrollTo({ top: ln.offsetTop - box.clientHeight * .45, behavior: REDUCED ? 'auto' : 'smooth' });
+    }
+    $$('.m3ph', rib).forEach((b, i) => b.classList.toggle('on', i === s.ph));
+    const tcv = tcAt(t), sec = t < 1e-3 ? (+(t * 1e6).toFixed(1)) + ' µs' : (+t.toFixed(4)) + ' s';
+    tRead.textContent = `t = ${sec}`;
+    const doing = { setup: 'running set-up lines (a few µs — drawn wider so you can see them)', write: 'writing a pin / register', poll: 'stuck in the polling loop, waiting for EM0', idle: 'idle in while(1); — the timer works alone' }[s.k];
+    let h = `<div><span class="mlab">CPU</span> ${doing}</div><div><span class="mlab">${M.tc.lab}</span> <b>${fmtN(tcv)}</b>${M.tc.mr ? ` / ${M.tc.mrLab} = ${fmtN(at(M.tc.mr, t))}` : ''}</div>`;
+    h += M.lanes.map(l => `<span class="m3pin ${at(l.pts, t) ? 'hi' : ''}"><i></i>${l.lab} = ${at(l.pts, t)}</span>`).join('');
+    const seen = M.marks.filter(m => m[0] <= t && m[1] !== 'tc');
+    if (M.seg) { const last = seen.filter(m => m[1] === 'seg').pop(); h += `<div class="m3seg"><span class="mlab">7-seg shows</span> <b>${last ? last[2] : '— (not written yet)'}</b>${last ? ` → f = ${last[2]} Hz` : ''}</div>`; }
+    seen.filter(m => typeof m[1] === 'number').forEach(m => h += `<div class="m3cr">📸 ${m[2]} <span class="p-soft small">(TC copied at the edge)</span></div>`);
+    now.innerHTML = h;
+  }
+  /* ---------- program / knob changes ---------- */
+  function rebuild(keepT) {
+    code = P.code(kv); M = P.model(kv);
+    const old = codeHost.firstChild; const cb = codeBlock(code, P.file); codeHost.innerHTML = ''; codeHost.appendChild(cb); lines = $$('.cl', cb); lastHL = '';
+    lines.forEach((l, i) => { l.style.cursor = 'pointer'; l.title = 'jump to when this line runs'; l.onclick = () => { const s = M.segs.find(sg => sg.l.some(q => (Array.isArray(q) ? lineOf(code, q[0], q[1]) : lineOf(code, q)) === i + 1)); if (s) { playing = false; bPlay.textContent = '▶ play'; setX(X(s.t0) + (map.find(m => m.s === s).x1 - X(s.t0)) * .5); } }; });
+    const used = { P1: 'PR MR0 MCR EMR', P2: 'PR MR0 MCR EMR', P3: 'CTCR PR MR0 MCR EMR', P4: 'CTCR MR1 MCR EMR', P5: 'CTCR (T1) · PR MR0 MCR EMR (T0)', P6: 'CCR PR MR0 MCR EMR' }[P.id];
+    rib.innerHTML = `<div class="m3ph" data-k="0">${PH[0]}</div><div class="m3ph" data-k="1">② configure: <b>${used}</b></div><div class="m3ph" data-k="2">${PH[2]}</div><div class="m3ph w4">${P.wait === 'poll' ? '④ CPU polls <code>EMR &amp; 1</code> until the match' : '④ CPU idles — the <b>hardware</b> makes the output'}</div>`;
+    const poll = M.segs.filter(s => s.k === 'poll').reduce((a, s) => a + s.t1 - s.t0, 0), idle = M.segs.filter(s => s.k === 'idle').reduce((a, s) => a + s.t1 - s.t0, 0);
+    busy.innerHTML = poll > idle ? `<b class="p-red">CPU busy-waiting ${(poll / M.T * 100).toFixed(1)} %</b> of the time — it can do nothing else.` : `<b class="p-green">CPU free ${(idle / M.T * 100).toFixed(1)} %</b> of the time — the timer hardware does the work.`;
+    draw(); setX(keepT ? X(Math.min(t, M.T)) : X(0));
+  }
+  function pick(i) {
+    P = PROGS[i]; kv = P.knob[4]; PROGS.forEach((p, j) => p.btn.classList.toggle('on', i === j));
+    kr.innerHTML = ''; kr.appendChild(el('span', { class: 'gae' }, `🎛 ${P.id} knob:`));
+    knobR = ruler(kr, P.knob[0], P.knob[1], P.knob[2], P.knob[4], P.knob[3], P.knob[5], v => { kv = v; rebuild(true); });
+    playing = false; bPlay.textContent = '▶ play'; rebuild(false);
+  }
+  // scrubbing
+  const toX = e => { const r = S.getBoundingClientRect(), vb = S.viewBox.baseVal; return (e.clientX - r.left) / r.width * vb.width; };
+  let drag = false;
+  S.addEventListener('pointerdown', e => { drag = true; S.setPointerCapture(e.pointerId); playing = false; bPlay.textContent = '▶ play'; setX(toX(e)); });
+  S.addEventListener('pointermove', e => { if (drag) setX(toX(e)); });
+  S.addEventListener('pointerup', () => drag = false); S.addEventListener('pointercancel', () => drag = false);
+  widthWatch(w, 700, n => { narrow = n; if (M) { const tt = t; draw(); setX(X(tt)); } });
+  const loop = Loop(S, dt => { if (!playing) return; const nx = xp + dt * rate * Wd / 9; setX(nx); if (nx >= X0 + Wd) { playing = false; bPlay.textContent = '▶ play'; } });
+  loop.start(); pick(0);
+});
+
+/* =========================================================
+   NOTEBOOK 1 · part J — M4: the LCD X-ray (chapter 4)
+   ========================================================= */
+BUILD.push(function wM4() {
+  const w = MW('w-m4', 'LCD X-ray', 'power on · init (or forget to!) · type — follow every byte down to the pixels');
+  const lcd = new HD44780(); // fresh power-on: 8-bit mode, display off
+  const Q = []; let cur = null, ph = 0, nibDur = .9, run = true, hist = [], lastDesc = 'just powered on: 8-bit mode, display OFF, DDRAM full of spaces', lastByte = null, ddFlash = -1;
+  const CMDS = [[0x01, 'clear'], [0x02, 'home'], [0x06, 'entry →'], [0x04, 'entry ←'], [0x0C, 'display on'], [0x0E, '+ cursor'], [0x0F, '+ blink'], [0x80, 'line 1'], [0xC0, 'line 2'], [0x10, 'cursor ←'], [0x14, 'cursor →'], [0x18, 'shift ←'], [0x1C, 'shift →'], [0x28, '4-bit, 2 lines'], [0x08, 'display off']];
+  function queueByte(rs, x, src) { Q.push({ rs, nib: x >> 4, byte: x, half: 'high', src }); Q.push({ rs, nib: x & 15, byte: x, half: 'low', src }); }
+  function queueInit() { [0x30, 0x30, 0x30, 0x20].forEach(c => Q.push({ rs: 0, nib: c >> 4, byte: c, half: 'only', src: 'init' })); [0x28, 0x0C, 0x06, 0x01, 0x80].forEach(c => queueByte(0, c, 'init')); }
+
+  /* ---------- controls ---------- */
+  const top = el('div', { class: 'm4top' }); w.appendChild(top);
+  const r1 = el('div', { class: 'row' }); top.appendChild(r1);
+  const bPow = el('button', { class: 'btn sm o', type: 'button' }, '⚡ power on (reset LCD)'), bInit = el('button', { class: 'btn sm p', type: 'button' }, '① send the init sequence'), bSkip = el('button', { class: 'btn sm', type: 'button' }, '⏭ finish the queue');
+  r1.append(bPow, bInit, bSkip);
+  const r2 = el('div', { class: 'row' }); top.appendChild(r2);
+  const inp = el('input', { class: 'inp', value: 'Hi LPC!', maxlength: 24, 'aria-label': 'text to send as data', spellcheck: 'false' }); const bTx = el('button', { class: 'btn sm g', type: 'button' }, '② type it (RS = 1)');
+  r2.append(el('span', { class: 'gae' }, 'text:'), inp, bTx);
+  const r3 = el('div', { class: 'chips' }); top.appendChild(r3); r3.appendChild(el('span', { class: 'cav p-soft' }, 'commands (RS = 0):'));
+  CMDS.forEach(([c, t]) => { const b = el('button', { class: 'chip mn', type: 'button' }, `${hx(c)} <small>${t}</small>`); b.onclick = () => { queueByte(0, c, 'cmd'); paint(); }; r3.appendChild(b); });
+  const r4 = el('div', { class: 'row' }); top.appendChild(r4);
+  ruler(r4, 'speed (one nibble)', 1, 10, 5, 1, v => (+(2.6 / Math.pow(1.38, v - 1)).toFixed(2)) + ' s', v => { nibDur = 2.6 / Math.pow(1.38, v - 1); });
+  nibDur = 2.6 / Math.pow(1.38, 4);
+  const bRun = el('button', { class: 'btn sm y', type: 'button' }, '❚❚ pause'); r4.appendChild(bRun);
+  bRun.onclick = () => { run = !run; bRun.textContent = run ? '❚❚ pause' : '▶ run'; };
+  bPow.onclick = () => { Q.length = 0; cur = null; lcd.powerOn(); hist = []; lastDesc = 'power on: 8-bit mode, 1 line, display OFF — it knows nothing about our 4-bit wiring yet'; lastByte = null; paint(); view.draw(); };
+  bInit.onclick = () => { queueInit(); paint(); };
+  bTx.onclick = () => { for (const ch of inp.value) queueByte(1, ch.charCodeAt(0) & 0xFF, 'text'); paint(); };
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') bTx.onclick(); });
+  bSkip.onclick = () => { if (cur && !cur.latched) finishLatch(); cur = null; while (Q.length) { cur = Q.shift(); finishLatch(); cur = null; } paint(); view.draw(); };
+
+  /* ---------- the six stages ---------- */
+  const grid = el('div', { class: 'm4grid' }); w.appendChild(grid);
+  const card = (cls, n, title, sub) => { const c = el('div', { class: 'm4c ' + cls }); c.innerHTML = `<div class="m4h"><i>${n}</i><b>${title}</b><small>${sub}</small></div>`; grid.appendChild(c); return c; };
+  const cA = card('a', 1, 'lcd_write()', 'the byte · flag1 = RS · split in two'); const aBody = el('div', { class: 'm4byte' }); cA.appendChild(aBody); const qv = el('div', { class: 'm4q' }); cA.appendChild(qv);
+  const cB = card('b', 2, 'port_write()', 'the nibble on P0.23–P0.28'); const pins = el('div', { class: 'm4pins' }); cB.appendChild(pins); const bTxt = el('div', { class: 'm4small' }); cB.appendChild(bTxt);
+  const PN = [['EN', 'P0.28'], ['RS', 'P0.27'], ['D7', 'P0.26'], ['D6', 'P0.25'], ['D5', 'P0.24'], ['D4', 'P0.23']];
+  const pinEl = PN.map(([n, p]) => { const d = el('div', { class: 'm4pin' }, `<span class="led"></span><b>${n}</b><small>${p}</small>`); pins.appendChild(d); return d; });
+  const cC = card('c', 3, 'logic analyser', 'what the wires do · ▼ = EN falls → LCD latches'); const LA = sv('svg', { class: 'dg m4la', viewBox: '0 0 560 172' }); cC.appendChild(LA);
+  const cD = card('d', 4, 'LCD controller', 'its own little brain'); const ctl = el('div', { class: 'm4ctl' }); cD.appendChild(ctl);
+  const cF = card('f', 6, 'pixels', '5×8 dots per box, drawn from DDRAM'); const view = LCDView(cF, lcd); const fTxt = el('div', { class: 'm4small' }); cF.appendChild(fTxt);
+  const cE = card('e', 5, 'DDRAM', 'the LCD\'s memory · frame = the 16 boxes you can see'); const dd = el('div', { class: 'm4dd' }); cE.appendChild(dd);
+  const ddCells = [[], []];
+  for (let r = 0; r < 2; r++) { const row = el('div', { class: 'm4ddr' }); dd.appendChild(row); row.appendChild(el('span', { class: 'm4ddl' }, r ? 'line 2' : 'line 1')); for (let c = 0; c < 40; c++) { const cell = el('span', { class: 'm4ddc' }, '<b></b><small></small>'); row.appendChild(cell); ddCells[r][c] = cell; } }
+
+  /* ---------- running one nibble ---------- */
+  function finishLatch() { // EN falls: the LCD takes the nibble
+    const n = cur; n.latched = true; const before = lcd.bus8 ? '8-bit' : '4-bit'; let res;
+    if (lcd.bus8) { const b = (n.nib & 15) << 4; res = { byte: b, w: 8 }; }
+    else if (lcd.half === null) { lcd.half = n.nib & 15; res = { half: lcd.half }; }
+    else { const b = (lcd.half << 4) | (n.nib & 15); lcd.half = null; res = { byte: b, w: 4 }; }
+    if (res.byte != null) {
+      const b = res.byte;
+      if (n.rs) { const a = lcd.ac; lcd.data(b); ddFlash = a; lastDesc = `data ${hx(b)}${b >= 32 && b < 127 ? ` '${String.fromCharCode(b)}'` : ' (not a letter → junk box)'} stored at DDRAM ${hx(a)}, cursor → ${hx(lcd.ac)}`; }
+      else lastDesc = (res.w === 8 ? `8-bit read: D7–D4 = ${bin(n.nib, 4)}, D3–D0 = 0000 (grounded) → ${hx(b)} → ` : '') + lcd.cmd(b);
+      if (res.w === 8 && n.half !== 'only') lastDesc += ` <span class="p-red">— the LCD is still in 8-bit mode, so this ${n.half} nibble was taken as a whole byte!</span>`;
+      lastByte = { b, rs: n.rs };
+    } else lastDesc = `4-bit mode: high half ${hx(res.half, 1)} stored — waiting for the low half`;
+    hist.push({ rs: n.rs, nib: n.nib, tag: res.half != null ? 'H' : res.w === 8 ? '8' : 'L', mode: before });
+    if (hist.length > 14) hist.shift();
+  }
+  function step(dt) {
+    if (!cur) { if (!Q.length) return; cur = Q.shift(); ph = 0; }
+    const p0 = ph; ph += dt / nibDur;
+    if (p0 < .68 && ph >= .68) { finishLatch(); view.draw(); }
+    if (ph >= 1) { cur = null; ph = 0; }
+    paint();
+  }
+
+  /* ---------- painting ---------- */
+  function paint() {
+    const n = cur, p = n ? ph : 1;
+    // stage glow
+    const act = !n ? -1 : p < .2 ? 0 : p < .42 ? 1 : p < .68 ? 2 : p < .8 ? 3 : 4;
+    [cA, cB, cC, cD, cE, cF].forEach((c, i) => c.classList.toggle('act', act >= 0 && (i === act || (act === 3 && i === 3) || (act === 4 && i >= 4))));
+    // A: the byte
+    if (n) {
+      const x = n.byte, hi = x >> 4, lo = x & 15, ch = n.rs && x >= 32 && x < 127 ? `'${String.fromCharCode(x)}'` : '';
+      aBody.innerHTML = `<div class="m4bx"><span class="hx">${hx(x)}</span> ${ch}<span class="pill ${n.rs ? 'y' : 'l'}">${n.rs ? 'data · RS = 1' : 'command · RS = 0'}</span></div>
+        <div class="m4nib"><span class="${n.half === 'low' ? '' : 'on'}">${bin(hi, 4)}<small>high</small></span><span class="${n.half === 'low' ? 'on' : n.half === 'only' ? 'skip' : ''}">${bin(lo, 4)}<small>${n.half === 'only' ? 'not sent (flag2 = 1)' : 'low'}</small></span></div>
+        <div class="m4small">${n.half === 'only' ? 'init command: <b>flag2 = 1</b> → only the high nibble is sent' : `sending the <b>${n.half}</b> nibble: <code>temp2 = (temp1 &amp; ${n.half === 'high' ? '0xF0) &lt;&lt; 19' : '0x0F) &lt;&lt; 23'}</code>`}</div>`;
+    } else aBody.innerHTML = `<div class="m4small">${Q.length ? 'next byte coming…' : 'idle — press <b>init</b>, type text or tap a command'}</div>`;
+    qv.innerHTML = Q.filter(q => q.half !== 'low').slice(0, 9).map(q => `<span class="${q.rs ? 'd' : 'c'}">${q.rs && q.byte > 32 && q.byte < 127 ? esc(String.fromCharCode(q.byte)) : q.rs && q.byte === 32 ? '␣' : hx(q.byte)}</span>`).join('') + (Q.length ? ' <small>← queue</small>' : '');
+    // B: pins
+    const set = n && p >= .05, rsOn = n && p >= .25 ? n.rs : 0, en = n && p >= .42 && p < .68;
+    const lv = [en ? 1 : 0, rsOn, ...[3, 2, 1, 0].map(b => set ? (n.nib >> b) & 1 : 0)];
+    pinEl.forEach((d, i) => d.firstChild.classList.toggle('on', !!lv[i]));
+    const t2 = n ? (n.half === 'low' ? (n.byte & 15) << 23 : (n.byte & 0xF0) << 19) >>> 0 : 0;
+    bTxt.innerHTML = (n ? `<div class="m4t2">temp2 = <b>${hex(t2)}</b> → only bits 26–23 can be 1</div>` : '') + (!n ? 'all quiet' : p < .25 ? `<code>FIOPIN = temp2</code> → D7–D4 = <b>${bin(n.nib, 4)}</b> (RS, EN = 0)` : p < .42 ? `<code>${n.rs ? 'FIOSET' : 'FIOCLR'} = RS_CTRL</code> → RS = ${n.rs}` : p < .68 ? '<code>FIOSET = EN_CTRL</code> → EN HIGH …' : `<code>FIOCLR = EN_CTRL</code> → EN LOW: latched! then <code>delay_lcd(5000)</code>`);
+    // C: analyser
+    drawLA(n, p);
+    // D: controller
+    ctl.innerHTML = `<div class="row" style="gap:6px 10px"><span class="pill ${lcd.bus8 ? 'p' : 'g'}">${lcd.bus8 ? '8-bit interface' : '4-bit interface'}</span><span class="pill">${lcd.N ? '2 lines' : '1 line'}</span><span class="pill ${lcd.D ? 'y' : ''}">display ${lcd.D ? 'ON' : 'OFF'}</span></div>
+      <div class="m4half">${lcd.bus8 ? 'reads D7–D0 in one go (D3–D0 are grounded = 0000)' : lcd.half === null ? 'waiting for a <b>high</b> half' : `holding high half <b>${hx(lcd.half, 1)}</b> — waiting for the low half`}</div>
+      <div class="m4last">${lastDesc}</div>
+      <div class="kv m4kv"><span>cursor (AC)</span><span><b>${hx(lcd.ac)}</b> → ${lcd.N ? `line ${lcd.ac >= 0x40 ? 2 : 1}, box ${(lcd.ac & 0x3F) + 1}` : 'box ' + (lcd.ac + 1)}</span><span>entry mode</span><span>I/D = ${lcd.id} (${lcd.id ? 'move right' : 'move left'}) · S = ${lcd.S}</span><span>D · C · B</span><span>${lcd.D} · ${lcd.C} · ${lcd.B}</span><span>display shift</span><span>${lcd.sh}</span></div>`;
+    // E: DDRAM
+    const base = lcd.N ? [0, 0x40] : [0, 40], vis = new Set();
+    for (let l = 0; l < 2; l++) for (let c = 0; c < 16; c++) { const a = lcd.cell(l, c); if (a >= 0) vis.add(a); }
+    for (let r = 0; r < 2; r++) for (let c = 0; c < 40; c++) { const a = base[r] + c, ch = lcd.dd[a], cell = ddCells[r][c]; cell.firstChild.textContent = ch === 32 ? '' : ch >= 32 && ch < 127 ? String.fromCharCode(ch) : '▯'; cell.lastChild.textContent = hx(a).slice(2); cell.className = 'm4ddc' + (vis.has(a) ? ' vis' : '') + (a === lcd.ac ? ' cur' : '') + (a === ddFlash ? ' new' : '') + (!lcd.N && r === 1 && !vis.has(a) ? ' n1' : ''); }
+    fTxt.innerHTML = lcd.D ? 'the controller copies the framed DDRAM boxes onto the glass' : '<span class="p-red">display OFF (D = 0)</span> — DDRAM may hold text, but nothing is shown. Send 0x0C!';
+  }
+  function drawLA(n, p) {
+    const X0 = 50, WW = 64, NW = laN, L = [['RS', 22], ['EN', 50], ['D7', 80], ['D6', 100], ['D5', 120], ['D4', 140]];
+    let o = L.map(([t, y]) => `<text x="4" y="${y + 4}" class="lb">${t}</text>`).join('');
+    const wins = hist.slice(Math.max(0, hist.length - (n ? NW - 1 : NW))).map(h => Object.assign({ done: 1 }, h));
+    if (n) wins.push({ rs: n.rs, nib: n.nib, cur: 1, tag: '' });
+    let prevRS = 0;
+    wins.forEach((h, k) => {
+      const x = X0 + k * WW, F = f => (x + f * WW).toFixed(1), q = h.cur ? p : 1;
+      const tr = (yH, yL, pts) => { let d = `M${F(0)} ${pts[0][1] ? yH : yL}`; pts.slice(1).forEach(([f, v]) => { if (f <= q) d += `H${F(f)}V${v ? yH : yL}`; }); return d + `H${F(Math.min(q, 1))}`; };
+      o += `<path d="${tr(14, 28, [[0, prevRS], [.05, 0], [.25, h.rs]])}" class="t rs"/>`;
+      o += `<path d="${tr(42, 56, [[0, 0], [.42, 1], [.68, 0]])}" class="t en"/>`;
+      [3, 2, 1, 0].forEach((b, i) => { const y = 80 + i * 20; o += `<path d="${tr(y - 7, y + 6, [[0, 0], [.05, (h.nib >> b) & 1]])}" class="t d"/>`; });
+      if (q >= .68) o += `<text x="${F(.68)}" y="160" text-anchor="middle" class="lat">▼ ${hx(h.nib, 1).slice(2)}</text><path d="M${F(.68)} 36 V146" class="latl"/>`;
+      if (h.tag) o += `<text x="${F(.5)}" y="9" text-anchor="middle" class="tag">${h.tag === 'H' ? 'high ½' : h.tag === 'L' ? 'low ½' : '8-bit'}</text>`;
+      prevRS = h.rs;
+    });
+    if (!wins.length) o += `<text x="${X0 + 10}" y="84" class="tag" style="font-size:19px">no transfers yet — press ① init</text><text x="${X0 + 10}" y="108" class="tag" style="font-size:19px">and watch RS, EN, D7–D4 move</text>`;
+    LA.innerHTML = o;
+  }
+  let laN = 7; widthWatch(w, 760, nr => { laN = nr ? 4 : 12; LA.setAttribute('viewBox', `0 0 ${56 + laN * 64} 172`); paint(); });
+  const loop = Loop(w, dt => { if (run) step(dt); });
+  paint(); loop.start();
+});
+
+/* =========================================================
+   NOTEBOOK 1 · part K — M5: the trainer board + 5 program cartridges (chapter 5)
+   ========================================================= */
+BUILD.push(function wM5() {
+  const w = MW('w-m5', 'trainer board · 5 cartridges', 'slide a cartridge in · use the board · watch which building blocks light up');
+  const CALC = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '−', '×', '÷', 'E', 'CLR'];
+  const BLK = [
+    ['scan', 'keypad scan', 'get_key(): rows P2.10–13 out, columns P1.23–26 in', 'ch 1', 'st-keypad'],
+    ['p212', 'P2.12 key', '!(LPC_GPIO2->FIOPIN & (1<<12)) → pressed = 0', 'ch 0', 'st-plug'],
+    ['tmr', 'Timer0 delay_ms()', 'PR = 2999 → 1 TC step = 1 ms, MR0 = ms, stop + EM0', 'ch 2', 'st-clock'],
+    ['logic', 'program logic', '', 'ch 5', 'st-gear'],
+    ['ascii', 'number → ASCII', '', 'ch 4', 'st-sparkle'],
+    ['lcd', 'LCD driver', 'lcd_init · lcd_cmd · lcd_char · lcd_str (RS, EN, nibbles)', 'ch 4', 'st-lcd']
+  ];
+  const CARTS = [
+    { id: 'Q1', name: 'keypad → LCD', title: 'KEY PRESSED:', uses: ['scan', 'logic', 'ascii', 'lcd'], logic: 'key_ascii[16] lookup table', ascii: 'table holds the characters', flow: ['scan rows', 'key found?', "key_ascii[row*4+col]", 'lcd_cmd(0xC0) · lcd_char', 'wait for release'] },
+    { id: 'Q2', name: 'BCD counter', title: 'BCD COUNTER', uses: ['tmr', 'logic', 'ascii', 'lcd'], logic: 'd[3]++ and ripple carry', ascii: "digit + 0x30 ('0')", flow: ['lcd_cmd(0xC0)', "print d[k] + 0x30", 'delay_ms(500)', 'd[3]++ · carry'] },
+    { id: 'Q3', name: 'digital clock', title: 'DIGITAL CLOCK', uses: ['tmr', 'logic', 'ascii', 'lcd'], logic: 'ss → mm → hh roll-overs', ascii: "v/10 + '0', v%10 + '0'", flow: ['lcd_cmd(0xC0)', 'show2(hh) : mm : ss', 'delay_ms(1000)', 'ss++ · roll-overs'] },
+    { id: 'Q4', name: 'die toss', title: 'DIE TOSS: P2.12', uses: ['p212', 'logic', 'ascii', 'lcd'], logic: 'dice spins 1→6 non-stop', ascii: "dice + '0'", flow: ['dice++ (1…6)', 'P2.12 pressed?', 'print YOU GOT: n', 'wait for release'] },
+    { id: 'Q5', name: 'calculator', title: '', uses: ['scan', 'logic', 'ascii', 'lcd'], logic: 'state: 0 = a, 1 = op, 2 = b', ascii: "digit + '0' · sprintf(result)", flow: ['get_key()', 'state 0: a', 'state 1: operator', 'state 2: b → result'] }
+  ];
+  let cart = null, lcd = new HD44780(), view, kp, speed = 1, acc = 0, dice = 1, bytes = [];
+  let st = {};
+  /* ---------- layout ---------- */
+  const shelf = el('div', { class: 'm5shelf' }); w.appendChild(shelf);
+  shelf.appendChild(el('span', { class: 'cav p-soft' }, 'cartridges:'));
+  CARTS.forEach((c, i) => { const b = el('button', { class: 'm5cart', type: 'button' }, `<i></i><b>${c.id}</b><span>${c.name}</span>`); b.onclick = () => insert(i); shelf.appendChild(b); c.btn = b; });
+  const main = el('div', { class: 'm5main' }); w.appendChild(main);
+  const board = el('div', { class: 'm5board' }); main.appendChild(board);
+  const slot = el('div', { class: 'm5slot' }, '<span>insert a cartridge ↑</span>'); board.appendChild(slot);
+  const lcdHost = el('div', { class: 'm5lcd' }); board.appendChild(lcdHost); view = LCDView(lcdHost, lcd);
+  const row = el('div', { class: 'm5row' }); board.appendChild(row);
+  const kpHost = el('div', { class: 'm5kp' }); row.appendChild(kpHost);
+  const side = el('div', { class: 'm5side' }); row.appendChild(side);
+  const key = el('button', { class: 'bigkey m5key', type: 'button' }, 'P2.12<br><small>key</small>'); side.appendChild(key);
+  const dz = el('div', { class: 'm5dice' }, '<small>dice =</small><b>1</b>'); side.appendChild(dz);
+  const hb = el('div', { class: 'm5hb' }, '<span class="led g"></span><small>Timer0<br>delay done</small>'); side.appendChild(hb);
+  const spdBox = el('div', { class: 'm5spd' }); side.appendChild(spdBox);
+  chipGroup(spdBox, [[1, 'real time'], [12, 'fast ×12']], 1, v => speed = +v, 'm5s');
+  const bus = el('div', { class: 'm5bus' }); board.appendChild(bus);
+  const right = el('div', { class: 'm5right' }); main.appendChild(right);
+  right.appendChild(el('div', { class: 'mlab' }, 'the main loop of this cartridge'));
+  const flow = el('div', { class: 'm5flow' }); right.appendChild(flow);
+  right.appendChild(el('div', { class: 'mlab', style: 'margin-top:8px' }, 'building blocks (every program is made of these)'));
+  const blocks = el('div', { class: 'm5blocks' }); right.appendChild(blocks);
+  const B = {};
+  BLK.forEach(([k, n, d, ch, stk]) => { const e = el('div', { class: 'm5b' }, `<svg class="m5i"><use href="#${stk}"/></svg><div><div class="m5bn">${n} <span class="pill">${ch}</span></div><div class="m5bd">${d}</div><div class="m5bv"></div></div>`); blocks.appendChild(e); B[k] = { e, d: $('.m5bd', e), v: $('.m5bv', e) }; });
+  const note = el('div', { class: 'msay' }); right.appendChild(note);
+
+  /* ---------- LCD driver (logs every byte) ---------- */
+  const drv = {
+    cmd(c) { lcd.cmd(c); log(0, c); }, ch(ch) { const b = typeof ch === 'number' ? ch : ch.charCodeAt(0); lcd.data(b); log(1, b); },
+    str(s) { for (const c of s) drv.ch(c); }, init() { lcd.ready(); lcd.cmd(0x0C); lcd.cmd(0x06); lcd.cmd(0x01); lcd.cmd(0x80); }
+  };
+  function log(rs, b) { bytes.push(rs ? `<span class="d">'${b === 32 ? '␣' : esc(String.fromCharCode(b))}' ${hx(b)}</span>` : `<span class="c">cmd ${hx(b)}</span>`); if (bytes.length > 9) bytes.splice(0, bytes.length - 9); }
+  function showBus() { bus.innerHTML = '<span class="mlab">bytes on the LCD wires (newest last):</span> ' + (bytes.join(' ') || '—'); }
+  /* ---------- glow a chain of blocks ---------- */
+  let tmo = [];
+  function chain(keys, vals, node) {
+    tmo.forEach(clearTimeout); tmo = [];
+    Object.entries(vals || {}).forEach(([k, v]) => B[k].v.innerHTML = v);
+    $$('.m5fn', flow).forEach((n, i) => n.classList.toggle('on', i === node));
+    keys.forEach((k, i) => tmo.push(setTimeout(() => { B[k].e.classList.add('hot'); tmo.push(setTimeout(() => B[k].e.classList.remove('hot'), 700)); }, i * 170)));
+    view.draw(); showBus();
+  }
+  /* ---------- the cartridges' programs ---------- */
+  const p2 = n => String(n).padStart(2, '0');
+  function insert(i) {
+    cart = CARTS[i]; CARTS.forEach((c, j) => c.btn.classList.toggle('on', i === j));
+    slot.innerHTML = `<b>${cart.id}</b> ${cart.name}`; slot.classList.remove('in'); void slot.offsetWidth; slot.classList.add('in');
+    bytes = []; drv.init(); bytes.push('<span class="c">lcd_init(): 0x30 0x30 0x30 0x20 0x28 0x0C 0x06 0x01 0x80</span>');
+    if (cart.title) drv.str(cart.title);
+    BLK.forEach(([k]) => { B[k].e.classList.toggle('off', !cart.uses.includes(k)); B[k].v.innerHTML = ''; });
+    B.logic.d.innerHTML = cart.logic; B.ascii.d.innerHTML = cart.ascii;
+    flow.innerHTML = cart.flow.map((f, j) => `<span class="m5fn">${f}</span>${j < cart.flow.length - 1 ? '<i>→</i>' : '<i class="loop">↺</i>'}`).join('');
+    kpHost.innerHTML = ''; kp = Keypad(kpHost, { labels: cart.id === 'Q5' ? CALC : KEYLAB, onchange: (p, k, how) => { if (how === 'down' || how === undefined) onKey(k); } });
+    kpHost.classList.toggle('off', !cart.uses.includes('scan')); key.classList.toggle('off', !cart.uses.includes('p212')); dz.style.display = cart.id === 'Q4' ? '' : 'none'; hb.classList.toggle('off', !cart.uses.includes('tmr'));
+    st = { d: [0, 0, 0, 0], hh: 23, mm: 59, ss: 50, state: 0, a: 0, b: 0, op: 0 }; acc = 0;
+    if (cart.id === 'Q2') { drv.cmd(0xC0); drv.str('0000'); }
+    if (cart.id === 'Q3') { drv.cmd(0xC0); drv.str('23:59:50'); }
+    chain(['lcd'], { lcd: `lcd_init() + lcd_str("${cart.title || ''}")` }, -1);
+    note.innerHTML = { Q1: 'Tap a key on the keypad.', Q2: 'It counts by itself — every 500 ms Timer0 says "go on". Try fast ×12 to see the carries.', Q3: 'Starts at 23:59:50 — wait for midnight (or go fast).', Q4: 'The dice variable spins non-stop. Press P2.12 to catch it.', Q5: 'Type a one-digit sum: e.g. 7 × 8, then CLR.' }[cart.id];
+  }
+  function onKey(k) {
+    if (!cart) { note.textContent = 'Insert a cartridge first ↑'; return; }
+    const r = k >> 2, c = k & 3, scanV = `key ${k}: row ${r} (P2.${10 + r} HIGH) → column ${c} (P1.${23 + c}) answers`;
+    if (cart.id === 'Q1') { drv.cmd(0xC0); drv.ch(KEYLAB[k]); chain(['scan', 'logic', 'ascii', 'lcd'], { scan: scanV, logic: `key_ascii[${k}]`, ascii: `'${KEYLAB[k]}' = ${hx(KEYLAB[k].charCodeAt(0))}`, lcd: `lcd_cmd(0xC0) · lcd_char('${KEYLAB[k]}')` }, 3); return; }
+    if (cart.id !== 'Q5') { note.innerHTML = `<span class="p-red">${cart.id} never scans the keypad</span> — the key press is ignored.`; chain([], {}, -1); return; }
+    // calculator
+    const s = st, lab = CALC[k];
+    if (k === 15) { drv.cmd(0x01); s.state = 0; chain(['scan', 'logic', 'lcd'], { scan: scanV, logic: 'F = clear → state = 0', lcd: 'lcd_cmd(0x01)' }, 0); return; }
+    if (s.state === 0 && k <= 9) { s.a = k; drv.cmd(0x01); drv.ch(48 + k); s.state = 1; chain(['scan', 'logic', 'ascii', 'lcd'], { scan: scanV, logic: `a = ${k}, state → 1`, ascii: `${k} + '0' = '${k}'`, lcd: `lcd_cmd(0x01) · lcd_char('${k}')` }, 1); return; }
+    if (s.state === 1 && k >= 10 && k <= 13) { s.op = k - 10; drv.ch('+-*/'[s.op]); s.state = 2; chain(['scan', 'logic', 'lcd'], { scan: scanV, logic: `op = ${k} − 10 = ${s.op} ('${'+-*/'[s.op]}'), state → 2`, lcd: `lcd_char('${'+-*/'[s.op]}')` }, 2); return; }
+    if (s.state === 2 && k <= 9) {
+      s.b = k; drv.ch(48 + k); drv.ch('='); let res, err = false;
+      if (s.op === 0) res = s.a + k; else if (s.op === 1) res = s.a - k; else if (s.op === 2) res = s.a * k; else if (k === 0) err = true; else res = Math.trunc(s.a / k);
+      drv.str(err ? 'ERR' : String(res)); s.state = 0;
+      chain(['scan', 'logic', 'ascii', 'lcd'], { scan: scanV, logic: err ? 'b = 0 → ÷ by zero → "ERR"' : `${s.a} ${'+-*/'[s.op]} ${k} = ${res}`, ascii: err ? '"ERR"' : `sprintf(buf, "%d", ${res}) → "${res}"`, lcd: `lcd_char('${k}') · lcd_char('=') · lcd_str("${err ? 'ERR' : res}")` }, 3); return;
+    }
+    note.innerHTML = `key "${lab}" doesn't fit state ${s.state} → ignored.`; chain(['scan', 'logic'], { scan: scanV, logic: `state ${s.state}: "${lab}" ignored` }, s.state + 1);
+  }
+  function tick() { // a delay_ms() finished
+    hb.firstChild.classList.add('on'); setTimeout(() => hb.firstChild.classList.remove('on'), 160);
+    if (cart.id === 'Q2') {
+      const d = st.d; let k = 3; d[k]++; while (k > 0 && d[k] > 9) { d[k] = 0; k--; d[k]++; } if (d[0] > 9) d[0] = 0;
+      drv.cmd(0xC0); drv.str(d.join(''));
+      chain(['tmr', 'logic', 'ascii', 'lcd'], { tmr: 'delay_ms(500): TC counted 0 → 500 (1 ms steps)', logic: `d[] = {${d.join(', ')}}${k < 3 ? ` · carried into d[${k}]` : ''}`, ascii: d.map(x => `${x}→'${x}'`).join(' '), lcd: `lcd_cmd(0xC0) · 4 × lcd_char` }, 3);
+    } else if (cart.id === 'Q3') {
+      st.ss++; let roll = ''; if (st.ss === 60) { st.ss = 0; st.mm++; roll = 'ss 60 → 0, mm + 1'; } if (st.mm === 60) { st.mm = 0; st.hh++; roll = 'mm 60 → 0, hh + 1'; } if (st.hh === 24) { st.hh = 0; roll = 'hh 24 → 0 · midnight!'; }
+      const t = `${p2(st.hh)}:${p2(st.mm)}:${p2(st.ss)}`; drv.cmd(0xC0); drv.str(t);
+      chain(['tmr', 'logic', 'ascii', 'lcd'], { tmr: 'delay_ms(1000): 1000 TC steps of 1 ms', logic: `ss++${roll ? ' → ' + roll : ''}`, ascii: `${st.ss} → '${Math.floor(st.ss / 10)}' (v/10) '${st.ss % 10}' (v%10)`, lcd: `lcd_cmd(0xC0) · "${t}"` }, roll ? 3 : 1);
+    }
+  }
+  const toss = e => { e && e.preventDefault(); if (!cart) { note.textContent = 'Insert a cartridge first ↑'; return; } key.classList.add('down'); setTimeout(() => key.classList.remove('down'), 160);
+    if (cart.id !== 'Q4') { note.innerHTML = `<span class="p-red">${cart.id} never reads P2.12</span> — nothing happens.`; return; }
+    const n = dice; drv.cmd(0xC0); drv.str('YOU GOT: '); drv.ch(48 + n);
+    chain(['p212', 'logic', 'ascii', 'lcd'], { p212: 'P2.12 reads 0 → pressed', logic: `caught dice = ${n}`, ascii: `${n} + '0' = '${n}' (${hx(48 + n)})`, lcd: 'lcd_cmd(0xC0) · lcd_str("YOU GOT: ") · lcd_char' }, 2);
+  };
+  key.addEventListener('pointerdown', toss); key.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') toss(e); });
+  const loop = Loop(w, (dt, t) => {
+    if (!cart) return;
+    if (cart.id === 'Q4') { dice = dice % 6 + 1; dz.lastChild.textContent = dice; }
+    if (cart.id === 'Q2' || cart.id === 'Q3') { acc += dt * speed; const per = cart.id === 'Q2' ? .5 : 1; while (acc >= per) { acc -= per; tick(); } }
+  });
+  insert(0); loop.start();
 });
 
 bootCore();

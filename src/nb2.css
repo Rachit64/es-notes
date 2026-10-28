@@ -67,3 +67,6 @@ svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear 
 .term .cur{font-style:normal; animation:blink 1s steps(2) infinite}
 @media (max-width:640px){ .lsrbits{grid-template-columns:repeat(4,minmax(0,1fr))} .meter{min-width:110px} }
 .tbl.pwmff td.act{background:var(--hl-y); font-weight:700}
+@media (max-width:640px){ .phone-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px} .phone-scroll > svg{min-width:520px} }
+.trigtbl td{vertical-align:middle}
+.trigtbl tr.hit td{background:var(--hl-y)}

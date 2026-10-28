@@ -1,0 +1,135 @@
+/* =========================================================
+   NOTEBOOK 1 · part F — master widgets ("chapter N in one widget")
+   + small phone fixes for older widgets
+   ========================================================= */
+
+/* ---------- phone / small fixes for existing widgets ---------- */
+.hscroll{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px}
+.swipe-hint{display:none; font-family:'Caveat'; font-size:18px; color:var(--ink3); text-align:center}
+@media (max-width:640px){
+  .hscroll > svg.blk{min-width:620px}
+  .swipe-hint{display:block}
+  .mbc{min-width:31px} .mbc i{width:27px; height:26px; font-size:14.5px}
+  #w-mask .seg7{width:46px}
+  #w-mask .row.mt{gap:8px 10px}
+}
+svg.nibtd .tr{fill:none; stroke-width:2.6; stroke-linejoin:round; stroke-linecap:round}
+svg.nibtd .tr.rs{stroke:var(--blue)} svg.nibtd .tr.en{stroke:var(--red)}
+svg.nibtd .tr.bus{stroke:var(--green); fill:var(--hl-g); stroke-width:1.8}
+svg.nibtd .tr.fut{stroke:var(--ink3); stroke-dasharray:4 4; opacity:.5; fill:none}
+/* LCD pin list */
+.lpgrid{display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:5px; margin-top:10px}
+.lpb{display:flex; flex-direction:column; align-items:center; gap:0; padding:3px 2px 2px; border:1.5px solid var(--faint); border-radius:8px; background:var(--paper); cursor:pointer; color:var(--ink); line-height:1.15; min-width:0}
+.lpb i{font-style:normal; font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
+.lpb b{font-family:'Gaegu'; font-weight:700; font-size:16px; color:var(--ink)}
+.lpb span{font-family:'Courier Prime'; font-size:11px; color:var(--ink3); white-space:nowrap}
+.lpb.lpc{border-color:var(--purple)} .lpb.lpc span{color:var(--purple); font-weight:700}
+.lpb.on{background:var(--hl-l); border-color:var(--ink); box-shadow:1.5px 2px 0 var(--ink)}
+@media (max-width:640px){ .lpgrid{grid-template-columns:repeat(4,minmax(0,1fr))} }
+
+/* ---------- the "cut here" line + master heading ---------- */
+.mcut{position:relative; height:0; margin:70px -8px 0; border-top:2.4px dashed var(--ink3); opacity:.85}
+.mcut span{position:absolute; left:18px; top:-15px; font-family:'Caveat'; font-size:20px; line-height:1; color:var(--ink2); background:var(--paper); padding:2px 10px; border-radius:6px}
+.bub.mh{margin-top:26px}
+.bub.mh .num{background:var(--bc2); font-size:24px; animation:mwob 2.8s ease-in-out infinite alternate}
+@keyframes mwob{from{transform:rotate(-10deg)} to{transform:rotate(8deg) scale(1.06)}}
+.mlede{max-width:780px; color:var(--ink2)}
+
+/* ---------- master card ---------- */
+.wg.master{--tilt:0deg; border:2.4px solid var(--ink); border-radius:6px 10px 8px 12px/10px 6px 12px 8px; box-shadow:4px 5px 0 var(--ink), 0 26px 44px -26px var(--shadow); padding-top:30px}
+.wg.master > .mst{position:absolute; right:-18px; top:-26px; width:58px; height:58px; --sr:14deg; z-index:5; pointer-events:none}
+.wg.master .wg-h .wt{background:var(--wtc,var(--n-y))}
+.wg.master .wg-h .wt::before{content:"★ "; color:var(--orange)}
+.mlab{font-family:'Gaegu'; font-weight:700; font-size:16px; color:var(--ink2); line-height:1.2}
+.mbox{border:1.6px solid var(--faint); border-radius:10px 13px 9px 12px/12px 9px 13px 10px; background:var(--paper); padding:8px 10px}
+.msay{font-family:'Caveat'; font-size:21px; line-height:1.2; color:var(--purple); min-height:2.4em}
+.msay.r{color:var(--red)} .msay.g{color:var(--green)}
+svg.dg .mpulse{fill:var(--orange); stroke:var(--ink); stroke-width:1.4; filter:drop-shadow(0 0 4px var(--orange))}
+svg.dg .mpulse.r{fill:var(--hi)} svg.dg .mpulse.b{fill:var(--blue)} svg.dg .mpulse.g{fill:var(--green)} svg.dg .mpulse.p{fill:var(--purple)}
+svg.dg .mring{fill:none; stroke:var(--red); stroke-width:2.4; animation:mring .7s ease-out forwards}
+@keyframes mring{from{opacity:1; r:4} to{opacity:0; r:22}}
+.mcode{font-family:'Courier Prime'; font-size:14px; background:var(--code-bg); color:var(--code-ink); border:1.5px solid var(--faint); border-radius:8px; padding:4px 10px; overflow-x:auto; white-space:pre}
+.mcode .k{color:var(--code-kw); font-weight:700} .mcode .n{color:var(--code-num)} .mcode .c{color:var(--code-com); font-style:italic} .mcode .r{color:var(--code-reg)} .mcode .s{color:var(--code-str)} .mcode .pp{color:var(--pink); font-weight:700}
+
+/* =========================================================
+   M0 · pin X-ray bench
+   ========================================================= */
+.m0top{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:16px 24px; align-items:start}
+.m0pick .chips{gap:6px}
+.m0bench{display:flex; flex-direction:column; gap:8px}
+.m0tiles{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+.m0tiles .chips{gap:5px}
+.m0tiles .chip{font-size:15px; padding:2px 10px 1px}
+.m0line{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.m0line .mcode{font-size:15.5px; flex:1 1 260px; min-width:0}
+.m0line .inp{width:9.5em}
+.m0recipe .chip{--cc:var(--n-g)}
+.m0sheet{margin-top:14px; display:flex; flex-direction:column; gap:3px}
+.m0r{display:grid; grid-template-columns:118px minmax(0,1fr) 104px; gap:8px; align-items:center}
+.m0r .lab{font-family:'Gaegu'; font-weight:700; font-size:15px; color:var(--ink2); line-height:1.1; text-align:right}
+.m0r .hx{font-family:'Courier Prime'; font-weight:700; font-size:14px; color:var(--ink)}
+.m0bits{display:flex; gap:8px; min-width:0}
+.m0half{display:grid; grid-template-columns:repeat(16,minmax(0,1fr)); gap:1px; flex:1 1 0; min-width:0}
+.m0half i{font-style:normal; font-family:'Courier Prime'; font-weight:700; font-size:12.5px; text-align:center; line-height:22px; height:22px; border:1px solid var(--faint); border-radius:3px; background:var(--paper); color:var(--ink3); transition:background .3s, color .3s}
+.m0half i.one{background:var(--hl-y); color:var(--ink)}
+.m0half i.nib{margin-left:4px}
+.m0half i.pin{box-shadow:inset 0 0 0 2px var(--pink)}
+.m0half i.chg{animation:m0chg .6s ease}
+@keyframes m0chg{40%{transform:translateY(-4px) scale(1.15); background:var(--hl-g)}}
+.m0r.hdr .m0half i{border:0; background:none; font-size:10px; color:var(--ink3); height:14px; line-height:14px; font-weight:400}
+.m0r.hdr .m0half b{grid-column:span 4; text-align:center; font-family:'Courier Prime'; font-size:13px; color:var(--blue); border-bottom:2px solid var(--hl-b); line-height:16px}
+.m0r.hdr .m0half b.pinnib{background:var(--hl-p); border-radius:4px 4px 0 0; color:var(--ink)}
+.m0r.res .lab{color:var(--green)}
+.m0r.op .lab{color:var(--purple)}
+.m0expl{font-size:.9em; color:var(--ink2); margin:4px 0 0 126px}
+.m0mid{display:grid; grid-template-columns:minmax(0,1.75fr) minmax(0,1fr); gap:16px 22px; margin-top:16px; align-items:start}
+svg.m0x{max-width:640px}
+svg.m0x .w{fill:none; stroke:var(--ink3); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; transition:stroke .3s}
+svg.m0x .w.on{stroke:var(--hi)} svg.m0x .w.lo{stroke:var(--lo)}
+svg.m0x .w.off{opacity:.35; stroke-dasharray:3 5}
+svg.m0x .blk{fill:var(--card); stroke:var(--ink); stroke-width:1.7; filter:url(#wob)}
+svg.m0x .blk.dim{opacity:.4}
+svg.m0x .gate{fill:url(#hatch-b); stroke:var(--blue); stroke-width:1.6}
+svg.m0x .gate.open{fill:var(--paper); stroke-dasharray:3 3}
+svg.m0x .sock{fill:var(--paper); stroke:var(--ink); stroke-width:1.8}
+svg.m0x .sock.on{fill:var(--hl-y)}
+svg.m0x .cord{fill:none; stroke:var(--orange); stroke-width:5; stroke-linecap:round; transition:d .5s}
+svg.m0x .cordi{fill:none; stroke:var(--paper); stroke-width:1.4; stroke-dasharray:2 5; opacity:.8; transition:d .5s}
+svg.m0x .plug{fill:var(--orange); stroke:var(--ink); stroke-width:1.5}
+svg.m0x .flash{animation:m0fl .8s ease}
+@keyframes m0fl{30%{filter:drop-shadow(0 0 8px var(--orange))}}
+svg.m0x .ledbulb{fill:#7d3a40; stroke:var(--ink); stroke-width:1.8}
+svg.m0x .ledbulb.on{fill:var(--led); filter:drop-shadow(0 0 8px var(--led-glow))}
+svg.m0x .swk{cursor:pointer}
+svg.m0x text.t{font-size:13.5px}
+svg.m0x text.s{font-size:12.5px; fill:var(--ink2)}
+svg.m0x text.m{font-family:'Courier Prime'; font-weight:700; font-size:12.5px}
+.m0regs{display:grid; grid-template-columns:auto 1fr; gap:3px 10px; align-items:center; font-size:.9em}
+.m0regs button{all:unset; cursor:pointer; font-family:'Gaegu'; font-weight:700; color:var(--ink2); padding:1px 6px; border-radius:6px; border:1.4px dashed transparent}
+.m0regs button:hover,.m0regs button.on{border-color:var(--ink3); background:var(--hl-y); color:var(--ink)}
+.m0regs span{font-family:'Courier Prime'; font-size:13.5px; overflow-wrap:anywhere}
+.m0regs span em{font-style:normal; color:var(--pink); font-weight:700}
+.m0beat{margin-top:12px; display:flex; flex-direction:column; gap:6px}
+.m0beat .odo{font-size:22px; letter-spacing:2px; min-width:0}
+@media (max-width:860px){ .m0top,.m0mid{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:640px){
+  .m0r{grid-template-columns:minmax(0,1fr) auto; gap:2px 6px}
+  .m0r .lab{text-align:left; grid-column:1; grid-row:1}
+  .m0r .hx{grid-column:2; grid-row:1}
+  .m0r .m0bits{grid-column:1 / 3; grid-row:2; flex-direction:column; gap:2px}
+  .m0half i{font-size:11.5px; height:20px; line-height:20px}
+  .m0expl{margin-left:0}
+}
+
+.chip.mn{font-family:'Courier Prime'; font-weight:700; font-size:13.5px}
+
+/* keypad keys: keep the label dark on the white key in both themes */
+.kkey b{color:#2a2933}
+@media (max-width:640px){ .wg.master > .mst{right:0; top:-24px; width:44px; height:44px} }
+
+.m0xs{overflow-x:auto; -webkit-overflow-scrolling:touch}
+@media (max-width:640px){
+  .m0xs svg.m0x{min-width:500px}
+  .m0regs span{font-size:12px}
+  .m0regs button{font-size:15px}
+}

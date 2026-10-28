@@ -2,6 +2,9 @@
    NOTEBOOK 2 · part A — interrupts (NVIC, timer, EINT, GPIO)
    ========================================================= */
 
+/* draw an SVG at its real pixel width (text stays readable on phones) */
+function pxW(svg, H, min = 260) { const Wd = Math.max(min, Math.round(svg.clientWidth || (svg.parentNode && svg.parentNode.clientWidth) || 600)); svg.setAttribute('viewBox', `0 0 ${Wd} ${H}`); svg.setAttribute('height', H); return Wd; }
+
 /* ---------- polling vs interrupt race ---------- */
 BUILD.push(function wPoll() {
   const w = W('w-poll', 'polling vs interrupt', 'same random parcels arrive in both lanes');
@@ -29,7 +32,7 @@ BUILD.push(function wPoll() {
     L.segs = L.segs.filter(s => s[1] > T - WIN); L.bells = L.bells.filter(b => b > T - WIN);
   };
   const draw = L => {
-    const X = t => 10 + (t - (T - WIN)) / WIN * 620; const g = L.svg; g.innerHTML = '';
+    const Wd = pxW(L.svg, 58), X = t => 10 + (t - (T - WIN)) / WIN * (Wd - 20); const g = L.svg; g.innerHTML = '';
     const col = { w: 'var(--hl-g)', c: 'var(--faint)', h: 'var(--hl-p)' };
     L.segs.concat([[L.t0, T, { work: 'w', chk: 'c', isr: 'h' }[L.st]]]).forEach(([a, b, k]) => { if (b < T - WIN) return; const x1 = X(Math.max(a, T - WIN)), x2 = X(b); sv('rect', { x: x1, y: 22, width: Math.max(0, x2 - x1), height: 26, rx: 4, style: `fill:${col[k]};stroke:var(--ink3);stroke-width:.6` }, g); });
     L.bells.forEach(b => sv('text', { x: X(b), y: 16, 'text-anchor': 'middle', style: 'font-size:14px' }, g).textContent = '🔔');
@@ -37,10 +40,9 @@ BUILD.push(function wPoll() {
     const avg = L.lat.length ? L.lat.reduce((a, b) => a + b, 0) / L.lat.length : 0;
     L.stats.innerHTML = `homework time: <b>${Math.round(L.work / Math.max(T, .01) * 100)}%</b> · waited per parcel: <b>${avg.toFixed(2)} s</b>${L === A ? ` · checks: ${L.checks} (wasted: <b>${L.wasted}</b>)` : ' · checks: 0 — the bell tells it'}`;
   };
-  const lp = Loop(w, dt => {
-    T += dt; if (T >= nextEv) { [A, B].forEach(L => { L.pend.push(T); L.bells.push(T); }); nextEv = T + 1.4 + Math.random() * 2.6; }
-    step(A, dt, true); step(B, dt, false); draw(A); draw(B);
-  });
+  const tick = dt => { T += dt; if (T >= nextEv) { [A, B].forEach(L => { L.pend.push(T); L.bells.push(T); }); nextEv = T + 1.4 + Math.random() * 2.6; } step(A, dt, true); step(B, dt, false); };
+  for (let i = 0; i < 600; i++) tick(1 / 60); // start with a few seconds already on the chart
+  const lp = Loop(w, dt => { tick(dt); draw(A); draw(B); });
   lp.start();
 });
 
@@ -183,7 +185,7 @@ BUILD.push(function wT1() {
     { l: [L('ticks++;'), L('if(ticks==1000)')], t: 'ticks = 1. Not 1000 yet → return to main.', f: s => set(s, { ticks: 1 }) },
     { l: L('LPC_GPIO2->FIOPIN=(LPC_GPIO1'), t: 'Back in main exactly where it was — copying the switch again.', f: s => set(s, { cpu: 'main' }) },
     { l: [L('ticks++;'), L('if(ticks==1000)')], t: '…999 more interrupts later (1 per ms): ticks = 1000.', f: s => set(s, { cpu: 'isr', ticks: 1000 }) },
-    { l: [L('ticks=0;'), L('FIOPIN=~(LPC_GPIO0')], t: 'ticks = 0 and <b>toggle P0.2</b>. That happens once every 1000 × 1 ms = <b>1 s</b>.', f: s => set(s, { ticks: 0 }) },
+    { l: [L('ticks=0;'), L('FIOPIN=~(LPC_GPIO0')], t: 'ticks = 0 and <b>toggle P0.2</b>: <code>~(FIOPIN &amp; 0x4)</code> makes bit 2 the opposite of what it was. That happens once every 1000 × 1 ms = <b>1 s</b>.', f: s => set(s, { ticks: 0 }) },
     { l: L('LPC_GPIO2->FIOPIN=(LPC_GPIO1'), t: 'Return → main continues. Two jobs share one CPU: blink by interrupt, copy by main.', f: s => set(s, { cpu: 'main' }) }
   ];
   let isrCount = 0, ms = 0, led = 0, sw = 0;
@@ -324,27 +326,28 @@ BUILD.push(function wT3() {
 BUILD.push(function wTrig() {
   const w = W('w-trig', 'trigger lab', 'hold the button to pull the pin LOW · pick a mode');
   let mode = 2; // EXTMODE<<1 | EXTPOLAR
-  const MODES = [['0', '0', 'Level 0', 'interrupt keeps coming while pin = 0'], ['0', '1', 'Level 1', 'interrupt keeps coming while pin = 1'], ['1', '0', 'Falling edge', 'one interrupt each time the pin goes 1 → 0'], ['1', '1', 'Rising edge', 'one interrupt each time the pin goes 0 → 1']];
-  const tb = el('table', { class: 'tbl', style: 'max-width:560px' }); w.appendChild(el('div', { class: 'tblwrap' })).appendChild(tb);
-  tb.innerHTML = '<tr><th>EXTMODEx</th><th>EXTPOLARx</th><th>EINTx triggers on</th></tr>' + MODES.map((m, i) => `<tr data-i="${i}" style="cursor:pointer"><td class="m">${m[0]}</td><td class="m">${m[1]}</td><td><b>${m[2]}</b> <span class="small p-soft">— ${m[3]}</span></td></tr>`).join('');
+  const MODES = [['0', '0', 'Level 0', 'again and again while pin = 0'], ['0', '1', 'Level 1', 'again and again while pin = 1'], ['1', '0', 'Falling edge ↘', 'once each time the pin goes 1→0'], ['1', '1', 'Rising edge ↗', 'once each time the pin goes 0→1']];
+  const tb = el('table', { class: 'tbl trigtbl' }); w.appendChild(el('div', { class: 'tblwrap' })).appendChild(tb);
+  tb.innerHTML = '<tr><th>EXTMODE</th><th>EXTPOLAR</th><th>EINTx triggers on <span class="small p-soft">(tap a row)</span></th></tr>' + MODES.map((m, i) => `<tr data-i="${i}" style="cursor:pointer"><td class="m">${m[0]}</td><td class="m">${m[1]}</td><td><b>${m[2]}</b> <span class="small p-soft">— ${m[3]}</span></td></tr>`).join('');
   $$('tr[data-i]', tb).forEach(r => r.onclick = () => { mode = +r.dataset.i; marks = []; paint(); });
   const ctl = el('div', { class: 'row mt' }); w.appendChild(ctl);
   const btn = el('button', { class: 'bigkey', type: 'button', style: 'width:76px;height:76px' }, 'P2.12<br><small>hold</small>'); ctl.appendChild(btn);
   const cnt = el('div', { class: 'say' }); ctl.appendChild(cnt);
   const s = sv('svg', { class: 'dg', viewBox: '0 0 640 120' }); w.appendChild(s);
-  let lvl = 1, T = 0, hist = [[0, 1]], marks = [], last = -9, n = 0;
+  let lvl = 1, T = 8, hist = [[0, 1]], marks = [], last = -9, n = 0;
   const setL = v => { if (v === lvl) return; lvl = v; hist.push([T, v]); const m = mode; if ((m === 2 && v === 0) || (m === 3 && v === 1)) { marks.push(T); n++; } };
   btn.addEventListener('pointerdown', e => { e.preventDefault(); btn.classList.add('down'); setL(0); });
   const up = () => { btn.classList.remove('down'); setL(1); }; btn.addEventListener('pointerup', up); btn.addEventListener('pointerleave', up);
   function paint() { $$('tr[data-i]', tb).forEach(r => r.classList.toggle('hit', +r.dataset.i === mode)); }
-  const WIN = 8, X = t => 60 + (t - (T - WIN)) / WIN * 570;
+  const WIN = 8; let X = t => t;
   const lp = Loop(w, dt => {
     T += dt; const m = mode;
     if ((m === 0 && lvl === 0) || (m === 1 && lvl === 1)) { if (T - last > 0.12) { last = T; marks.push(T); n++; } }
     hist = hist.filter((h, i) => i === hist.length - 1 || hist[i + 1][0] > T - WIN); marks = marks.filter(t => t > T - WIN);
-    s.innerHTML = '';
-    sv('text', { x: 2, y: 42, class: 'lbl', style: 'font-size:14px' }, s).textContent = 'P2.12';
-    sv('text', { x: 2, y: 100, class: 'lbl', style: 'font-size:14px' }, s).textContent = 'ISR runs';
+    s.innerHTML = ''; const Wd = pxW(s, 120); X = t => 70 + (t - (T - WIN)) / WIN * (Wd - 80);
+    sv('text', { x: 2, y: 44, class: 'lbl', style: 'font-size:14px' }, s).textContent = 'P2.12';
+    sv('text', { x: 2, y: 104, class: 'lbl', style: 'font-size:14px' }, s).textContent = 'ISR runs';
+    sv('path', { d: `M70 112 H${Wd - 10}`, style: 'stroke:var(--faint)' }, s);
     sv('path', { d: digi(hist.map(h => [Math.max(h[0], T - WIN), h[1]]).concat([[T, lvl]]), X, 22, 58), style: 'fill:none;stroke:var(--blue);stroke-width:2.6' }, s);
     marks.forEach(t => { sv('path', { d: `M${X(t)} 112 V86`, style: 'stroke:var(--red);stroke-width:2.6;stroke-linecap:round' }, s); });
     cnt.innerHTML = `mode: <b>${MODES[mode][2]}</b> · ISR ran <b>${n}</b>×<br><span class="small p-soft">${MODES[mode][3]}</span>`;
@@ -462,18 +465,18 @@ BUILD.push(function wE2() {
   const k = el('button', { class: 'bigkey', type: 'button' }, 'P2.12<br><small>hold</small>'); r.appendChild(k);
   const say = el('div', { class: 'note blue stp-note' }); side.appendChild(say);
   const s = sv('svg', { class: 'dg', viewBox: '0 0 520 110' }); side.appendChild(s);
-  let held = false, T = 0, ph = 0, n = 0, lv = 0, hist = [[0, 0]], pin = [[0, 1]];
+  let held = false, T = 4, ph = 0, n = 0, lv = 0, hist = [[0, 0]], pin = [[0, 1]];
   k.addEventListener('pointerdown', e => { e.preventDefault(); held = true; k.classList.add('down'); pin.push([T, 0]); });
   const up = () => { if (!held) return; held = false; k.classList.remove('down'); pin.push([T, 1]); }; k.addEventListener('pointerup', up); k.addEventListener('pointerleave', up);
   say.innerHTML = 'Press and <b>hold</b> P2.12. Watch the ISR loop and the LED trace.';
   const setLv = v => { if (v !== lv) { lv = v; hist.push([T, v]); led.classList.toggle('on', !!v); } };
-  const WIN = 4, X = t => 50 + (t - (T - WIN)) / WIN * 460;
+  const WIN = 4; let X = t => t;
   const lp = Loop(side, dt => {
     T += dt;
     if (held) { ph += dt; const P = 0.16; const q = ph % P; if (q < 0.02) { hi([L('EXTINT = 0x00000004')]); setLv(0); } else if (q < 0.13) { hi([L('FIOSET = 1<<23'), L('for (i=0')]); setLv(1); } else { hi([L('FIOCLR = 1<<23')]); setLv(0); } if (ph - dt < Math.floor(ph / P) * P || ph < dt) n++; say.innerHTML = `Pin is 0 → flag comes right back → <b>ISR #${n}</b>. LED: ON → short delay → OFF → the ISR starts again immediately. Looks ON (a bit dimmer).`; }
     else { ph = 0; setLv(0); hi([L('while(1) ;')]); if (n) say.innerHTML = `Released → pin = 1 → no more interrupts → LED stays OFF. (ISR ran ${n}× while you held it.)`; }
     hist = hist.filter((h, i) => i === hist.length - 1 || hist[i + 1][0] > T - WIN); pin = pin.filter((h, i) => i === pin.length - 1 || pin[i + 1][0] > T - WIN);
-    s.innerHTML = '';
+    s.innerHTML = ''; const Wd = pxW(s, 110); X = t => 52 + (t - (T - WIN)) / WIN * (Wd - 60);
     sv('text', { x: 2, y: 36, class: 'lbl', style: 'font-size:13px' }, s).textContent = 'P2.12'; sv('text', { x: 2, y: 92, class: 'lbl', style: 'font-size:13px' }, s).textContent = 'LED';
     sv('path', { d: digi(pin.map(h => [Math.max(h[0], T - WIN), h[1]]).concat([[T, held ? 0 : 1]]), X, 18, 46), style: 'fill:none;stroke:var(--blue);stroke-width:2.4' }, s);
     sv('path', { d: digi(hist.map(h => [Math.max(h[0], T - WIN), h[1]]).concat([[T, lv]]), X, 72, 100), style: 'fill:none;stroke:var(--red);stroke-width:2.4' }, s);

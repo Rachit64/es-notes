@@ -234,7 +234,7 @@ BUILD.push(function wP4() {
       const x = X(e); const shown = e <= n;
       if (!shown) break;
       d += `H${x - 13}V44 H${x}`; if (e < 16) d += `V20`;
-      sv('text', { x: x - 13, y: 58, 'text-anchor': 'middle', class: 'mono', style: `font-size:10px;fill:${ev[e - 1].m ? 'var(--red)' : 'var(--ink3)'}` }, g).textContent = ev[e - 1].tc;
+      sv('text', { x: x - 13, y: 58, 'text-anchor': 'middle', class: 'mono', style: `font-size:13px;fill:${ev[e - 1].m ? 'var(--red)' : 'var(--ink3)'}` }, g).textContent = ev[e - 1].tc;
       if (ev[e - 1].m) { od += `H${x - 13}V${ev[e - 1].out ? 84 : 114}`; sv('path', { d: `M${x - 13} 62 V78`, style: 'stroke:var(--red);stroke-width:1.5;stroke-dasharray:2 3' }, g); }
     }
     od += `H${X(n) - 13 + (n ? 13 : 0)}`;
@@ -305,10 +305,10 @@ BUILD.push(function wP5() {
     v._kv.innerHTML = `TC1 = <b>${s.gate === 1 ? '…counting' : (s.tc1 ?? '–')}</b>${s.gate === 2 ? ` → f = ${s.show} Hz` : ''}`;
     const g = v._svg; g.innerHTML = ''; const X = t => 40 + t * 460; const ph = .37 / f;
     sv('rect', { x: X(0), y: 6, width: 460, height: 70, rx: 4, style: `fill:${s.gate ? 'var(--hl-g)' : 'transparent'};stroke:var(--faint)` }, g);
-    sv('text', { x: X(.5), y: 96, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:12px' }, g).textContent = s.gate ? '← 1 second gate (Timer0 delay) →' : 'the 1 s window';
+    sv('text', { x: X(.5), y: 97, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:15px' }, g).textContent = s.gate ? '← 1 second gate (Timer0 delay) →' : 'the 1 s window';
     const pts = [[-0.05, 0]]; for (let k2 = 0; k2 < f + 1; k2++) { const tr = ph + k2 / f; pts.push([tr, 1], [tr + .5 / f, 0]); } pts.push([1.05, pts[pts.length - 1][1]]);
     sv('path', { d: digi(pts.filter(p => p[0] <= 1.05), x => X(Math.max(-0.05, Math.min(1.05, x))), 20, 60), style: 'fill:none;stroke:var(--blue);stroke-width:2.2' }, g);
-    if (s.gate) for (let k2 = 0; k2 < f; k2++) { const x = X(ph + k2 / f); sv('text', { x, y: 16, 'text-anchor': 'middle', style: 'fill:var(--orange);font-size:13px' }, g).textContent = '★' + (k2 + 1); }
+    if (s.gate) for (let k2 = 0; k2 < f; k2++) { const x = X(ph + k2 / f); sv('text', { x, y: 17, 'text-anchor': 'middle', style: 'fill:var(--orange);font-size:15px' }, g).textContent = '★' + (k2 + 1); }
   };
   const st = Stepper(host, { code: P5_CODE, title: 'freq_meter.c', steps: build(), init: () => ({}), view });
   ruler(gen, 'frequency', 1, 9, f, 1, v => v + ' Hz', v => { f = v; st.setSteps(build(), Math.min(st.k, 99)); });

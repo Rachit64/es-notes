@@ -67,6 +67,7 @@
   <ul class="b">
     <li><b>GPIO</b> = General Purpose Input/Output: a pin you drive HIGH/LOW yourself (output) or read (input).</li>
     <li>Pin names: <b>P0.2</b> = port 0, pin 2. A port has 32 pins, so each port register is 32 bits: <span class="hl-y">bit n ↔ pin n</span>.</li>
+    <li>In C every port has its own copy of the registers: <code>LPC_GPIO0-&gt;FIOSET</code> = FIOSET of port 0, <code>LPC_GPIO2-&gt;FIODIR</code> = FIODIR of port 2. The PINSEL registers live in <code>LPC_PINCON</code>.</li>
   </ul>
   <p class="mnote o">FIOSET / FIOCLR only touch the 1-bits → safe. <br>FIOPIN = x writes the <u>whole</u> port!</p>
   <div class="tblwrap"><table class="tbl">
@@ -79,12 +80,20 @@
     <tr><td class="m">FIOMASK</td><td><b>1 = protected</b>: writes via FIOPIN / FIOSET / FIOCLR skip that pin, and FIOPIN reads it as 0. 0 = normal.</td></tr>
   </table></div>
   <div class="wg" id="w-gpio"></div>
+  <div class="h4" style="--hc:var(--orange)">PINSEL — which job does the pin do?</div>
   <ul class="b arrow">
     <li>Each PINSEL register covers 16 pins: <b>PINSEL0</b> = P0.0–15, <b>PINSEL1</b> = P0.16–31, <b>PINSEL2</b> = P1.0–15, <b>PINSEL3</b> = P1.16–31, <b>PINSEL4</b> = P2.0–15.</li>
     <li>Pin Px.n uses bits <span class="hl-g">2×(n mod 16)+1 : 2×(n mod 16)</span>. Example P1.28 → (28−16)×2 = 24 → bits 25:24 → <code>3&lt;&lt;24</code> picks function 3.</li>
     <li>After reset every PINSEL is 0 → every pin starts as GPIO.</li>
   </ul>
   <div class="wg" id="w-pinsel"></div>
+  <div class="icard"><div class="ih">using any pin = 3 steps (always in this order)</div>
+    <ol class="b">
+      <li><b>PINSEL</b> → give the pin its job (<code>00</code> = GPIO — already true after reset, so GPIO programs often skip it).</li>
+      <li><b>FIODIR</b> → 1 = output, 0 = input.</li>
+      <li><b>FIOSET / FIOCLR</b> to drive an output — or read <b>FIOPIN</b> for an input.</li>
+    </ol>
+  </div>
 
   <h3 class="bub jit" style="--bc:var(--hl-y);--bc2:var(--n-y)"><span class="num">0.3</span>The heartbeat: PCLK</h3>
   <div class="icard"><div class="ih">peripheral clock (as used in all these slides)</div>
@@ -93,8 +102,12 @@
   </div>
   <ul class="b">
     <li><code>SystemInit();</code> + <code>SystemCoreClockUpdate();</code> start most programs: they set up the clock system and record the CPU frequency. Just copy them.</li>
-    <li><code>#include &lt;LPC17xx.h&gt;</code> gives the names <code>LPC_GPIO0</code> … <code>LPC_GPIO4</code> (one per port), <code>LPC_PINCON</code> (PINSEL), <code>LPC_TIM0</code> … Each points to a block of registers; <code>-&gt;</code> picks one: <code>LPC_TIM0-&gt;TC</code> = "the TC register of Timer0".</li>
+    <li><code>#include &lt;LPC17xx.h&gt;</code> gives all these names: <code>LPC_GPIO0</code> … <code>LPC_GPIO4</code>, <code>LPC_PINCON</code>, <code>LPC_TIM0</code> … Each points to a block of registers; <code>-&gt;</code> picks one: <code>LPC_TIM0-&gt;TC</code> = "the TC register of Timer0".</li>
   </ul>
+  <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-y);--bc2:var(--n-y)"><span class="num">★</span>chapter 0 in one widget</h3>
+  <p class="mlede">Pick a pin, build a C line from the tiles and press <b>run</b>. Watch the line turn into bits, land in a register, and travel through the pin's insides to the LED — or get stopped on the way.</p>
+  <div class="wg master" id="w-m0"></div>
 </article>
 
 <!-- ===================== CH 1 : KEYPAD ===================== -->
@@ -119,7 +132,7 @@
 
   <h3 class="bub jit" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">1.1</span>The circuit</h3>
   <ul class="b">
-    <li><b>Rows R1–R4 → P2.10–P2.13</b> = <span class="hl-p">outputs</span> (we drive them), each through a diode (D6–D9, IN5819).</li>
+    <li><b>Rows R1–R4 → P2.10–P2.13</b> = <span class="hl-p">outputs</span> (we drive them), each through a diode (D6–D9, 1N5819).</li>
     <li><b>Columns C1–C4 → P1.23–P1.26</b> = <span class="hl-b">inputs</span> (we read them), each pulled down to GND by 15 kΩ (R63–R66).</li>
     <li>Keys SW3 … SW18 = push-buttons, each joining one row to one column.</li>
   </ul>
@@ -128,7 +141,7 @@
 
   <h3 class="bub jit" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">1.2</span>Scanning, step by step</h3>
   <ol class="b">
-    <li>Make <b>one</b> row HIGH, the other three LOW: <code>LPC_GPIO2-&gt;FIOPIN = 1&lt;&lt;10;</code> (row 0) … <code>1&lt;&lt;13</code> (row 3).</li>
+    <li>Make <b>one</b> row HIGH, the other three LOW: <code>LPC_GPIO2-&gt;FIOPIN = 1&lt;&lt;10;</code> (row 0) … <code>1&lt;&lt;13</code> (row 3). The code counts rows and columns from <b>0</b>: row 0 = R1 = P2.10, col 0 = C1 = P1.23.</li>
     <li>Read the columns: <code>LPC_GPIO1-&gt;FIOPIN &amp; 0x07800000</code> — the mask keeps only bits 23–26 (the 4 column pins).</li>
     <li>Result 0 → no key pressed in this row → go to the next row.</li>
     <li>Result ≠ 0 → the HIGH column tells <b>col</b>; the current row tells <b>row</b> → key found! <span class="hl-p">keycode = 4 × row + col</span> (0 … F).</li>
@@ -176,6 +189,10 @@
       <li>Two keys in one row pressed together → temp3 has two bits set → no <code>if</code> matches → col unchanged.</li>
     </ul>
   </div>
+  <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">★</span>chapter 1 in one widget</h3>
+  <p class="mlede">Hold a key (tap it in the matrix). The scan loop carries your key-press station by station — row driver → columns → <code>scan()</code> → keycode → <code>SEVEN_CODE</code> → <code>&lt;&lt;4</code> → FIOMASK → decoder → digit. Flip the fault switches to see where each mistake breaks the chain.</p>
+  <div class="wg master" id="w-m1"></div>
 </article>
 
 <!-- ===================== CH 2 : TIMER ===================== -->
@@ -271,6 +288,10 @@
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">2.9</span>The whole timer in one picture</h3>
   <p>This is the slide's block diagram, redrawn. Tap any block, or play the signal flow.</p>
   <div class="wg" id="w-block"></div>
+  <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">★</span>chapter 2 in one widget</h3>
+  <p class="mlede">The block diagram, switched on. Change any register on the left and the wires it controls light up; pulses flow PCLK → PC → TC → comparators → MCR / EMR → pins, bell and capture snapshots. Load a scenario to see a whole program's setup at once.</p>
+  <div class="wg master" id="w-m2"></div>
 </article>
 
 <!-- ===================== CH 3 : TIMER PROGRAMS ===================== -->
@@ -290,7 +311,7 @@
     <li>Writing <code>EMR = 0x20</code> at the start of every delay also writes <b>EM0 = 0</b> — that re-arms the flag for the next wait.</li>
   </ul>
   <div class="wg" id="w-p1" style="--tilt:0deg"></div>
-  <p class="small p-soft">Slide's one-line alternative to the FIOSET/FIOCLR pair: <code>LPC_GPIO0-&gt;FIOPIN = ~(LPC_GPIO0-&gt;FIOPIN &amp; 0x00000004);</code> — if P0.2 was 1 the result has bit 2 = 0, if it was 0 → 1. A toggle in one line.</p>
+  <p class="small p-soft">Slide's one-line alternative to the FIOSET/FIOCLR pair: <code>LPC_GPIO0-&gt;FIOPIN = ~(LPC_GPIO0-&gt;FIOPIN &amp; 0x00000004);</code> — if P0.2 was 1 the result has bit 2 = 0, if it was 0 → 1. A toggle in one line. (It also writes 1 to every other port-0 pin — harmless here, because only P0.2 is an output.)</p>
 
   <h3 class="bub jit" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">P2</span>75 % duty cycle</h3>
   <p><span class="pill p">question</span> Square wave of period 2 s with 75 % duty cycle on P0.2.</p>
@@ -333,6 +354,10 @@
     <li>TC counts ms (PR = 3000) from 0 to 1000 in each <code>delay()</code> → <b>CR0 = how many ms into the current second the edge arrived</b>.</li>
   </ul>
   <div class="wg" id="w-p6"></div>
+  <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">★</span>chapter 3 in one widget</h3>
+  <p class="mlede">All six programs on one time machine. Pick a program, turn its knob, then drag the playhead: you see which line the CPU is on, what TC is doing and what every pin does at that instant.</p>
+  <div class="wg master" id="w-m3"></div>
 </article>
 
 <!-- ===================== CH 4 : LCD ===================== -->
@@ -413,6 +438,10 @@
       <li><code>FIOPIN = temp2</code> in <code>port_write()</code> writes the whole port 0 — fine here because RS/EN are set again right after, and nothing else is on port 0.</li>
     </ul>
   </div>
+  <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-l);--bc2:var(--n-l)"><span class="num">★</span>chapter 4 in one widget</h3>
+  <p class="mlede">An X-ray of the LCD. Power it on, send the init sequence (or forget to!), then type. Each byte is split into nibbles, clocked in with RS/EN, decoded by the LCD's controller, stored in DDRAM and finally drawn as pixels.</p>
+  <div class="wg master" id="w-m4"></div>
 </article>
 
 <!-- ===================== CH 5 : LCD QUESTIONS ===================== -->
@@ -515,6 +544,10 @@ void lcd_str(char *s)          { while (*s) lcd_char(*s++); }
     <li>÷ by 0 → print "ERR".</li>
   </ul>
   <div class="wg" id="w-q5" style="--tilt:0deg"></div>
+    <div class="mcut" aria-hidden="true"><span>✂ revise the whole chapter from here</span></div>
+  <h3 class="bub jit mh" style="--bc:var(--hl-o);--bc2:var(--n-o)"><span class="num">★</span>chapter 5 in one widget</h3>
+  <p class="mlede">One trainer board, five program cartridges. Slide a cartridge in and use the board: the building blocks that program needs light up, and every key press or timer tick flows through them to the LCD.</p>
+  <div class="wg master" id="w-m5"></div>
   <div class="note green" style="max-width:640px"><div class="nh"><svg><use href="#st-heart"/></svg>done with notebook ①!</div>
     Next: notebook ② — interrupts (timer, external, GPIO), ADC, DAC, stepper motor, PWM and UART.
   </div>

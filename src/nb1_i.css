@@ -1,0 +1,59 @@
+/* =========================================================
+   M3 · six-program time machine
+   ========================================================= */
+.m3tabs{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin-bottom:12px}
+.m3tab{display:flex; flex-direction:column; align-items:center; gap:0; padding:6px 4px 5px; border:1.8px solid var(--ink); border-radius:10px 13px 9px 12px/12px 9px 13px 10px; background:var(--paper); cursor:pointer; color:var(--ink); box-shadow:2px 3px 0 var(--faint); transition:transform .15s, background .15s; line-height:1.15; min-width:0}
+.m3tab svg{width:30px; height:30px}
+.m3tab b{font-family:'Gaegu'; font-weight:700; font-size:18px}
+.m3tab span{font-family:'Caveat'; font-size:16px; color:var(--ink2); text-align:center}
+.m3tab:hover{transform:translateY(-2px) rotate(-1deg)}
+.m3tab.on{background:var(--n-g); box-shadow:2px 3px 0 var(--ink); transform:rotate(-1.5deg)}
+.m3knob{margin-bottom:10px}
+.m3knob .rl{max-width:520px}
+.m3rib{display:grid; grid-template-columns:1fr 1.5fr 1fr 1.6fr; gap:0; margin-bottom:12px; border:1.6px solid var(--ink); border-radius:10px; overflow:hidden}
+.m3ph{position:relative; padding:4px 10px 4px 16px; font-size:15px; line-height:1.25; background:var(--paper); color:var(--ink2); border-right:1.4px dashed var(--faint); transition:background .2s, color .2s}
+.m3ph:last-child{border-right:0}
+.m3ph.on{background:var(--hl-g); color:var(--ink)}
+.m3ph.on::before{content:"▶"; position:absolute; left:3px; top:5px; font-size:10px; color:var(--green)}
+.m3ph b{font-family:'Courier Prime'; font-size:13px}
+.m3main{display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:16px 20px; align-items:start}
+.m3left{display:flex; flex-direction:column; gap:8px; min-width:0}
+svg.m3tl{background:var(--paper); border:1.6px solid var(--faint); border-radius:10px; touch-action:none; cursor:ew-resize; user-select:none}
+svg.m3tl .grid{stroke:var(--faint); stroke-width:1; stroke-dasharray:2 4}
+svg.m3tl text.ax{font-family:'Courier Prime'; font-size:11px; fill:var(--ink3)}
+svg.m3tl text.lb{font-family:'Gaegu'; font-weight:700; font-size:15px}
+svg.m3tl text.sm{font-family:'Gaegu'; font-weight:700; font-size:12.5px; fill:var(--ink2)}
+svg.m3tl .cpu{stroke:var(--ink); stroke-width:.8}
+svg.m3tl .cpu.setup{fill:var(--purple)} svg.m3tl .cpu.write{fill:var(--pink)}
+svg.m3tl .cpu.poll{fill:url(#hatch-y); stroke:var(--orange)} svg.m3tl .cpu.idle{fill:var(--hl-g); stroke:var(--green)}
+svg.m3tl text.cpt{font-family:'Caveat'; font-size:16px; fill:var(--ink)}
+svg.m3tl .mrl{fill:none; stroke:var(--red); stroke-width:1.4; stroke-dasharray:5 4}
+svg.m3tl text.mrt{font-family:'Gaegu'; font-weight:700; font-size:12px; fill:var(--red)}
+svg.m3tl .tcl{fill:none; stroke:var(--blue); stroke-width:2.4; stroke-linejoin:round}
+svg.m3tl .ln{fill:none; stroke-width:2.4; stroke-linejoin:round}
+svg.m3tl .ln.out{stroke:var(--red)} svg.m3tl .ln.in{stroke:var(--green)} svg.m3tl .ln.em{stroke:var(--purple); stroke-width:1.8}
+svg.m3tl text.star{fill:var(--orange); font-size:14px}
+svg.m3tl .segm{fill:#26232b; stroke:var(--ink)} svg.m3tl text.segt{font-family:'Courier Prime'; font-weight:700; font-size:16px; fill:var(--led)}
+svg.m3tl text.capt{font-family:'Caveat'; font-size:16px; fill:var(--blue)}
+svg.m3tl .phl{stroke:var(--pink); stroke-width:2.4}
+svg.m3tl .phk{fill:var(--pink); stroke:var(--ink); stroke-width:1.6}
+.m3ctl{gap:8px}
+.m3ctl .ro{font-size:14px}
+.m3now{font-size:15.5px; line-height:1.35; display:flex; flex-direction:column; gap:3px}
+.m3now b{font-family:'Courier Prime'; font-weight:700}
+.m3now .mlab{display:inline-block; min-width:44px}
+.m3pin{display:inline-flex; align-items:center; gap:6px; font-family:'Courier Prime'; font-size:13.5px; margin-right:14px}
+.m3pin i{width:13px; height:13px; border-radius:50%; border:1.6px solid var(--ink); background:var(--faint)}
+.m3pin.hi i{background:var(--led); box-shadow:0 0 8px var(--led-glow)}
+.m3cr{font-family:'Caveat'; font-size:19px; color:var(--blue)}
+.m3right{min-width:0}
+.m3right .code{max-height:400px; overflow:auto; margin-top:10px; padding-top:30px}
+.m3right .code .ctitle{top:6px}
+.m3busy{margin-top:8px; font-size:15.5px}
+@media (max-width:980px){ .m3main{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:700px){
+  .m3tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .m3rib{grid-template-columns:1fr 1fr}
+  .m3ph{font-size:13.5px; border-bottom:1.4px dashed var(--faint)}
+  .m3right .code{max-height:300px}
+}

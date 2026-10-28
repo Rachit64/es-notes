@@ -38,6 +38,7 @@
         <li>Uses notebook ①: registers &amp; bits, GPIO (PINSEL / FIODIR / FIOSET / FIOCLR / FIOPIN), timer (PR, TC, MR, MCR, EMR, CTCR, CCR) and the LCD driver (<code>flag1</code>, <code>temp1</code>, <code>lcd_write()</code>).</li>
         <li>Graph-paper cards are toys; printed code strips with <b>next ▶</b> walk through programs; <span class="p-red">red boxes</span> = traps &amp; slide mistakes.</li>
         <li>PCLK = <b>3 MHz</b> everywhere (as in the slides).</li>
+        <li>Every chapter ends with <b>★ chapter N in one widget</b>: the whole chapter as one machine you can poke. Use those to revise.</li>
       </ul>
     </div>
   </header>
@@ -64,12 +65,12 @@
 
   <h3 class="bub jit" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">1.1</span>NVIC &amp; the vector table</h3>
   <ul class="b">
-    <li><b>NVIC</b> = Nested Vectored Interrupt Controller. It controls system exceptions and peripheral interrupts. In the LPC176x it supports <b>35 vectored interrupts</b>.</li>
+    <li><b>NVIC</b> = Nested Vectored Interrupt Controller. It controls system exceptions and peripheral interrupts. In the LPC176x it supports <b>35 vectored interrupts</b>. (<em>Vectored</em> = each interrupt has its own ISR address in a table; <em>nested</em> = a more urgent interrupt may even pause a running ISR.)</li>
     <li>Each peripheral has one or more interrupt lines to the NVIC. The <b>interrupt number</b> tells where its entry sits in the Interrupt Vector Table (IVT).</li>
     <li><b>Interrupt vector</b> = the <span class="hl-p">address of the ISR</span>. The vector of interrupt type N is stored at <b>base address + 4 × N</b> (each entry is 4 bytes).</li>
     <li>When the interrupt occurs, the NVIC loads that vector into the <b>PC</b> (<b>Program Counter</b>: the CPU register holding the address of the next instruction — not the timer's prescale counter!) → the ISR runs and services the peripheral.</li>
   </ul>
-  <div class="icard"><div class="ih">where is the vector of type N?</div><div class="eq">address = IVT base + 4 × N</div></div>
+  <div class="icard"><div class="ih">where is the vector of type N?</div><div class="eq">address = IVT base + 4 × N</div><p class="center small">The 16 Cortex system exceptions come first, so a peripheral's type is <b>N = 16 + its IRQ number</b>.<br>Example: TIMER0 is IRQ 1 → N = 17 → address 0x00 + 4 × 17 = <b>0x44</b>.</p></div>
 
   <h3 class="bub jit" style="--bc:var(--hl-p);--bc2:var(--n-p)"><span class="num">1.2</span>What happens, in order</h3>
   <ol class="b">
@@ -86,6 +87,10 @@
       <li>Two "enable" switches are always needed: one in the <b>peripheral</b> (e.g. MCR interrupt bit) and one in the <b>NVIC</b> (<code>NVIC_EnableIRQ(TIMER0_IRQn)</code>).</li>
     </ul>
   </div>
+
+  <h3 class="bub jit mhead" style="--bc:var(--hl-p);--bc2:var(--n-y)"><span class="num">★</span>chapter 1 in one widget</h3>
+  <p class="mlead">The whole chapter as one machine. Pick a peripheral, press <b>⚡ event!</b> and follow the marble: peripheral flag → NVIC → stack → vector table → ISR → back to main. Then break it on purpose: switch off an enable, "forget" to clear the flag, misspell the ISR name, or switch to polling.</p>
+  <div class="wg" id="w-m1"></div>
 </article>
 
 <!-- ===================== CH 2 : TIMER INTERRUPTS ===================== -->
@@ -112,8 +117,8 @@
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">T1</span>Blink every second — while doing something else</h3>
   <p><span class="pill p">question</span> Toggle the LED on P0.2 every second while displaying the status of the switch on P1.0 on the LED on P2.0.</p>
   <ul class="b">
-    <li>Timer0 interrupts every <b>1 ms</b>: PR = 0, MR0 = 2999 → 3000 PCLK ticks; MCR = 3 = interrupt + reset on MR0.</li>
-    <li>The ISR counts <code>ticks</code>; at 1000 (= 1 s) it toggles P0.2.</li>
+    <li>Timer0 interrupts every <b>1 ms</b>: PR = 0, MR0 = 2999 → TC counts 0, 1, …, 2999 = <b>3000</b> PCLK ticks = 3000 / 3 MHz = 1 ms (that's why it's 2999, not 3000); MCR = 3 = interrupt + reset on MR0.</li>
+    <li>The ISR counts <code>ticks</code>; at 1000 (= 1 s) it toggles P0.2 with <code>FIOPIN = ~(FIOPIN &amp; 0x4)</code>: bit 2 becomes the opposite of what it was (the other bits become 1, but on port 0 only P0.2 is an output, so nothing else changes).</li>
     <li>Meanwhile <code>main()</code> just copies the switch to the LED, forever. Both jobs happen "at the same time".</li>
   </ul>
   <div class="wg" id="w-t1" style="--tilt:0deg"></div>
@@ -129,10 +134,14 @@
   <h3 class="bub jit" style="--bc:var(--hl-b);--bc2:var(--n-b)"><span class="num">T3</span>Rectangular wave: 1.5 s HIGH, 0.5 s LOW</h3>
   <p><span class="pill p">question</span> Timer interrupt for rectangular waveform generation (1.5 s HIGH and 0.5 s LOW).</p>
   <ul class="b">
-    <li>PR = 3000 → 1 TC step ≈ 1 ms. MCR = 5 = bit 0 (interrupt) + bit 2 (<b>stop</b>) on MR0.</li>
+    <li>PR = 3000 → one TC step every 3001 PCLK ticks ≈ <b>1 ms</b>, so MR0 = 1500 ≈ 1.5 s and MR0 = 500 ≈ 0.5 s. MCR = 5 = bit 0 (interrupt) + bit 2 (<b>stop</b>) on MR0.</li>
     <li>A <code>flag</code> remembers which half we're in. In the ISR: reset the timer, flip the pin, load the <em>other</em> time into MR0, start again.</li>
   </ul>
   <div class="wg" id="w-t3" style="--tilt:0deg"></div>
+
+  <h3 class="bub jit mhead" style="--bc:var(--hl-b);--bc2:var(--n-y)"><span class="num">★</span>chapter 2 in one widget</h3>
+  <p class="mlead">A time machine for the three timer programs. The whole run is simulated; <b>drag the purple cursor</b> to any moment and read every register. Zoom ×1000 to see single 1 ms ticks, or jump to one interrupt and <b>step inside it</b>. Change PR / MR0 / the MCR bits — or make the ISR forget <code>IR = 1</code> — and watch the waveforms change.</p>
+  <div class="wg" id="w-m2"></div>
 </article>
 
 <!-- ===================== CH 3 : EXTERNAL INTERRUPTS ===================== -->
@@ -162,17 +171,18 @@
 
   <h3 class="bub jit" style="--bc:var(--hl-y);--bc2:var(--n-y)"><span class="num">3.1</span>Setting one up (5 steps)</h3>
   <ol class="b">
-    <li>Pin → external interrupt in <b>PINSELx</b>.</li>
+    <li>Pin → external interrupt in <b>PINSEL4</b>: pin P2.n uses bits 2n+1 : 2n, function <b>01</b>. EINT0 P2.10 → <code>1&lt;&lt;20</code>, EINT1 → <code>1&lt;&lt;22</code>, EINT2 P2.12 → <code>1&lt;&lt;24</code>, EINT3 → <code>1&lt;&lt;26</code>.</li>
     <li>Edge or level in <b>EXTMODE</b>.</li>
     <li>Polarity (falling/rising, low/high) in <b>EXTPOLAR</b>.</li>
     <li>Enable it in the NVIC: <code>NVIC_EnableIRQ(EINTx_IRQn)</code>.</li>
-    <li>In the ISR, clear the flag in <b>EXTINT</b>.</li>
+    <li>In the ISR, clear the flag in <b>EXTINT</b> (write 1 to its bit, e.g. <code>LPC_SC-&gt;EXTINT = 4;</code> for EINT2).</li>
   </ol>
   <div class="wg" id="w-eintgen"></div>
 
   <h3 class="bub jit" style="--bc:var(--hl-y);--bc2:var(--n-y)"><span class="num">E1</span>Toggle on every falling edge</h3>
   <p><span class="pill p">question</span> Toggle the LED on P1.23 at each negative edge of the input applied at P2.12 (EINT2, function 01).</p>
   <div class="wg" id="w-e1" style="--tilt:0deg"></div>
+  <p class="small p-soft">Slide nit: the first line is missing its <code>#</code> — it must be <code>#include&lt;LPC17xx.h&gt;</code>.</p>
 
   <h3 class="bub jit" style="--bc:var(--hl-y);--bc2:var(--n-y)"><span class="num">E2</span>LED on while the switch is held</h3>
   <p><span class="pill p">question</span> Turn ON the LED on P1.23 whenever the switch on P2.12 (EINT2) is pressed; the LED stays ON as long as the switch is pressed (pressed = logic 0).</p>
@@ -181,6 +191,10 @@
     <li>Each ISR: LED on → tiny delay → LED off. Back-to-back ISRs keep the LED nearly always on — slightly dimmer, as in the slide's "LED intensity" sketch.</li>
   </ul>
   <div class="wg" id="w-e2" style="--tilt:0deg"></div>
+
+  <h3 class="bub jit mhead" style="--bc:var(--hl-y);--bc2:var(--n-y)"><span class="num">★</span>chapter 3 in one widget</h3>
+  <p class="mlead">A live board with all four external interrupts. Outside the chip: two buttons, a switch and a signal generator on P2.10–P2.13. Inside the chip: the <b>PINSEL4 / EXTMODE / EXTPOLAR</b> switches, the <b>EXTINT</b> flags and the <b>NVIC</b> enables. Tap any ◉ test point to clip an oscilloscope probe on it.</p>
+  <div class="wg" id="w-m3"></div>
 </article>
 
 <!-- ===================== CH 4 : GPIO INTERRUPTS ===================== -->
@@ -214,7 +228,7 @@
   <h3 class="bub jit" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">G2</span>2×2 keypad with GPIO interrupt</h3>
   <p><span class="pill p">question</span> Columns of a 2×2 matrix keyboard on P2.10–P2.11, rows on P1.0–P1.1. Using a GPIO interrupt, show the keycode of the pressed key on the LEDs on P0.0–P0.1.</p>
   <ul class="b">
-    <li>Idea: drive <b>both rows HIGH</b> and wait. Any key press makes its column go 0→1 → a <b>rising-edge interrupt</b> on P2.10 or P2.11. No scanning while idle!</li>
+    <li>Idea: drive <b>both rows HIGH</b> and wait. The columns rest at 0 (pull-down resistors). A key press connects its column to a HIGH row → the column goes 0→1 → a <b>rising-edge interrupt</b> on P2.10 or P2.11. No scanning while idle!</li>
     <li>In the ISR: which column? (StatR) → clear → scan the rows to find which row → keycode = row × 2 + col on P0.1–P0.0 → drive both rows HIGH again.</li>
   </ul>
   <div class="wg" id="w-g2" style="--tilt:0deg"></div>
@@ -225,6 +239,10 @@
       <li>In G1: <code>LPC_GPIO1-&gt;FIOCLR 1&lt;&lt;23;</code> is missing <code>=</code>, and <code>IO0IntClr |= x</code> works but <code>IO0IntClr = x</code> is cleaner (it's a write-only register).</li>
     </ul>
   </div>
+
+  <h3 class="bub jit mhead" style="--bc:var(--hl-g);--bc2:var(--n-y)"><span class="num">★</span>chapter 4 in one widget</h3>
+  <p class="mlead">All GPIO interrupts ring the <b>same</b> bell (EINT3), so the ISR is a detective: <b>IOIntStatus</b> → which port, <b>IOxIntStatR / StatF</b> → which pin and which edge, then <b>IOxIntClr</b> to close the case. Red string = a pending status bit. Run G1, G2, or pick your own pins.</p>
+  <div class="wg" id="w-m4"></div>
 </article>
 
 <!-- ===================== CH 5 : ADC ===================== -->
@@ -270,7 +288,7 @@
   <div class="wg" id="w-adcr"></div>
   <ul class="b arrow">
     <li>ADC clock = PCLK / (CLKDIV + 1) must be ≤ 13 MHz → program the <b>smallest</b> CLKDIV that gives ≤ 13 MHz (a slower clock only helps for a high-impedance source). With PCLK = 3 MHz, CLKDIV = 0 is fine.</li>
-    <li><b>Software mode</b> (BURST = 0): select <em>one</em> channel in SEL, write START = 001 → one conversion (65 clocks).</li>
+    <li><b>Software mode</b> (BURST = 0): select <em>one</em> channel in SEL, write START = 001 → one conversion (65 ADC clocks = 21.7 µs at 3 MHz).</li>
     <li><b>Burst mode</b> (BURST = 1, START = 000): the ADC keeps converting all selected channels by itself (up to 200 kHz), lowest channel first. Clear BURST to stop (the running conversion finishes).</li>
     <li>The ADC must be powered: <code>LPC_SC-&gt;PCONP |= (1&lt;&lt;12);</code> (it's off after reset).</li>
   </ul>
@@ -313,6 +331,10 @@
       <li>A3 divides by 0xFFF (4095) instead of 4096 — a 0.02 % difference; both are accepted.</li>
     </ul>
   </div>
+
+  <h3 class="bub jit mhead" style="--bc:var(--hl-l);--bc2:var(--n-y)"><span class="num">★</span>chapter 5 in one widget</h3>
+  <p class="mlead">A voltage goes into the factory and comes out as text on the LCD. Follow the parcel: <b>MUX</b> picks the channel → <b>SAR</b> finds 12 bits → <b>ADDRn</b> (DONE, OVERRUN, RESULT) → the CPU polls or gets an <b>interrupt</b> → <code>(x&gt;&gt;4)&amp;0xFFF</code> → volts → <code>sprintf</code> → LCD. Try burst mode without the interrupt, or forget <code>PCONP</code>.</p>
+  <div class="wg" id="w-m5"></div>
 </article>
 
 <!-- ===================== CH 6 : DAC ===================== -->
@@ -365,6 +387,10 @@
   </ul>
   <div class="wg" id="w-sine" style="--tilt:0deg"></div>
   <p class="mnote r">slide lists "V310" — it means 300° (the samples go 0, 30, 60 … 330)</p>
+
+  <h3 class="bub jit mhead" style="--bc:var(--hl-o);--bc2:var(--n-y)"><span class="num">★</span>chapter 6 in one widget</h3>
+  <p class="mlead">A music box: the paper roll is your sample table. <b>Drag on it to draw any wave</b> (or load D1 / D2). Each sample goes <code>(value &lt;&lt; 6)</code> → DACR → pre-buffer → counter beat → resistor-string tap → AOUT. Change <b>DACCNTVAL</b> (pitch), <b>BIAS</b>, double buffering, and watch the scope — the yellow dots are what the ADC of ch. 5 would read back.</p>
+  <div class="wg" id="w-m6"></div>
 </article>
 
 <!-- ===================== CH 7 : STEPPER ===================== -->
@@ -404,6 +430,10 @@
     <li>2.5 rev × 60 steps = <b>150 steps</b>. <code>step_pos[i % 4]</code> cycles 3, 9, C, 6.</li>
   </ul>
   <div class="wg" id="w-s1" style="--tilt:0deg"></div>
+
+  <h3 class="bub jit mhead" style="--bc:var(--hl-b);--bc2:var(--n-y)"><span class="num">★</span>chapter 7 in one widget</h3>
+  <p class="mlead">The step table is a punched paper tape: a hole = 1. Each row goes to <b>P0.3–P0.0</b> (C D A B) → 10 kΩ → transistor → coil, and the shaft moves one step. Punch your own holes, try the wrong order, pull out the flyback diodes, then let the S1 maths decide the delay and the loop count.</p>
+  <div class="wg" id="w-m7"></div>
 </article>
 
 <!-- ===================== CH 8 : PWM ===================== -->
@@ -428,7 +458,8 @@
   <ul class="b">
     <li><b>Single edge</b>: the pulse always <b>starts at the beginning</b> of the period; only its end moves.</li>
     <li><b>Double edge</b>: both edges can move → the pulse can be anywhere in the period (used in multi-phase motor control).</li>
-    <li>LPC1768: <b>6 PWM outputs</b> PWM1.1 … PWM1.6, built on a timer with <b>7 match registers</b> MR0–MR6. <b>MR0 sets the period</b> (the PWM timer resets on MR0).</li>
+    <li>LPC1768: <b>6 PWM outputs</b> PWM1.1 … PWM1.6, built on a timer with <b>7 match registers</b> MR0–MR6. <b>MR0 sets the period</b> (the PWM timer resets on MR0): period = MR0 × (PR + 1) / 3 MHz.</li>
+    <li>Single edge: the output is HIGH from the start of the period until TC = MRn → <b>duty = MRn / MR0</b> (e.g. MR4 = 15000, MR0 = 30000 → 50 %).</li>
     <li>Each output is an S-R flip-flop (S input → output 1, R input → output 0). <b>Single edge</b> uses 2 match registers: set by <b>Match 0</b>, reset by <b>Match n</b>. <b>Double edge</b> uses 3 (MR0 for the period + two edge positions): set by <b>Match (n−1)</b>, reset by <b>Match n</b>. PWM1 is always single edge. The table in the widget below is the slide's set/reset table.</li>
   </ul>
   <div class="wg" id="w-ramp"></div>
@@ -468,6 +499,10 @@
   </ul>
   <div class="wg" id="w-w1" style="--tilt:0deg"></div>
   <p class="small p-soft">The slide also writes <code>LPC_PWM1-&gt;LER = 0x000000FF;</code> when flag flips. LER only has bits 0–6, so this works exactly like 0x7F (bit 7 is ignored).</p>
+
+  <h3 class="bub jit mhead" style="--bc:var(--hl-p);--bc2:var(--n-y)"><span class="num">★</span>chapter 8 in one widget</h3>
+  <p class="mlead">PWM is a timer drawn as a record: one turn = one period (MR0), the hand is <b>TC</b>, and the numbered pegs are <b>MR1–MR6</b>. Each ring is an output, coloured where it is HIGH. Drag a peg or a fader: the hollow peg is the value you wrote, the solid one is the <b>shadow</b> that's really used — until <b>LER</b> + Match 0. Flip PWMSEL / PWMENA, break the MCR, or let the W1 interrupt make PWM1.4 breathe.</p>
+  <div class="wg" id="w-m8"></div>
 </article>
 
 <!-- ===================== CH 9 : UART ===================== -->
@@ -507,8 +542,8 @@
   <h3 class="bub jit" style="--bc:var(--hl-g);--bc2:var(--n-g)"><span class="num">9.2</span>UART registers</h3>
   <ul class="b">
     <li><b>FIFO</b> = First-In-First-Out queue (16 bytes): bytes leave in the same order they came in. The UART has one for TX and one for RX.</li>
-    <li><b>U0THR</b> (Transmit Holding, write): top byte of the TX FIFO = newest character; written here → sent when it reaches the bottom of the FIFO. Needs DLAB = 0.</li>
-    <li><b>U0RBR</b> (Receiver Buffer, read): top byte of the RX FIFO = <b>oldest</b> received character. Needs DLAB = 0.</li>
+    <li><b>U0THR</b> (Transmit Holding, write-only): write a byte here to send it. It joins the back of the TX FIFO and goes out when its turn comes. Needs DLAB = 0.</li>
+    <li><b>U0RBR</b> (Receiver Buffer, read-only): reading it gives the <b>oldest</b> byte waiting in the RX FIFO. Needs DLAB = 0.</li>
     <li><b>U0DLL / U0DLM</b> (Divisor Latch LSB / MSB): together a 16-bit divisor for the baud rate (0 is treated as 1). Needs <b>DLAB = 1</b>.</li>
   </ul>
   <div class="wg" id="w-dlab"></div>
@@ -525,7 +560,8 @@
   </div>
   <ul class="b">
     <li><b>U0FDR</b> (Fractional Divider): DIVADDVAL = bits 3:0 (reset 0 → no effect), MULVAL = bits 7:4 (must be ≥ 1; reset 1).</li>
-    <li>The "16" = the UART samples each bit 16 times.</li>
+    <li>The "16" = the UART samples each bit 16 times (and uses the middle sample).</li>
+    <li>Working it backwards (DivAddVal = 0): divisor = PCLK / (16 × baud) = 3 000 000 / (16 × 9600) = 19.53 → <b>19 = 0x13</b> → DLM = 0, DLL = 0x13 → real baud 9868 (2.8 % fast — small enough).</li>
   </ul>
   <div class="wg" id="w-baud"></div>
 
@@ -537,6 +573,10 @@
     <li>main: wait for rx flag → write it to THR → wait for tx flag → repeat.</li>
   </ul>
   <div class="wg" id="w-u1" style="--tilt:0deg"></div>
+
+  <h3 class="bub jit mhead" style="--bc:var(--hl-g);--bc2:var(--n-y)"><span class="num">★</span>chapter 9 in one widget</h3>
+  <p class="mlead">Two ends, one wire. On the left is U1's <code>UART0_Init()</code>: untick a line and see where the writes land (DLAB decides!). Type on the PC: the byte travels PC → MAX232 → RxD0 → RBR / LSR → IIR → ISR → THR → back to the terminal. The pink ticks show where the receiver samples each bit with <b>its own</b> clock: change the PC baud or format and watch the samples miss.</p>
+  <div class="wg" id="w-m9"></div>
   <div class="note green" style="max-width:640px"><div class="nh"><svg><use href="#st-heart"/></svg>that's everything!</div>
     Notebook ① (keypad, timer, LCD) + notebook ② = all four slide decks.
   </div>

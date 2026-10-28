@@ -4,29 +4,39 @@
 
 /* ---------- LCD pin explorer ---------- */
 BUILD.push(function wLcdPins() {
-  const w = W('w-lcdpins', 'LCD module · 16 pins', 'tap a pin');
-  const P = [['VSS', 'Ground', 'GND pin of the display.', 'GND'], ['VCC', '+5 V', 'Supply voltage pin of the display.', '+V'], ['VEE', 'contrast', 'Adjusts the contrast — connected to a potentiometer.', '10 kΩ pot'], ['RS', 'register select', '<b>0 = command register</b>, <b>1 = data register</b>.', 'P0.27'], ['RW', 'read / write', '0 = write, 1 = read.', 'GND → always write'], ['E', 'enable', 'A LOW→HIGH(→LOW) pulse makes the LCD perform the read/write.', 'P0.28'],
-    ['D0', 'data 0', 'Data bit 0 — only used in 8-bit mode.', 'GND'], ['D1', 'data 1', 'Data bit 1 — only used in 8-bit mode.', 'GND'], ['D2', 'data 2', 'Data bit 2 — only used in 8-bit mode.', 'GND'], ['D3', 'data 3', 'Data bit 3 — only used in 8-bit mode.', 'GND'], ['D4', 'data 4', 'Data bit 4 (used in 4-bit mode).', 'P0.23'], ['D5', 'data 5', 'Data bit 5 (used in 4-bit mode).', 'P0.24'], ['D6', 'data 6', 'Data bit 6 (used in 4-bit mode).', 'P0.25'], ['D7', 'data 7', 'Data bit 7 (used in 4-bit mode).', 'P0.26'], ['LED+', 'backlight +', '+ve pin of the backlight LED → +5 V.', '+V'], ['LED−', 'backlight −', '−ve pin of the backlight LED → GND.', 'GND']];
-  const s = sv('svg', { class: 'dg lcdmod', viewBox: '0 0 640 260' }); w.appendChild(s);
-  sv('rect', { x: 30, y: 60, width: 580, height: 180, rx: 12, style: 'fill:#2e8b3a;stroke:var(--ink);stroke-width:2' }, s);
-  [[44, 74], [596, 74], [44, 226], [596, 226]].forEach(([x, y]) => sv('circle', { cx: x, cy: y, r: 6, style: 'fill:#d8d8de;stroke:#1d1d22' }, s));
-  sv('rect', { x: 86, y: 118, width: 470, height: 96, rx: 6, style: 'fill:#1d2a12' }, s);
-  sv('rect', { x: 98, y: 128, width: 446, height: 76, rx: 3, style: 'fill:#a5d63c' }, s);
-  const txt = sv('text', { x: 321, y: 176, 'text-anchor': 'middle', style: 'font-family:Courier Prime;font-weight:700;font-size:26px;fill:#1d3a10;letter-spacing:4px' }, s); txt.textContent = 'tap a pin ↑';
+  const w = W('w-lcdpins', 'LCD module · 16 pins', 'tap a pin — on the board or in the list');
+  const P = [['VSS', 'Ground', 'GND pin of the display.', 'GND'], ['VCC', '+5 V', 'Supply voltage pin of the display.', '+5V'], ['VEE', 'contrast', 'Adjusts the contrast — connected to a potentiometer.', 'pot'], ['RS', 'register select', '<b>0 = command register</b>, <b>1 = data register</b>.', 'P0.27'], ['RW', 'read / write', '0 = write, 1 = read.', 'GND'], ['E', 'enable', 'A LOW→HIGH(→LOW) pulse makes the LCD perform the read/write.', 'P0.28'],
+    ['D0', 'data 0', 'Data bit 0 — only used in 8-bit mode.', 'GND'], ['D1', 'data 1', 'Data bit 1 — only used in 8-bit mode.', 'GND'], ['D2', 'data 2', 'Data bit 2 — only used in 8-bit mode.', 'GND'], ['D3', 'data 3', 'Data bit 3 — only used in 8-bit mode.', 'GND'], ['D4', 'data 4', 'Data bit 4 (used in 4-bit mode).', 'P0.23'], ['D5', 'data 5', 'Data bit 5 (used in 4-bit mode).', 'P0.24'], ['D6', 'data 6', 'Data bit 6 (used in 4-bit mode).', 'P0.25'], ['D7', 'data 7', 'Data bit 7 (used in 4-bit mode).', 'P0.26'], ['LED+', 'backlight +', '+ve pin of the backlight LED → +5 V.', '+5V'], ['LED−', 'backlight −', '−ve pin of the backlight LED → GND.', 'GND']];
+  const NOTE = { 4: 'RW is tied to GND → <b>always write</b>.', 7: 'D3–D0 are tied to GND — 4-bit mode needs only D7–D4.' };
+  const s = sv('svg', { class: 'dg lcdmod', viewBox: '0 0 640 300', role: 'img', 'aria-label': '16-pin LCD module and its wiring' }); w.appendChild(s);
+  const R = rng(16), X = i => 104 + i * 27.5;
+  // the LPC1768 side: a bus bar that the 6 used pins climb up to
+  sv('path', { d: Pen.line(X(3) - 6, 34, X(13) + 6, 34, R, .6), style: 'fill:none;stroke:var(--purple);stroke-width:3;stroke-linecap:round' }, s);
+  sv('text', { x: X(8), y: 24, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:16px;fill:var(--purple)' }, s).textContent = 'LPC1768 · port 0';
+  sv('rect', { x: 30, y: 122, width: 580, height: 170, rx: 12, style: 'fill:#2e8b3a;stroke:var(--ink);stroke-width:2' }, s);
+  [[44, 136], [596, 136], [44, 278], [596, 278]].forEach(([x, y]) => sv('circle', { cx: x, cy: y, r: 6, style: 'fill:#d8d8de;stroke:#1d1d22' }, s));
+  sv('rect', { x: 86, y: 190, width: 470, height: 90, rx: 6, style: 'fill:#1d2a12' }, s);
+  sv('rect', { x: 98, y: 199, width: 446, height: 72, rx: 3, style: 'fill:#a5d63c' }, s);
+  const txt = sv('text', { x: 321, y: 244, 'text-anchor': 'middle', style: 'font-family:Courier Prime;font-weight:700;font-size:26px;fill:#1d3a10;letter-spacing:4px' }, s); txt.textContent = 'tap a pin ↑';
+  const list = el('div', { class: 'lpgrid' }); w.appendChild(list);
   const info = el('div', { class: 'note lav', style: 'margin:14px 0 0' }); w.appendChild(info);
-  const pins = P.map((p, i) => {
-    const x = 104 + i * 27.5; const g = sv('g', { class: 'hov lpin', tabindex: 0 }, s);
-    sv('rect', { x: x - 9, y: 66, width: 18, height: 18, rx: 3, style: 'fill:#e6c15a;stroke:#5a4410' }, g);
-    sv('circle', { cx: x, cy: 75, r: 4, style: 'fill:#3a2a08' }, g);
-    sv('text', { x, y: 102, 'text-anchor': 'middle', class: 'mono', style: 'font-size:10px;fill:#e9ffe0' }, g).textContent = i + 1;
-    const lt = sv('text', { x, y: 52, 'text-anchor': 'end', transform: `rotate(-60 ${x} 52)`, class: 'lbl', style: 'font-size:12.5px' }, g); lt.textContent = p[0];
-    const ct = sv('text', { x: x + 4, y: 40, 'text-anchor': 'end', transform: `rotate(-60 ${x + 4} 40)`, style: `font-size:11px;font-family:Caveat;fill:var(--purple)` }, s);
-    if (/^P0/.test(p[3])) ct.textContent = p[3] + ' ·';
-    const pick = () => { $$('.lpin', s).forEach(e => e.classList.remove('selb')); g.classList.add('selb'); info.innerHTML = `<div class="nh">pin ${i + 1} · ${p[0]} <span class="p-soft small">(${p[1]})</span></div>${p[2]}<br><span class="p-purple">our circuit: <b>${p[3]}</b></span>`; txt.textContent = `${i + 1}: ${p[0]}`; };
-    g.addEventListener('click', pick); g.addEventListener('keydown', e => { if (e.key === 'Enter') pick(); });
-    return g;
+  const gs = [], bs = [];
+  P.forEach((p, i) => {
+    const x = X(i), lpc = /^P0/.test(p[3]);
+    const g = sv('g', { class: 'hov lpin', tabindex: 0, role: 'button', 'aria-label': `pin ${i + 1} ${p[0]}` }, s);
+    if (lpc) sv('path', { d: `M${x} 118 V103 M${x} 55 V34`, style: 'fill:none;stroke:var(--purple);stroke-width:2.2' }, g);
+    else sv('path', { d: `M${x} 118 V104`, style: 'stroke:var(--ink3);stroke-width:1.6' }, g);
+    const lt = sv('text', { x: x + 4, y: lpc ? 98 : 100, transform: `rotate(-90 ${x + 4} ${lpc ? 98 : 100})`, style: `font-family:Courier Prime;font-weight:700;font-size:${lpc ? 12.5 : 11}px;fill:${lpc ? 'var(--purple)' : 'var(--ink3)'}` }, g); lt.textContent = p[3];
+    sv('rect', { x: x - 9, y: 118, width: 18, height: 18, rx: 3, style: 'fill:#e6c15a;stroke:#5a4410' }, g);
+    sv('circle', { cx: x, cy: 127, r: 4, style: 'fill:#3a2a08' }, g);
+    sv('text', { x, y: 156, 'text-anchor': 'middle', class: 'mono', style: 'font-size:11px;fill:#e9ffe0' }, g).textContent = i + 1;
+    sv('text', { x, y: 175, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:11px;fill:#fff8d8' }, g).textContent = p[0];
+    const b = el('button', { class: 'lpb' + (lpc ? ' lpc' : ''), type: 'button' }, `<i>${i + 1}</i><b>${p[0]}</b><span>${p[3]}</span>`); list.appendChild(b);
+    const pick = () => { gs.forEach(e => e.classList.remove('selb')); bs.forEach(e => e.classList.remove('on')); g.classList.add('selb'); b.classList.add('on'); info.innerHTML = `<div class="nh">pin ${i + 1} · ${p[0]} <span class="p-soft small">(${p[1]})</span></div>${p[2]}<br><span class="p-purple">our circuit: <b>${p[3] === 'pot' ? '10 kΩ potentiometer' : p[3]}</b></span>${NOTE[i] || (i >= 6 && i <= 9 ? ' ' + NOTE[7] : '')}`; txt.textContent = `${i + 1}: ${p[0]}`; };
+    g.addEventListener('click', pick); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } }); b.onclick = pick;
+    gs.push(g); bs.push(b);
   });
-  info.innerHTML = '<div class="nh">16 pins</div>Pins 1–3 power &amp; contrast · 4–6 control (RS, RW, E) · 7–14 data D0–D7 · 15–16 backlight.';
+  info.innerHTML = '<div class="nh">16 pins</div>Pins 1–3 power &amp; contrast · 4–6 control (RS, RW, E) · 7–14 data D0–D7 · 15–16 backlight. <span class="p-purple">Purple = wired to the LPC1768.</span>';
 });
 
 /* ---------- instruction builder ---------- */
@@ -150,11 +160,11 @@ BUILD.push(function wNibble() {
   const pwSteps = (half, x, f1) => {
     const t2 = half === 'high' ? ((x & 0xF0) << 19) >>> 0 : ((x & 0x0F) << 23) >>> 0;
     return [
-      { l: L('FIOPIN = temp2'), t: `port_write(): <b>FIOPIN = ${hex(t2)}</b> → P0.26–P0.23 = <b>${bin(half === 'high' ? x >> 4 : x & 15, 4)}</b>; RS and EN are 0 in temp2, so they go LOW too.`, f: s => set(s, { pins: t2, rs: 0, en: 0 }) },
-      { l: f1 ? [L('else'), L('FIOSET = RS_CTRL')] : [L('if (flag1 == 0)'), L('FIOCLR = RS_CTRL')], t: f1 ? '<b>RS = 1</b> → this goes to the <b>data</b> register.' : '<b>RS = 0</b> → this goes to the <b>command</b> register.', f: s => set(s, { rs: f1 }) },
-      { l: L('FIOSET = EN_CTRL'), t: '<b>EN HIGH</b> …', f: s => set(s, { en: 1, tl: s.tl.concat([[s.ti++, 'hi']]) }) },
+      { l: L('FIOPIN = temp2'), t: `port_write(): <b>FIOPIN = ${hex(t2)}</b> → P0.26–P0.23 = <b>${bin(half === 'high' ? x >> 4 : x & 15, 4)}</b>; RS and EN are 0 in temp2, so they go LOW too.`, f: s => set(s, { pins: t2, rs: 0, en: 0, k: s.k + 1 }) },
+      { l: f1 ? [L('else'), L('FIOSET = RS_CTRL')] : [L('if (flag1 == 0)'), L('FIOCLR = RS_CTRL')], t: f1 ? '<b>RS = 1</b> → this goes to the <b>data</b> register.' : '<b>RS = 0</b> → this goes to the <b>command</b> register.', f: s => set(s, { rs: f1, k: s.k + 1 }) },
+      { l: L('FIOSET = EN_CTRL'), t: '<b>EN HIGH</b> …', f: s => set(s, { en: 1, k: s.k + 1 }) },
       { l: L('delay_lcd(25)'), t: '… hold it a moment (delay_lcd(25)) so the LCD sees the data steady …' },
-      { l: L('FIOCLR = EN_CTRL'), t: `… <b>EN LOW</b> → falling edge → the LCD <b>latches</b> the ${half} nibble <b>${hx(half === 'high' ? x >> 4 : x & 15, 1)}</b>.`, f: s => { s.en = 0; s.got = s.got.concat([half === 'high' ? x >> 4 : x & 15]); s.tl = s.tl.concat([[s.ti++, 'lo']]); } },
+      { l: L('FIOCLR = EN_CTRL'), t: `… <b>EN LOW</b> → falling edge → the LCD <b>latches</b> the ${half} nibble <b>${hx(half === 'high' ? x >> 4 : x & 15, 1)}</b>.`, f: s => { s.en = 0; s.k++; s.got = s.got.concat([half === 'high' ? x >> 4 : x & 15]); } },
       { l: L('delay_lcd(5000)'), t: 'delay_lcd(5000): give the LCD time to finish (we can\'t read its busy flag — RW is grounded).' }
     ];
   };
@@ -179,23 +189,36 @@ BUILD.push(function wNibble() {
       v.innerHTML = '';
       v._byte = miniBits(v, ['b7', 'b6', 'b5', 'b4', 'b3', 'b2', 'b1', 'b0'], 'temp1 (the byte)');
       v._port = miniBits(v, ['EN·28', 'RS·27', 'D7·26', 'D6·25', 'D5·24', 'D4·23'], 'port 0 pins P0.28 … P0.23');
-      v._td = sv('svg', { class: 'dg', viewBox: '0 0 420 96' }); v.appendChild(v._td);
+      v._td = sv('svg', { class: 'dg nibtd', viewBox: '0 0 420 128' }); v.appendChild(v._td);
       const r = el('div', { class: 'row' }); v.appendChild(r);
       v._lcd = new HD44780().ready(); v._lcd.print('>'); v._lv = LCDView(r, v._lcd);
       v._got = el('div', { class: 'say' }); r.appendChild(v._got);
     }
     v._byte.set([7, 6, 5, 4, 3, 2, 1, 0].map(b => (s.x >> b) & 1));
     const p = s.pins || 0; v._port.set([s.en ? 1 : 0, s.rs ? 1 : 0, (p >>> 26) & 1, (p >>> 25) & 1, (p >>> 24) & 1, (p >>> 23) & 1]);
-    const g = v._td; g.innerHTML = '';
-    ['EN', 'RS', 'D7–D4'].forEach((n, i) => sv('text', { x: 2, y: 22 + i * 30, class: 'lbl', style: 'font-size:12px' }, g).textContent = n);
-    let d = 'M50 30'; let x = 50; s.tl.forEach(([i, e]) => { x = 70 + i * 70; d += `H${x}V${e === 'hi' ? 10 : 30}`; }); d += `H${Math.max(x + 30, 80)}`;
-    sv('path', { d, style: 'fill:none;stroke:var(--red);stroke-width:2.4' }, g);
-    sv('path', { d: `M50 ${s.rs ? 40 : 60} H410`, style: 'fill:none;stroke:var(--blue);stroke-width:2.2' }, g);
-    s.got.forEach((n, i) => { const xx = 70 + i * 140; sv('rect', { x: xx - 20, y: 68, width: 110, height: 22, rx: 8, style: 'fill:var(--hl-y);stroke:var(--ink)' }, g); sv('text', { x: xx + 35, y: 84, 'text-anchor': 'middle', class: 'mono', style: 'font-size:12px' }, g).textContent = (i ? 'low ' : 'high ') + bin(n, 4); sv('path', { d: `M${xx + 70} 34 v30`, style: 'stroke:var(--pink);stroke-width:1.5;stroke-dasharray:2 3' }, g); });
+    drawTrace(v._td, s);
     v._lcd.ready(); v._lcd.cmd(0x0E); v._lcd.print('>'); if (s.done) { if (s.f1) v._lcd.data(s.x); else if (s.f2) v._lcd.print(' (8-bit cmd)'); else v._lcd.cmd(s.x); } v._lv.draw();
     v._got.innerHTML = s.got.length ? `LCD received: ${s.got.map(n => hx(n, 1)).join(' + ')}${s.got.length === 2 ? ` = <b>${hx(s.x)}</b>` : s.f2 && s.done ? ' (8-bit mode reads it as 0x30)' : ' … waiting for the other half'}` : 'LCD waiting…';
   };
-  const st = Stepper(host, { code: LW_CODE, title: 'lcd_write + port_write', steps: build(), init: () => ({ x: opts[cur][2], tl: [], ti: 0, got: [] }), view });
+  /* timing trace: the whole transfer is drawn faint, the part already done in colour */
+  function drawTrace(g, s) {
+    g.innerHTML = ''; const nib = s.f2 ? 1 : 2, W0 = 66, WW = nib === 1 ? 300 : 172, x = s.x, ns = [x >> 4, x & 15];
+    const T = (i, ph) => W0 + i * WW + [8, 22, 62, 128, WW - 4][ph]; // phases: data, RS, EN↑, EN↓, end
+    [['RS', 22], ['EN', 60], ['D7–D4', 104]].forEach(([n, y]) => sv('text', { x: 2, y: y + 5, class: 'lbl', style: 'font-size:15px' }, g).textContent = n);
+    const done = s.k || 0, ev = (i, ph) => i * 4 + ph < done; // has event (nibble i, phase ph) happened?
+    for (let i = 0; i < nib; i++) {
+      const pal = ev(i, 0) ? '' : ' fut';
+      // RS: FIOPIN = temp2 drops it to 0, then FIOSET/FIOCLR sets it
+      const rsHi = 10, rsLo = 34; const prevRS = i ? (s.f1 ? rsHi : rsLo) : rsLo;
+      sv('path', { d: `M${T(i, 0) - 8} ${prevRS} H${T(i, 0)} V${rsLo} H${T(i, 1)} V${s.f1 ? rsHi : rsLo} H${T(i, 4)}`, class: 'tr rs' + (ev(i, 1) ? '' : ' fut') }, g);
+      sv('path', { d: `M${T(i, 0) - 8} 72 H${T(i, 2)} V48 H${T(i, 3)} V72 H${T(i, 4)}`, class: 'tr en' + (ev(i, 2) ? '' : ' fut') }, g);
+      sv('path', { d: `M${T(i, 0)} 104 l6 -12 H${T(i, 4) - 6} l6 12 l-6 12 H${T(i, 0) + 6} Z`, class: 'tr bus' + pal }, g);
+      sv('text', { x: (T(i, 0) + T(i, 4)) / 2, y: 109, 'text-anchor': 'middle', class: 'mono', style: 'font-size:13px' + (ev(i, 0) ? '' : ';opacity:.35') }, g).textContent = `${i ? 'low' : 'high'} ${bin(ns[i], 4)}`;
+      if (ev(i, 3)) { sv('path', { d: `M${T(i, 3)} 44 V122`, style: 'stroke:var(--pink);stroke-width:1.6;stroke-dasharray:3 3' }, g); sv('text', { x: T(i, 3) + 3, y: 42, class: 'lbl', style: 'font-size:12px;fill:var(--pink)' }, g).textContent = '▼ latched'; }
+    }
+    if (done) { const k = done - 1, i = k >> 2, ph = k & 3; sv('path', { d: `M${T(i, ph) + 2} 2 V126`, style: 'stroke:var(--orange);stroke-width:2;opacity:.7' }, g); }
+  }
+  const st = Stepper(host, { code: LW_CODE, title: 'lcd_write + port_write', steps: build(), init: () => ({ x: opts[cur][2], k: 0, got: [] }), view });
   chipGroup(pick, opts.map((o, i) => [i, o[0]]), cur, v => { cur = +v; st.setSteps(build()); });
 });
 

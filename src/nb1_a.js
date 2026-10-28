@@ -127,8 +127,7 @@ BUILD.push(function wScan() {
     rowW0[r] = sv('path', { d: `M115 ${y} H140`, class: 'wire' }, g);
     rowW[r] = sv('path', { d: Pen.line(160, y, 562, y, R, .6), class: 'wire' }, g);
     const dg = sv('g', { class: 'dio' }, g); dio[r] = dg;
-    sv('path', { d: `M140 ${y - 8} L140 ${y + 8} L158 ${y} Z`, class: 'ink', style: 'fill:var(--card)' }, dg);
-    sv('path', { d: `M159 ${y - 8} V${y + 8}`, class: 'ink' }, dg);
+    sv('path', { d: `M140 ${y - 8} L140 ${y + 8} L158 ${y} Z M159.5 ${y - 9} V${y + 9}`, class: 'ink', style: 'fill:var(--card)' }, dg); // bar in the same path: a lone vertical line has a 0-width box and the wobble filter would hide it
     const by = sv('path', { d: `M140 ${y} H160`, class: 'wire bypass', style: 'display:none' }, g); dg._by = by;
   });
   sv('text', { x: 150, y: 352, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:12px;fill:var(--ink3)' }, g).textContent = 'diodes';
@@ -200,9 +199,9 @@ BUILD.push(function wScan() {
     if (ones.length === 1) { colTxt = ones[0]; key = row * 4 + ones[0]; }
     kv.innerHTML = `<span>row</span><span>${row} → temp = 1&lt;&lt;${10 + row} = ${hx(1 << (10 + row), 4)}</span><span>temp3</span><span>${hex(t3)}</span><span>flag, col</span><span>${flag}, ${colTxt}</span>`;
     if (shorts.length) { now.className = 'say r'; now.textContent = `⚡ short! R${row + 1} (HIGH) is joined to R${shorts[0][1].find(r => r !== row) + 1} (LOW) through column C${shorts[0][0] + 1}`; }
-    else if (key !== null) { now.className = 'say g'; now.textContent = `row ${row} HIGH → column ${ones[0]} answers → key "${KEYLAB[key]}" (keycode ${row}×4+${ones[0]} = ${key})`; if (stepped !== false) { seg.set(SEVEN[key]); if (last !== key || stepped === true) addLog(`R${row + 1} → C${ones[0] + 1} → <b>${KEYLAB[key]}</b>`); last = key; } }
+    else if (key !== null) { now.className = 'say g'; now.textContent = `row ${row} (R${row + 1}) HIGH → column ${ones[0]} (C${ones[0] + 1}) answers → key "${KEYLAB[key]}" (keycode ${row}×4+${ones[0]} = ${key})`; if (stepped !== false) { seg.set(SEVEN[key]); if (last !== key || stepped === true) addLog(`R${row + 1} → C${ones[0] + 1} → <b>${KEYLAB[key]}</b>`); last = key; } }
     else if (ones.length > 1) { now.className = 'say r'; now.textContent = `${ones.length} columns HIGH at once — ${!pull ? 'floating inputs = ghost keys!' : 'two keys in this row: no if() matches'}`; }
-    else { now.className = 'say'; now.textContent = `row ${row} HIGH → all columns 0 → nothing here, next row`; }
+    else { now.className = 'say'; now.textContent = `row ${row} (R${row + 1}) HIGH → all columns 0 → nothing here, next row`; }
   }
   function addLog(h) { const d = el('div', {}, h); log.prepend(d); while (log.children.length > 4) log.lastChild.remove(); }
   const loop = Loop(svg, dt => { if (!pull && ++flick % 6 === 0) paint(false); if (!running) return; acc += dt * speed; if (acc >= 1) { acc = 0; advance(); } });

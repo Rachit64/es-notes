@@ -42,7 +42,7 @@ BUILD.push(function wRamp() {
   const MR = [100, 41, 78, 53, 27, 65, 90]; const sel = [0, 0, 1, 0, 1, 0, 0]; // PWMSEL2 & 4 set
   const show = [2, 4, 5];
   const ctl = el('div', { class: 'col' }); w.appendChild(ctl);
-  const s = sv('svg', { class: 'dg', viewBox: '0 0 660 330' }); w.appendChild(s);
+  const s = sv('svg', { class: 'dg', viewBox: '0 0 660 330', style: 'touch-action:pan-y' }); w.appendChild(s);
   const tb = el('div', { class: 'tblwrap' }); w.appendChild(tb);
   const chs = el('div', { class: 'chips' }); ctl.appendChild(chs); chs.appendChild(el('span', { class: 'gae small' }, 'show outputs:'));
   for (let n = 1; n <= 6; n++) { const c = el('button', { class: 'chip' + (show.includes(n) ? ' on' : ''), type: 'button' }, 'PWM' + n); c.onclick = () => { const i = show.indexOf(n); if (i >= 0) show.splice(i, 1); else show.push(n); c.classList.toggle('on'); draw(); }; chs.appendChild(c); }
@@ -50,18 +50,19 @@ BUILD.push(function wRamp() {
   for (let n = 2; n <= 6; n++) { const c = el('button', { class: 'chip' + (sel[n] ? ' on' : ''), type: 'button', style: '--cc:var(--n-p)' }, 'PWMSEL' + n); c.onclick = () => { sel[n] ^= 1; c.classList.toggle('on'); draw(); }; sl.appendChild(c); }
   const mr = el('div', { class: 'row' }); ctl.appendChild(mr);
   const rr = []; for (let i = 1; i <= 6; i++) rr[i] = ruler(mr, 'MR' + i, 1, 99, MR[i], 1, v => v, v => { MR[i] = v; draw(); });
-  let drag = null;
-  const X = t => 70 + t / 100 * 560;
+  let drag = null, Wd = 660, LX = 70;
+  const X = t => LX + t / 100 * (Wd - LX - 30);
   function lv(n, t) { // level of PWMn at time t (1..100)
     if (!sel[n] || n === 1) return t < MR[n] ? 1 : 0; // set at 0 (start), reset by MRn
     const a = MR[n - 1], b = MR[n]; // set by MR(n-1), reset by MRn
     if (a < b) return t >= a && t < b ? 1 : 0; return (t >= a || t < b) ? 1 : 0;
   }
   function draw() {
+    Wd = pxW(s, 150 + show.length * 52); LX = Wd < 520 ? 58 : 70;
     s.innerHTML = '';
     sv('text', { x: 4, y: 64, class: 'lbl', style: 'font-size:14px' }, s).textContent = 'TC';
     sv('path', { d: `M${X(0)} 100 L${X(100)} 20 L${X(100)} 100`, style: 'fill:var(--hl-b);stroke:var(--blue);stroke-width:2' }, s);
-    sv('text', { x: X(100) - 6, y: 112, 'text-anchor': 'end', class: 'mono', style: 'font-size:11px' }, s).textContent = 'MR0 = 100 → TC resets';
+    sv('text', { x: X(100), y: 116, 'text-anchor': 'end', class: 'mono', style: 'font-size:11px;fill:var(--blue)' }, s).textContent = 'MR0 = 100: TC resets ↺';
     for (let i = 1; i <= 6; i++) {
       const x = X(MR[i]); const g = sv('g', { class: 'mrline', 'data-i': i }, s);
       sv('path', { d: `M${x} 14 V${110 + show.length * 52}`, style: `stroke:${FCOL[i % 8]};stroke-width:1.6;stroke-dasharray:4 4` }, g);
@@ -70,13 +71,13 @@ BUILD.push(function wRamp() {
       g.addEventListener('pointerdown', e => { drag = i; s.setPointerCapture(e.pointerId); });
     }
     show.sort((a, b) => a - b).forEach((n, k) => {
-      const y = 130 + k * 52; sv('text', { x: 4, y: y + 20, class: 'lbl', style: 'font-size:14px' }, s).textContent = 'PWM' + n + (sel[n] && n > 1 ? ' (D)' : '');
+      const y = 130 + k * 52; sv('text', { x: 4, y: y + 20, class: 'lbl', style: 'font-size:14px' }, s).textContent = 'PWM' + n + (sel[n] && n > 1 ? ' D' : '');
       const pts = []; let prev = null; for (let t = 0; t <= 100; t += 0.5) { const l = lv(n, t); if (l !== prev) { pts.push([t, l]); prev = l; } } pts.push([100, prev]);
       sv('path', { d: digi(pts, X, y, y + 30), style: 'fill:none;stroke:var(--red);stroke-width:2.6' }, s);
     });
     [1, 27, 41, 53, 65, 78, 100].forEach(t => sv('text', { x: X(t), y: 124 + show.length * 52, 'text-anchor': 'middle', class: 'mono', style: 'font-size:10px;fill:var(--ink3)' }, s).textContent = t);
-    let h = '<table class="tbl pwmff" style="max-width:640px"><tr><th>channel</th><th>single edge<br><small>set · reset by</small></th><th>double edge<br><small>set · reset by</small></th><th>HIGH</th></tr>';
-    for (let n = 1; n <= 6; n++) { const d = sel[n] && n > 1; h += `<tr><td class="m">PWM${n}</td><td class="${d ? '' : 'act'}">Match 0 · Match ${n}</td><td class="${d ? 'act' : ''}">Match ${n > 1 ? n - 1 : 0} · Match ${n}${n === 1 || n === 3 || n === 5 ? ' *' : ''}</td><td class="m">${d ? `${MR[n - 1]} → ${MR[n]}` : `start → ${MR[n]}`}</td></tr>`; }
+    let h = '<table class="tbl pwmff" style="max-width:640px"><tr><th>output</th><th>single edge<br><small>set / reset by</small></th><th>double edge<br><small>set / reset by</small></th><th>HIGH</th></tr>';
+    for (let n = 1; n <= 6; n++) { const d = sel[n] && n > 1; h += `<tr><td class="m">PWM${n}</td><td class="m ${d ? '' : 'act'}">MR0 / MR${n}</td><td class="m ${d ? 'act' : ''}">MR${n > 1 ? n - 1 : 0} / MR${n}${n === 1 || n === 3 || n === 5 ? ' *' : ''}</td><td class="m">${d ? `${MR[n - 1]}→${MR[n]}` : `0→${MR[n]}`}</td></tr>`; }
     tb.innerHTML = h + '</table><p class="small p-soft">Single = PWMSELn 0, double = PWMSELn 1; highlighted = the mode in use. * PWM1 has no PWMSEL bit (always single edge); double-edge PWM3/PWM5 would use up the match registers of PWM2/PWM4 — so PWM2, 4, 6 give the most double-edge outputs.<br>Slide example: MR0 = 100, MR1 = 41, MR2 = 78 (PWM2), MR3 = 53, MR4 = 27 (PWM4), MR5 = 65 (PWM5), PWMSEL2 &amp; PWMSEL4 set. "(D)" = double edge. If the set match is bigger than the reset match, the pulse wraps around the period end (PWM4 here).</p>';
     drawFF();
   }
@@ -84,7 +85,7 @@ BUILD.push(function wRamp() {
   const inn = el('div', { class: 'mt' }); w.appendChild(inn); let ch = 4;
   const cc = el('div', { class: 'chips' }); inn.appendChild(cc); cc.appendChild(el('span', { class: 'gae small' }, 'inside one output:'));
   chipGroup(cc, [1, 2, 3, 4, 5, 6].map(n => [n, 'PWM1.' + n]), ch, v => { ch = +v; drawFF(); });
-  const ff = sv('svg', { class: 'dg', viewBox: '0 0 520 176', style: 'max-width:600px' }); inn.appendChild(ff);
+  const ff = sv('svg', { class: 'dg', viewBox: '0 0 520 176', style: 'max-width:600px' }); inn.appendChild(el('div', { class: 'phone-scroll' })).appendChild(ff);
   const ffs = el('div', { class: 'say' }); inn.appendChild(ffs);
   function drawFF() {
     const n = ch, d = n > 1 && !!sel[n]; ff.innerHTML = '';
@@ -104,9 +105,9 @@ BUILD.push(function wRamp() {
     wr('M425 105 H452', 1); tx(456, 101, 'PWM1.' + n, 'font-size:15px;font-weight:700'); tx(456, 119, 'pin', 'font-size:14px');
     ffs.innerHTML = `PWM1.${n}: <b>set</b> (S → output 1) by Match ${d ? n - 1 : 0}, <b>reset</b> (R → output 0) by Match ${n} → ${d ? '<b>double</b> edge: both edges movable' : '<b>single</b> edge: the pulse always starts with the period'}. PWMENA${n} = 1 lets it out to the pin.`;
   }
-  s.addEventListener('pointermove', e => { if (!drag) return; const r = s.getBoundingClientRect(); const t = clamp(Math.round(((e.clientX - r.left) / r.width * 660 - 70) / 560 * 100), 1, 99); MR[drag] = t; rr[drag].value = t; rr[drag].dispatchEvent(new Event('input')); });
+  s.addEventListener('pointermove', e => { if (!drag) return; const r = s.getBoundingClientRect(); const t = clamp(Math.round((e.clientX - r.left - LX) / (r.width - LX - 30) * 100), 1, 99); MR[drag] = t; rr[drag].value = t; rr[drag].dispatchEvent(new Event('input')); });
   s.addEventListener('pointerup', () => drag = null);
-  draw();
+  draw(); new ResizeObserver(() => draw()).observe(s);
 });
 
 /* ---------- PWM1PCR ---------- */
@@ -144,27 +145,30 @@ BUILD.push(function wLer() {
   b2.onclick = () => { ler = 1; marks.push([T, 'LER']); };
   b3.onclick = () => { b1.onclick(); b2.onclick(); };
   bp.onclick = () => { run = !run; bp.textContent = run ? '❚❚' : '▶'; };
-  const s = sv('svg', { class: 'dg', viewBox: '0 0 660 170' }); w.appendChild(s);
+  const s = sv('svg', { class: 'dg', viewBox: '0 0 660 170' }); w.appendChild(s); let Wd = 660;
   const say = el('div', { class: 'say' }); w.appendChild(say);
   let marks = []; let lvl = 1, lastLvl = 1;
-  const WIN = 3.2, X = t => 50 + (t - (T - WIN)) / WIN * 600;
+  const WIN = 3.2, X = t => 60 + (t - (T - WIN)) / WIN * (Wd - 70);
   hist.push([0, 1]);
-  const lp = Loop(w, dt => {
+  const step = (dt, quiet) => {
     if (!run) return; T += dt; const adv = dt * speed;
     tc += adv; if (tc > MR0) { tc = 1; marks.push([T, 'Match 0']); if (ler) { shadow4 = mr4; ler = 0; marks.push([T, '→ shadow']); say.innerHTML = `Match 0 + LER bit 4 set → MR4 (${mr4}) copied into the shadow register → <b>the new duty starts with this period</b>. LER bits cleared.`; } }
     lvl = tc < shadow4 ? 1 : 0; if (lvl !== lastLvl) { hist.push([T, lvl]); lastLvl = lvl; }
     hist = hist.filter((h, i) => i === hist.length - 1 || hist[i + 1][0] > T - WIN); marks = marks.filter(m => m[0] > T - WIN);
     $('.m4', boxes).textContent = mr4; $('.s4', boxes).textContent = shadow4; $('.lb', boxes).textContent = ler; $('.lb', boxes).parentNode.classList.toggle('one', !!ler);
+    if (quiet) return;
     if (mr4 !== shadow4 && !ler) say.innerHTML = `MR4 = ${mr4} but the shadow still holds ${shadow4} → <b>no effect</b> yet. Set the LER bit!`;
     else if (mr4 !== shadow4 && ler) say.innerHTML = 'LER bit 4 set → waiting for the next Match 0 (start of the next period)…';
-    s.innerHTML = '';
+    Wd = pxW(s, 170); s.innerHTML = '';
     sv('text', { x: 2, y: 40, class: 'lbl', style: 'font-size:13px' }, s).textContent = 'TC';
     sv('text', { x: 2, y: 120, class: 'lbl', style: 'font-size:13px' }, s).textContent = 'PWM1.4';
     // ramp
     let d = ''; const per = MR0 / speed; for (let t = T - WIN; t <= T; t += 0.01) { const ph = ((tc - 1) / speed - (T - t)); const c = ((ph % per) + per) % per; d += (d ? 'L' : 'M') + X(t) + ' ' + (70 - c / per * 50); } sv('path', { d, style: 'fill:none;stroke:var(--blue);stroke-width:1.8' }, s);
     sv('path', { d: digi(hist.map(h => [Math.max(h[0], T - WIN), h[1]]).concat([[T, lvl]]), X, 100, 140), style: 'fill:none;stroke:var(--red);stroke-width:2.6' }, s);
     marks.forEach(([t, txt]) => { const c = txt === 'Match 0' ? 'var(--green)' : txt === 'LER' ? 'var(--orange)' : txt.startsWith('→') ? 'var(--purple)' : 'var(--pink)'; sv('path', { d: `M${X(t)} 76 V96`, style: `stroke:${c};stroke-width:2` }, s); sv('text', { x: X(t) + 3, y: txt === 'Match 0' ? 160 : 90, class: 'mono', style: `font-size:10px;fill:${c}` }, s).textContent = txt; });
-  });
+  };
+  for (let i = 0; i < 200; i++) step(1 / 60, true);
+  const lp = Loop(w, dt => step(dt));
   lp.start();
   w.appendChild(el('p', { class: 'small p-soft' }, 'This is the slide\'s "single edge PWM1.4" picture: MR0 = 100, MR4 = 30 at first; MR4 is loaded with 50 + LER bit 4 mid-period → the next period (after Match 0) uses 50.'));
 });
@@ -273,7 +277,7 @@ BUILD.push(function wFrame() {
   const c3 = el('div', { class: 'col' }); ctl.appendChild(c3); c3.appendChild(el('span', { class: 'gae small' }, 'stop bits')); chipGroup(c3, [[1, '1'], [2, '2']], stop, v => { stop = +v; draw(); });
   const info = el('div', { class: 'say' }); w.appendChild(info);
   const fr = el('div', { class: 'frame' }); w.appendChild(fr);
-  const s = sv('svg', { class: 'dg', viewBox: '0 0 660 120' }); w.appendChild(s);
+  const s = sv('svg', { class: 'dg', viewBox: '0 0 660 120' }); w.appendChild(s); new ResizeObserver(() => draw()).observe(s);
   const bt = el('div', { class: 'row' }); w.appendChild(bt);
   const send = el('button', { class: 'btn p', type: 'button' }, '✉ send it'); bt.appendChild(send);
   const rx = el('div', { class: 'say g' }); bt.appendChild(rx);
@@ -283,12 +287,13 @@ BUILD.push(function wFrame() {
     const ch = txt.charCodeAt(0) & ((1 << nb) - 1); const bits = frameBits(ch, nb, par, stop);
     info.innerHTML = `'${esc(txt)}' = ${hx(txt.charCodeAt(0))} = ${bin(txt.charCodeAt(0), 8)}${nb < 8 ? ` → only the low ${nb} bits are sent: ${bin(ch, nb)}` : ''} · LSB goes <b>first</b> · frame = ${bits.length} bits · at ${baud} baud one bit lasts ${(1e6 / baud).toFixed(1)} µs → one frame ≈ ${(bits.length * 1e3 / baud).toFixed(2)} ms`;
     fr.innerHTML = bits.map((b, i) => `<span class="fb ${b.k === 'start' ? 'st' : b.k === 'stop' ? 'sp' : b.k === 'P' ? 'pa' : 'da'}${i === anim ? ' cur' : ''}"><b>${b.v}</b><small>${b.k === 'start' ? 'start' : b.k === 'stop' ? 'stop' : b.k === 'P' ? 'parity' : 'D' + b.k.slice(1)}</small></span>`).join('');
-    s.innerHTML = ''; const n = bits.length + 2, X = i => 20 + i * 620 / n;
+    const Wd = pxW(s, 120); s.innerHTML = ''; const n = bits.length + 2, X = i => 20 + i * (Wd - 40) / n;
     sv('text', { x: X(0), y: 16, class: 'lbl', style: 'font-size:12px' }, s).textContent = 'idle = 1';
     const pts = [[0, 1]]; bits.forEach((b, i) => pts.push([i + 1, b.v])); pts.push([bits.length + 1, 1]); pts.push([n, 1]);
     sv('path', { d: digi(pts, X, 30, 80), style: 'fill:none;stroke:var(--blue);stroke-width:2.6' }, s);
     bits.forEach((b, i) => sv('text', { x: X(i + 1.5), y: 104, 'text-anchor': 'middle', class: 'mono', style: `font-size:11px;fill:${i === anim ? 'var(--pink)' : 'var(--ink3)'}` }, s).textContent = b.k === 'start' ? 'S' : b.k === 'stop' ? 'E' : b.k === 'P' ? 'P' : b.k.slice(1));
     if (anim >= 0) sv('rect', { x: X(anim + 1), y: 24, width: X(1) - X(0), height: 62, style: 'fill:var(--hl-p);opacity:.5' }, s);
+    if (anim >= 0) sv('path', { d: `M${X(anim + 1.5)} 20 V92`, style: 'stroke:var(--pink);stroke-width:1.6;stroke-dasharray:3 3' }, s);
     return bits;
   }
   send.onclick = () => {
@@ -305,7 +310,7 @@ BUILD.push(function wFrame() {
 /* ---------- RS232 / MAX232 ---------- */
 BUILD.push(function wRs232() {
   const w = W('w-rs232', 'TTL ↔ RS-232 through the MAX232', 'send a byte, compare the two voltage worlds');
-  const s = sv('svg', { class: 'dg', viewBox: '0 0 660 210' }); w.appendChild(s);
+  const s = sv('svg', { class: 'dg', viewBox: '0 0 660 210' }); w.appendChild(el('div', { class: 'phone-scroll' })).appendChild(s);
   // DB9
   sv('path', { d: 'M20 40 L100 50 L100 170 L20 180 Z', class: 'ink', style: 'fill:var(--card)' }, s);
   sv('text', { x: 60, y: 200, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:13px' }, s).textContent = 'PC · DB-9';
@@ -321,7 +326,7 @@ BUILD.push(function wRs232() {
   sv('text', { x: 500, y: 74, class: 'mono', style: 'font-size:10px' }, s).textContent = 'TxD'; sv('text', { x: 500, y: 114, class: 'mono', style: 'font-size:10px' }, s).textContent = 'RxD';
   const bt = el('div', { class: 'row' }); w.appendChild(bt);
   const send = el('button', { class: 'btn p', type: 'button' }, 'micro sends "U" ➝'); const recv = el('button', { class: 'btn sm', type: 'button' }, '⬅ PC sends "U"'); bt.append(send, recv);
-  const sc = sv('svg', { class: 'dg', viewBox: '0 0 660 230' }); w.appendChild(sc);
+  const sc = sv('svg', { class: 'dg', viewBox: '0 0 660 230' }); w.appendChild(el('div', { class: 'phone-scroll' })).appendChild(sc);
   function wave(rs) {
     sc.innerHTML = ''; const bits = frameBits(0x55, 8, 'none', 1); const X = i => 110 + i * 48;
     const Yt = v => 70 - v * 46, Yr = v => 165 + (v ? 1 : -1) * 40 * 1; // rs: 1 → -10, 0 → +10
@@ -451,11 +456,20 @@ BUILD.push(function wBaud() {
   const rev = el('div', { class: 'row' }); w.appendChild(rev);
   const tg = el('input', { class: 'inp', type: 'number', value: 9600, 'aria-label': 'target baud' }); const rb = el('button', { class: 'btn sm p', type: 'button' }, 'find DLL/DLM'); rev.append(el('span', { class: 'gae' }, 'target baud'), tg, rb);
   const rs = el('div', { class: 'say' }); w.appendChild(rs);
+  const drift = sv('svg', { class: 'dg' }); w.appendChild(drift);
   function calc() {
     const P = +pc.value, M = +dlm.value & 255, Lv = +dll.value & 255, D = +dav.value & 15, Mu = Math.max(1, +mul.value & 15); const div = Math.max(1, 256 * M + Lv);
-    const b = P / (16 * div * (1 + D / Mu));
-    out.innerHTML = `<div class="ih">result</div><div style="padding:8px 4px;font-size:17.5px">baud = ${P} / (16 × (256 × ${M} + ${Lv}) × (1 + ${D}/${Mu})) = ${P} / ${(16 * div * (1 + D / Mu)).toFixed(1)} = <b>${b.toFixed(1)}</b> bps</div>`;
+    const b = P / (16 * div * (1 + D / Mu)), t = +tg.value || 9600, err = (b - t) / t * 100;
+    out.innerHTML = `<div class="ih">result</div><div style="padding:8px 4px;font-size:17.5px">baud = ${P} / (16 × (256 × ${M} + ${Lv}) × (1 + ${D}/${Mu})) = ${P} / ${(16 * div * (1 + D / Mu)).toFixed(1)} = <b>${b.toFixed(1)}</b> bps · vs ${t}: <b class="${Math.abs(err) < 3 ? 'p-green' : 'p-red'}">${err >= 0 ? '+' : ''}${err.toFixed(1)} %</b></div>`;
+    // drift picture: the receiver (target baud) samples the middle of each of 10 bits sent at the real baud
+    const Wd = pxW(drift, 96), L = 80, R = Wd - 10, span = 10.6 / Math.min(b, t), X = x => L + x / span * (R - L);
+    let g = `<text x="4" y="28" class="lbl" style="font-size:12.5px">sent at ${Math.round(b)}</text><text x="4" y="66" class="lbl" style="font-size:12.5px">read at ${t}</text>`;
+    for (let k = 0; k < 10; k++) { const x0 = X(k / b), x1 = X((k + 1) / b); if (x0 < R) g += `<rect x="${x0.toFixed(1)}" y="12" width="${Math.max(0, Math.min(R, x1) - x0).toFixed(1)}" height="24" style="fill:${k % 2 ? 'var(--n-b)' : 'var(--n-g)'};stroke:var(--ink3)"/><text x="${((x0 + Math.min(R, x1)) / 2).toFixed(1)}" y="29" text-anchor="middle" class="mono" style="font-size:10px">${k === 0 ? 'S' : k === 9 ? 'E' : 'D' + (k - 1)}</text>`; }
+    let bad = 0; for (let k = 0; k < 10; k++) { const ts = (k + .5) / t, hit = Math.floor(ts * b), ok = hit === k; if (!ok) bad++; const x = X(ts); if (x < R) g += `<path d="M${x.toFixed(1)} 40 V70" style="stroke:${ok ? 'var(--green)' : 'var(--red)'};stroke-width:2"/><circle cx="${x.toFixed(1)}" cy="70" r="4" style="fill:${ok ? 'var(--green)' : 'var(--red)'}"/>`; }
+    g += `<text x="${R}" y="92" text-anchor="end" class="lbl" style="font-size:12.5px;fill:${bad ? 'var(--red)' : 'var(--green)'}">${bad ? `${bad} of 10 samples land in the wrong bit → garbage / framing error` : 'all 10 samples land inside the right bit ✓ (drift &lt; ½ bit)'}</text>`;
+    drift.innerHTML = g;
   }
+  tg.addEventListener('input', calc); new ResizeObserver(() => calc()).observe(drift);
   rb.onclick = () => { const P = +pc.value, t = +tg.value; const d = Math.max(1, Math.round(P / (16 * t))); dlm.value = d >> 8; dll.value = d & 255; dav.value = 0; mul.value = 1; calc(); const b = P / (16 * d); rs.innerHTML = `divisor = PCLK / (16 × baud) = ${P} / ${16 * t} = ${(P / 16 / t).toFixed(2)} → round to <b>${d}</b> → DLM = ${d >> 8}, DLL = ${d & 255} (${hx(d & 255)}) → actual ${b.toFixed(0)} bps, error ${((b - t) / t * 100).toFixed(2)} % ${Math.abs((b - t) / t) < 0.03 ? '✓ (under ~3 % works)' : '✗ too big — use the fractional divider'}`; };
   [pc, dlm, dll, dav, mul].forEach(i => i.addEventListener('input', calc)); calc();
 });

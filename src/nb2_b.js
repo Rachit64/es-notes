@@ -5,11 +5,11 @@
 /* ---------- ADC staircase ---------- */
 BUILD.push(function wStairs() {
   const w = W('w-stairs', 'the ADC staircase', 'drag the input voltage · zoom shows the steps');
-  let N = 12, V = 1.1, Vref = 3.3, zoom = false;
+  let N = 3, V = 1.1, Vref = 3.3, zoom = false;
   const ctl = el('div', { class: 'row' }); w.appendChild(ctl);
   ruler(ctl, 'input voltage V_A', 0, 3300, V * 1000, 1, v => (v / 1000).toFixed(3) + ' V', v => { V = v / 1000; draw(); });
   const nc = el('div', { class: 'col' }); ctl.appendChild(nc); nc.appendChild(el('span', { class: 'gae small' }, 'bits N'));
-  chipGroup(nc, [[3, '3'], [4, '4'], [8, '8'], [10, '10'], [12, '12 (LPC1768)']], N, v => { N = +v; draw(); });
+  chipGroup(nc, [[3, '3 (see the steps)'], [4, '4'], [8, '8'], [10, '10'], [12, '12 = LPC1768']], N, v => { N = +v; draw(); });
   const zc = el('button', { class: 'chip', type: 'button' }, '🔍 zoom in'); zc.onclick = () => { zoom = !zoom; zc.classList.toggle('on', zoom); draw(); }; ctl.appendChild(zc);
   const s = sv('svg', { class: 'dg', viewBox: '0 0 640 300' }); w.appendChild(s);
   const out = el('div', { class: 'row' }); w.appendChild(out);
@@ -17,10 +17,10 @@ BUILD.push(function wStairs() {
     const M = 1 << N, res = Vref / M, code = Math.min(M - 1, Math.floor(V / res));
     let v0 = 0, v1 = Vref; if (zoom) { const span = Math.max(res * 8, 0.002); v0 = Math.max(0, V - span / 2); v1 = Math.min(Vref, v0 + span); v0 = v1 - span; }
     const c0 = Math.floor(v0 / res), c1 = Math.min(M - 1, Math.ceil(v1 / res));
-    const X = v => 70 + (v - v0) / (v1 - v0) * 540, Y = c => 260 - (c - c0) / Math.max(1, (c1 - c0)) * 230;
+    const Wd = pxW(s, 300), X = v => 70 + (v - v0) / (v1 - v0) * (Wd - 100), Y = c => 260 - (c - c0) / Math.max(1, (c1 - c0)) * 230;
     s.innerHTML = '';
-    sv('path', { d: 'M70 260 H620 M70 260 V20', class: 'ink' }, s);
-    sv('text', { x: 620, y: 290, 'text-anchor': 'end', class: 'lbl', style: 'font-size:14px' }, s).textContent = 'analog input (V) →';
+    sv('path', { d: `M70 260 H${Wd - 20} M70 260 V20`, class: 'ink' }, s);
+    sv('text', { x: Wd - 20, y: 294, 'text-anchor': 'end', class: 'lbl', style: 'font-size:14px' }, s).textContent = 'analog input (V) →';
     sv('text', { x: 6, y: 16, class: 'lbl', style: 'font-size:14px' }, s).textContent = 'digital output';
     let d = ''; const steps = Math.min(c1 - c0 + 1, 600);
     for (let i = 0; i < steps; i++) { const c = c0 + Math.round(i * (c1 - c0) / Math.max(1, steps - 1)); const a = X(Math.max(v0, c * res)), b = X(Math.min(v1, (c + 1) * res)); d += (i ? 'V' : 'M' + a + ' ') + Y(c) + 'H' + b; }
@@ -31,13 +31,13 @@ BUILD.push(function wStairs() {
     [c0, c1].forEach(c => sv('text', { x: 64, y: Y(c) + 4, 'text-anchor': 'end', class: 'mono', style: 'font-size:12px' }, s).textContent = c);
     out.innerHTML = `<span class="ro">resolution = ${Vref} / 2<sup>${N}</sup> = <b>${(res * 1000).toFixed(N > 8 ? 3 : 1)} mV</b></span><span class="ro">output = ⌊${V.toFixed(3)} / ${(res * 1000).toFixed(3)} mV⌋ = <b>${code}</b> = ${hx(code, Math.ceil(N / 4))}</span><span class="ro">back to volts: ${code} × res = ${(code * res).toFixed(4)} V</span>`;
   }
-  draw();
+  draw(); new ResizeObserver(() => draw()).observe(s);
 });
 
 /* ---------- SAR binary search ---------- */
 BUILD.push(function wSar() {
   const w = W('w-sar', 'SAR = binary search', 'one bit per step, MSB first');
-  let N = 12, V = 1.1, k = -1, bits = [];
+  let N = 4, V = 1.1, k = -1, bits = [];
   const ctl = el('div', { class: 'row' }); w.appendChild(ctl);
   ruler(ctl, 'input V_A', 0, 3299, V * 1000, 1, v => (v / 1000).toFixed(3) + ' V', v => { V = v / 1000; reset(); });
   const nc = el('div', { class: 'col' }); ctl.appendChild(nc); nc.appendChild(el('span', { class: 'gae small' }, 'bits'));
@@ -61,15 +61,15 @@ BUILD.push(function wSar() {
   bN.onclick = stepOne; bA.onclick = () => { while (k < N - 1) stepOne(); }; bR.onclick = reset;
   function draw() {
     reg.innerHTML = bits.map((x, i) => `<span class="${x === null ? (i === k + 1 ? 'next' : '') : x ? 'one' : 'zero'}"><b>${x === null ? '?' : x}</b><small>b${N - 1 - i}</small></span>`).join('');
-    s.innerHTML = ''; const X = i => 60 + i * (560 / N), Y = v => 210 - v / 3.3 * 190;
-    sv('path', { d: 'M50 210 H630 M50 210 V12', class: 'ink' }, s);
+    const Wd = pxW(s, 230); s.innerHTML = ''; const X = i => 60 + i * ((Wd - 80) / N), Y = v => 210 - v / 3.3 * 190;
+    sv('path', { d: `M50 210 H${Wd - 10} M50 210 V12`, class: 'ink' }, s);
     [0, 1.65, 3.3].forEach(v => sv('text', { x: 44, y: Y(v) + 4, 'text-anchor': 'end', class: 'mono', style: 'font-size:11px' }, s).textContent = v + 'V');
-    sv('path', { d: `M50 ${Y(V)} H630`, style: 'stroke:var(--blue);stroke-width:2.2;stroke-dasharray:6 4' }, s);
-    sv('text', { x: 628, y: Y(V) - 6, 'text-anchor': 'end', class: 'lbl', style: 'font-size:13px;fill:var(--blue)' }, s).textContent = 'V_A';
+    sv('path', { d: `M50 ${Y(V)} H${Wd - 10}`, style: 'stroke:var(--blue);stroke-width:2.2;stroke-dasharray:6 4' }, s);
+    sv('text', { x: Wd - 12, y: Y(V) - 6, 'text-anchor': 'end', class: 'lbl', style: 'font-size:13px;fill:var(--blue)' }, s).textContent = 'V_A';
     let lo = 0, hi = 3.3;
-    hist.forEach((h, i) => { const x = X(i) + 8, wd = 560 / N - 12; sv('rect', { x, y: Y(hi), width: wd, height: Y(lo) - Y(hi), rx: 3, style: 'fill:var(--hl-l);stroke:var(--ink3);stroke-width:.8' }, s); sv('path', { d: `M${x - 3} ${Y(h.vt)} H${x + wd + 3}`, style: `stroke:${h.keep ? 'var(--green)' : 'var(--red)'};stroke-width:2.6` }, s); if (h.keep) lo = h.vt; else hi = h.vt; if (N <= 4) sv('text', { x: x + wd / 2, y: Y(h.vt) - 5, 'text-anchor': 'middle', class: 'mono', style: 'font-size:11px' }, s).textContent = h.vt.toFixed(2); });
+    hist.forEach((h, i) => { const x = X(i) + 8, wd = (Wd - 80) / N - 12; sv('rect', { x, y: Y(hi), width: wd, height: Y(lo) - Y(hi), rx: 3, style: 'fill:var(--hl-l);stroke:var(--ink3);stroke-width:.8' }, s); sv('path', { d: `M${x - 3} ${Y(h.vt)} H${x + wd + 3}`, style: `stroke:${h.keep ? 'var(--green)' : 'var(--red)'};stroke-width:2.6` }, s); if (h.keep) lo = h.vt; else hi = h.vt; if (N <= 4) sv('text', { x: x + wd / 2, y: Y(h.vt) - 5, 'text-anchor': 'middle', class: 'mono', style: 'font-size:11px' }, s).textContent = h.vt.toFixed(2); });
   }
-  reset();
+  reset(); new ResizeObserver(() => draw()).observe(s);
 });
 
 /* ---------- ADCR builder ---------- */
@@ -110,15 +110,20 @@ BUILD.push(function wAdgdr() {
 /* ---------- software vs burst timeline ---------- */
 BUILD.push(function wModes() {
   const w = W('w-modes', 'software vs burst', 'what the CPU and the ADC are doing');
-  const s = sv('svg', { class: 'dg', viewBox: '0 0 640 220' }); w.appendChild(s);
-  const lanes = [['software: CPU', 30], ['software: ADC', 70], ['burst: CPU', 140], ['burst: ADC', 180]];
-  lanes.forEach(([t, y]) => sv('text', { x: 2, y: y + 5, class: 'lbl', style: 'font-size:13px' }, s).textContent = t);
-  const g = sv('g', {}, s);
-  const blk = (x, wd, y, fill, txt) => { sv('rect', { x, y: y - 13, width: wd, height: 26, rx: 5, style: `fill:${fill};stroke:var(--ink3);stroke-width:.8` }, g); if (txt) sv('text', { x: x + wd / 2, y: y + 5, 'text-anchor': 'middle', class: 'mono', style: 'font-size:11px' }, g).textContent = txt; };
-  let x = 120; [4, 5, 4, 5].forEach(c => { blk(x, 26, 30, 'var(--hl-y)', 'START'); blk(x + 26, 52, 30, 'var(--faint)', 'wait'); blk(x + 26, 52, 70, 'var(--hl-l)', 'ch' + c); blk(x + 78, 22, 30, 'var(--hl-g)', 'read'); x += 124; });
-  x = 120; for (let i = 0; i < 9; i++) { blk(x, 52, 180, 'var(--hl-l)', 'ch' + (i % 2 ? 5 : 4)); x += 56; }
-  blk(120, 500, 140, 'var(--hl-g)', 'free for other work … the ISR reads results when DONE interrupts');
-  x = 120; for (let i = 0; i < 9; i++) { sv('text', { x: x + 52, y: 162, 'text-anchor': 'middle', style: 'font-size:13px' }, g).textContent = '⚡'; x += 56; }
+  const s = sv('svg', { class: 'dg' }); w.appendChild(s);
+  function draw() {
+    const Wd = pxW(s, 10), nar = Wd < 560, L = nar ? 6 : 120, R = Wd - 8, gap = nar ? 22 : 0;
+    const lanes = [['software · CPU', 30 + gap], ['software · ADC', 70 + 2 * gap], ['burst · CPU', 140 + 3 * gap], ['burst · ADC', 180 + 4 * gap]], H = 206 + 4 * gap;
+    pxW(s, H); let g = '';
+    lanes.forEach(([t, y]) => { g += nar ? `<text x="${L}" y="${y - 17}" class="lbl" style="font-size:13px;fill:var(--ink2)">${t}</text>` : `<text x="2" y="${y + 5}" class="lbl" style="font-size:13px">${t}</text>`; });
+    const blk = (x, wd, y, fill, txt) => { g += `<rect x="${x.toFixed(1)}" y="${y - 13}" width="${wd.toFixed(1)}" height="26" rx="5" style="fill:${fill};stroke:var(--ink3);stroke-width:.8"/>`; if (txt && wd > 24) g += `<text x="${(x + wd / 2).toFixed(1)}" y="${y + 5}" text-anchor="middle" class="mono" style="font-size:${wd < 44 ? 10 : 11}px">${txt}</text>`; };
+    const cyc = nar ? [4, 5] : [4, 5, 4, 5], u = (R - L) / (cyc.length * 125); let x = L;
+    cyc.forEach(c => { blk(x, 30 * u, lanes[0][1], 'var(--hl-y)', 'START'); blk(x + 30 * u, 52 * u, lanes[0][1], 'var(--faint)', 'wait'); blk(x + 30 * u, 52 * u, lanes[1][1], 'var(--hl-l)', 'ch' + c); blk(x + 82 * u, 38 * u, lanes[0][1], 'var(--hl-g)', 'read'); x += 125 * u; });
+    x = L; for (let i = 0; i < Math.floor(cyc.length * 125 / 55.5); i++) { blk(x, 52 * u, lanes[3][1], 'var(--hl-l)', 'ch' + (i % 2 ? 5 : 4)); g += `<text x="${(x + 52 * u).toFixed(1)}" y="${lanes[2][1] + 22}" text-anchor="middle" style="font-size:12px">⚡</text>`; x += 55.5 * u; }
+    blk(L, (cyc.length * 125 - 2) * u, lanes[2][1], 'var(--hl-g)', nar ? 'free for other work' : 'free for other work … the ISR collects each result (⚡ = DONE interrupt)');
+    s.innerHTML = g;
+  }
+  draw(); new ResizeObserver(() => draw()).observe(s);
   const t = el('div', { class: 'split mt' }); w.appendChild(t);
   t.innerHTML = '<ul class="b"><li><b>Software</b>: one START → one conversion; the CPU waits for DONE.</li></ul><ul class="b"><li><b>Burst</b>: the ADC loops through the SEL channels by itself; the CPU is free and collects results in the ADC interrupt.</li></ul>';
 });
@@ -157,7 +162,7 @@ BUILD.push(function wA1() {
   const L = t => lineOf(A1_CODE, t);
   const cd = v => Math.min(4095, Math.floor(v / 3.3 * 4096));
   function build() {
-    const c4 = cd(vals[0]), c5 = cd(vals[1]); const raw4 = (0x84000000 | (c4 << 4)) >>> 0, raw5 = (0x85000000 | (c5 << 4)) >>> 0;
+    const c4 = cd(vals[0]), c5 = cd(vals[1]); const raw4 = (0x80000000 | (c4 << 4)) >>> 0, raw5 = (0x80000000 | (c5 << 4)) >>> 0; // ADDRn: DONE + RESULT (no CHN field)
     return [
       { l: L('PINSEL3 = (3<<28)'), t: 'P1.30 → AD0.4, P1.31 → AD0.5 (function 11).' },
       { l: L('ADINTEN = 0'), t: 'No ADC interrupts — we poll the DONE bit.' },
@@ -354,34 +359,30 @@ BUILD.push(function wDacRes() {
   const ctl = el('div', { class: 'row' }); w.appendChild(ctl);
   const r1 = ruler(ctl, 'DACVALUE', 0, 1023, val, 1, v => v + ' = ' + hx(v, 3), v => { val = v; draw(); });
   ruler(ctl, 'V_REFP', 1000, 3300, VP * 1000, 10, v => (v / 1000).toFixed(2) + ' V', v => { VP = v / 1000; draw(); });
-  const s = sv('svg', { class: 'dg', viewBox: '0 0 640 300' }); w.appendChild(s);
+  const s = sv('svg', { class: 'dg' }); w.appendChild(s);
   const out = el('div', { class: 'say' }); w.appendChild(out);
   function draw() {
-    s.innerHTML = ''; const n = 16, top = 30, bot = 270, step = (bot - top) / n;
-    sv('text', { x: 60, y: 22, 'text-anchor': 'middle', class: 'lbl' }, s).textContent = 'V_REFP';
-    sv('text', { x: 60, y: 292, 'text-anchor': 'middle', class: 'lbl' }, s).textContent = 'V_REFN';
-    const tap = val / 1024 * n; const ty = bot - tap * step;
-    for (let i = 0; i < n; i++) { const y = top + i * step; sv('path', { d: `M60 ${y} l0 3 l-8 3 l16 4 l-16 4 l16 4 l-8 3 l0 ${step - 21}`, class: 'ink', style: 'stroke-width:1.5' }, s); }
-    const fill = sv('rect', { x: 84, y: ty, width: 14, height: bot - ty, rx: 4, style: 'fill:var(--hl-o);stroke:var(--ink3)' }, s);
-    sv('path', { d: `M60 ${ty} H180`, style: 'stroke:var(--orange);stroke-width:2.6' }, s);
-    sv('circle', { cx: 60, cy: ty, r: 4.5, style: 'fill:var(--orange)' }, s);
-    sv('text', { x: 108, y: ty - 6, class: 'mono', style: 'font-size:11px' }, s).textContent = `tap ${val}/1024`;
-    sv('path', { d: `M180 ${ty - 18} L180 ${ty + 18} L214 ${ty} Z`, class: 'ink', style: 'fill:var(--card)' }, s);
-    sv('text', { x: 196, y: ty - 22, 'text-anchor': 'middle', class: 'lbl', style: 'font-size:11px' }, s).textContent = 'buffer';
-    sv('path', { d: `M214 ${ty} H260`, class: 'ink' }, s);
-    sv('text', { x: 266, y: ty + 5, class: 'lbl' }, s).textContent = 'AOUT (P0.26)';
-    const V = val * (VP - VN) / 1024 + VN;
-    // meter
-    const mx = 470, my = 160; sv('path', { d: `M${mx - 100} ${my} A100 100 0 0 1 ${mx + 100} ${my}`, class: 'ink', style: 'fill:var(--paper)' }, s);
-    for (let i = 0; i <= 10; i++) { const a = Math.PI + i / 10 * Math.PI; sv('path', { d: `M${mx + Math.cos(a) * 88} ${my + Math.sin(a) * 88} L${mx + Math.cos(a) * 100} ${my + Math.sin(a) * 100}`, class: 'ink2' }, s); if (i % 2 === 0) sv('text', { x: mx + Math.cos(a) * 74, y: my + Math.sin(a) * 74 + 4, 'text-anchor': 'middle', class: 'mono', style: 'font-size:10px' }, s).textContent = (i / 10 * 3.3).toFixed(1); }
-    const a = Math.PI + V / 3.3 * Math.PI; sv('path', { d: `M${mx} ${my} L${mx + Math.cos(a) * 92} ${my + Math.sin(a) * 92}`, style: 'stroke:var(--red);stroke-width:3;stroke-linecap:round' }, s);
-    sv('circle', { cx: mx, cy: my, r: 6, style: 'fill:var(--ink)' }, s);
-    sv('text', { x: mx, y: my + 34, 'text-anchor': 'middle', class: 'mono', style: 'font-size:22px' }, s).textContent = V.toFixed(3) + ' V';
+    const Wd = pxW(s, 10), nar = Wd < 560, H = nar ? 480 : 300; pxW(s, H);
+    const n = 16, top = 34, bot = 270, step = (bot - top) / n, lx = 70, V = val * (VP - VN) / 1024 + VN, tap = val / 1024 * n, ty = bot - tap * step;
+    let g = `<text x="${lx}" y="22" text-anchor="middle" class="lbl">V_REFP = ${VP.toFixed(2)} V</text><text x="${lx}" y="${bot + 22}" text-anchor="middle" class="lbl">V_REFN = 0 V</text>`;
+    for (let i = 0; i < n; i++) { const y = top + i * step, z = step * .7, o = (step - z) / 2; g += `<path d="M${lx} ${y.toFixed(1)} v${o.toFixed(1)} l-6 ${(z / 6).toFixed(1)} l12 ${(z / 3).toFixed(1)} l-12 ${(z / 3).toFixed(1)} l6 ${(z / 6).toFixed(1)} v${o.toFixed(1)}" class="ink" style="stroke-width:1.4"/>`; g += `<circle cx="${lx}" cy="${y.toFixed(1)}" r="1.6" style="fill:var(--ink3)"/>`; }
+    g += `<rect x="${lx + 22}" y="${ty.toFixed(1)}" width="12" height="${(bot - ty).toFixed(1)}" rx="4" style="fill:var(--hl-o);stroke:var(--ink3)"/>`;
+    g += `<path d="M${lx} ${ty.toFixed(1)} H${lx + 150}" style="stroke:var(--orange);stroke-width:2.6"/><circle cx="${lx}" cy="${ty.toFixed(1)}" r="5" style="fill:var(--orange);stroke:var(--ink);stroke-width:1.2"/>`;
+    const bx = nar ? lx + 112 : lx + 150;
+    g += `<text x="${lx + 40}" y="${(nar ? ty + 36 : ty - 8).toFixed(1)}" class="mono" style="font-size:12px">tap ${val} of 1024</text>`;
+    g += `<path d="M${bx} ${ty - 18} L${bx} ${ty + 18} L${bx + 34} ${ty} Z" class="ink" style="fill:var(--card)"/><text x="${bx + 17}" y="${ty - 24}" text-anchor="middle" class="lbl" style="font-size:12px">buffer</text><path d="M${bx + 34} ${ty} H${bx + (nar ? 50 : 70)}" class="ink"/>` + (nar ? `<text x="${bx + 38}" y="${ty - 8}" class="lbl" style="font-size:13px">AOUT · P0.26</text>` : `<text x="${bx + 74}" y="${ty + 5}" class="lbl" style="font-size:14px">AOUT</text><text x="${bx + 74}" y="${ty + 20}" class="mono" style="font-size:11px">P0.26</text>`);
+    const mx = nar ? Wd / 2 : Math.max(bx + 250, Wd - 180), my = nar ? 430 : 170, rr = nar ? Math.min(110, Wd / 2 - 34) : 120;
+    g += `<path d="M${mx - rr} ${my} A${rr} ${rr} 0 0 1 ${mx + rr} ${my} Z" class="ink" style="fill:var(--paper)"/>`;
+    for (let i = 0; i <= 10; i++) { const a = Math.PI + i / 10 * Math.PI; g += `<path d="M${mx + Math.cos(a) * (rr - 12)} ${my + Math.sin(a) * (rr - 12)} L${mx + Math.cos(a) * rr} ${my + Math.sin(a) * rr}" class="ink2"/>`; if (i % 2 === 0) g += `<text x="${mx + Math.cos(a) * (rr + 14)}" y="${my + Math.sin(a) * (rr + 14) + 4}" text-anchor="middle" class="mono" style="font-size:11px">${(i / 10 * 3.3).toFixed(1)}</text>`; }
+    const a = Math.PI + V / 3.3 * Math.PI; g += `<path d="M${mx} ${my} L${mx + Math.cos(a) * (rr - 16)} ${my + Math.sin(a) * (rr - 16)}" style="stroke:var(--red);stroke-width:3;stroke-linecap:round"/><circle cx="${mx}" cy="${my}" r="6" style="fill:var(--ink)"/>`;
+    g += `<text x="${mx}" y="${my + 30}" text-anchor="middle" class="mono" style="font-size:22px;font-weight:700;fill:var(--orange)">${V.toFixed(3)} V</text>`;
+    if (nar) g += `<path d="M${bx + 50} ${ty} C${bx + 90} ${ty + 60} ${mx} ${my - rr - 60} ${mx} ${my - rr - 24}" style="fill:none;stroke:var(--ink3);stroke-dasharray:4 4"/>`; else g += `<path d="M${bx + 112} ${ty} H${mx - rr - 18}" style="stroke:var(--ink3);stroke-dasharray:4 4"/>`;
+    s.innerHTML = g;
     out.innerHTML = `V<sub>AOUT</sub> = ${val} × (${VP.toFixed(2)} − 0) / 1024 + 0 = <b>${V.toFixed(4)} V</b> · one step = ${(VP / 1024 * 1000).toFixed(2)} mV`;
   }
   const pr = el('div', { class: 'chips' }); w.appendChild(pr); pr.appendChild(el('span', { class: 'cav p-soft' }, 'try:'));
   [[0, '0'], [388, '388 (1.25 V)'], [776, '776 (2.5 V)'], [1023, '1023 (max)']].forEach(([v, t]) => { const b = el('button', { class: 'chip', type: 'button' }, t); b.onclick = () => { val = v; r1.value = v; r1.dispatchEvent(new Event('input')); }; pr.appendChild(b); });
-  draw();
+  draw(); new ResizeObserver(() => draw()).observe(s);
 });
 
 /* ---------- DACR builder ---------- */
@@ -405,13 +406,17 @@ BUILD.push(function wDbuf() {
   const boxes = el('div', { class: 'row mt' }); w.appendChild(boxes);
   boxes.innerHTML = '<div class="dbox"><div class="gae">CPU writes DACR</div><b class="cw">–</b></div><div class="arrow">➝</div><div class="dbox pre"><div class="gae">pre-buffer</div><b class="pb">–</b></div><div class="arrow">➝</div><div class="dbox"><div class="gae">DACR → AOUT</div><b class="dr">0</b></div><div class="dbox"><div class="gae">counter</div><b class="ct">–</b><small>reload = DACCNTVAL</small></div>';
   const s = sv('svg', { class: 'dg', viewBox: '0 0 640 150' }); w.appendChild(s);
-  const WIN = 6, X = t => 40 + (t - (T - WIN)) / WIN * 590;
-  const lp = Loop(w, dt => {
+  const WIN = 6; let X = t => t;
+  const tick = dt => {
     T += dt;
     if (T >= nextW) { val = (val + 1 + Math.floor(Math.random() * 2)) % 6; writes.push(T); nextW = T + 0.25 + Math.random() * 0.7; if (dbl) pre = val; else { dacr = val; hist.push([T, dacr]); } $('.cw', boxes).textContent = val; $('.cw', boxes).parentNode.classList.remove('popin'); void boxes.offsetWidth; $('.cw', boxes).parentNode.classList.add('popin'); }
     cnt -= dt / reload;
     if (cnt <= 0) { cnt += 1; beats.push(T); if (dbl && pre !== dacr) { dacr = pre; hist.push([T, dacr]); } }
     hist = hist.filter((h, i) => i === hist.length - 1 || hist[i + 1][0] > T - WIN); writes = writes.filter(t => t > T - WIN); beats = beats.filter(t => t > T - WIN);
+  };
+  for (let i = 0; i < 400; i++) tick(1 / 60);
+  const lp = Loop(w, dt => {
+    tick(dt); const Wd = pxW(s, 150); X = t => 40 + (t - (T - WIN)) / WIN * (Wd - 50);
     $('.pb', boxes).textContent = dbl ? pre : '(bypassed)'; $('.pb', boxes).parentNode.style.opacity = dbl ? 1 : .4; $('.dr', boxes).textContent = dacr; $('.ct', boxes).textContent = dbl ? Math.ceil(cnt * 10) : '–';
     s.innerHTML = '';
     beats.forEach(t => sv('path', { d: `M${X(t)} 6 V140`, style: 'stroke:var(--green);stroke-width:1.4;stroke-dasharray:3 4;opacity:' + (dbl ? 1 : .3) }, s));
@@ -544,6 +549,7 @@ function motorSvg(host) {
       Object.entries(on).forEach(([k, v]) => coils[k].classList.toggle('on', !!v));
       const dirs = { A: -90, B: 0, C: 90, D: 180 }; const act = Object.keys(on).filter(k => on[k]);
       if (!act.length) return; let x = 0, y = 0; act.forEach(k => { x += Math.cos(dirs[k] * Math.PI / 180); y += Math.sin(dirs[k] * Math.PI / 180); });
+      if (Math.hypot(x, y) < 0.01) return; // opposite coils cancel: the rotor stays put
       let target = Math.atan2(y, x) * 180 / Math.PI + 180; // N end points to active pair
       let diff = ((target - ang) % 360 + 540) % 360 - 180; ang += diff;
       rot.style.transition = animate ? 'transform .35s cubic-bezier(.3,1.4,.5,1)' : 'none'; rot.style.transform = `rotate(${ang}deg)`; rot.style.transformOrigin = '130px 130px';
@@ -556,7 +562,7 @@ BUILD.push(function wMotor() {
   const L = el('div', { style: 'max-width:300px' }), R = el('div', { class: 'col' }); sp.append(L, R);
   const m = motorSvg(L);
   let code = 0x3, k = 0, dir = 1, run = null, spd = 600, steps = 0;
-  const bits = miniBits(R, ['C · P0.3', 'D · P0.2', 'A · P0.1', 'B · P0.0'], 'FIOPIN bits 3…0');
+  const bits = miniBits(R, ['C<br>P0.3', 'D<br>P0.2', 'A<br>P0.1', 'B<br>P0.0'], 'FIOPIN bits 3…0 → coils');
   const ro = el('div', { class: 'row' }); R.appendChild(ro); const hv = el('span', { class: 'ro big' }); ro.append(el('span', { class: 'gae' }, 'value ='), hv);
   const seq = el('div', { class: 'seqrow' }); R.appendChild(seq);
   const ctl = el('div', { class: 'row' }); R.appendChild(ctl);
@@ -580,7 +586,7 @@ BUILD.push(function wMotor() {
 BUILD.push(function wDrv() {
   const w = W('w-drv', 'one channel of the driver', 'flip the pin, watch current flow');
   let on = false, diode = true, spike = 0;
-  const s = sv('svg', { class: 'dg drv', viewBox: '0 0 640 260' }); w.appendChild(s);
+  const s = sv('svg', { class: 'dg drv', viewBox: '0 0 640 260' }); w.appendChild(el('div', { class: 'phone-scroll' })).appendChild(s);
   sv('rect', { x: 10, y: 80, width: 90, height: 100, rx: 8, style: 'fill:#20c997;stroke:var(--ink);stroke-width:2' }, s);
   sv('text', { x: 55, y: 135, 'text-anchor': 'middle', class: 'lbl' }, s).textContent = 'LPC1768';
   sv('text', { x: 104, y: 124, class: 'mono', style: 'font-size:12px' }, s).textContent = 'P0.0';

@@ -193,3 +193,34 @@ svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.sc
 .rgc b{font-family:'Courier Prime'; font-weight:700; color:var(--ink3)}
 .rgc.set{border-style:solid; border-color:var(--ink); background:var(--hl-y)}
 .rgc.set b{color:var(--ink)}
+
+.ringing use{animation:ring .5s ease infinite; transform-origin:50% 10%; transform-box:fill-box}
+/* notebook 2 shared */
+.lane{border:1.5px dashed var(--faint); border-radius:10px; padding:6px 10px; margin:4px 0}
+.lstat{color:var(--ink2)}
+.ivtv{display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start}
+.ivt{display:flex; flex-direction:column; gap:3px; min-width:220px}
+.ivr{display:flex; gap:10px; align-items:center; padding:3px 8px; border:1.5px solid var(--faint); border-radius:6px; background:var(--paper); font-size:15px}
+.ivr .mono{font-size:12px}
+.ivr.dots{justify-content:center; border-style:dashed}
+.ivr.hit{background:var(--hl-y); border-color:var(--ink); box-shadow:2px 2px 0 var(--ink)}
+.cpu{display:flex; flex-direction:column; gap:5px; padding:8px 12px; border:2px solid var(--ink); border-radius:12px; background:var(--n-b); min-width:220px}
+.reg1{display:flex; justify-content:space-between; gap:12px; font-size:16px}
+.reg1 i{font-style:normal; font-family:'Gaegu'; font-weight:700; color:var(--ink2)}
+.reg1 b{font-family:'Courier Prime'; font-size:14px}
+.irrow{display:flex; gap:8px; flex-wrap:wrap}
+.irc{display:flex; flex-direction:column; align-items:center; padding:4px 10px; border:1.8px solid var(--faint); border-radius:10px; background:var(--paper); min-width:62px; transition:all .25s}
+.irc small{font-family:'Courier Prime'; font-size:10px; color:var(--ink3)}
+.irc b{font-family:'Courier Prime'; font-size:22px}
+.irc em{font-style:normal; font-family:'Gaegu'; font-weight:700}
+.irc.one{background:var(--hl-p); border-color:var(--ink)}
+.irc.hit{animation:shake2 .4s}
+.forgot{padding:10px 12px; border:1.6px dashed var(--faint); border-radius:10px}
+.board{display:flex; gap:22px; align-items:center; flex-wrap:wrap; padding:10px 12px; border:2px solid var(--ink); border-radius:12px; background:#24392b; color:#e9ffe0; margin-bottom:8px}
+.board .pinlbl{color:#cfe8d6}
+.board .say{color:#e9ffe0}
+.tsw{width:54px; height:28px; border-radius:16px; border:2px solid var(--ink); background:#9aa0ad; position:relative; cursor:pointer; padding:0}
+.tsw i{position:absolute; top:2px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; border:1.5px solid var(--ink); transition:left .15s}
+.tsw.on{background:#5fd18b}
+.tsw.on i{left:27px}
+.gpiotbl td{vertical-align:middle}

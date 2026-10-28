@@ -32,7 +32,6 @@ function tPaint(v, s, o) {
   if (s.wave && s.wave.length) { const pts = s.wave.concat([[s.t, s.wave[s.wave.length - 1][1]]]); sv('path', { d: digi(pts, X, 22, 64), style: 'fill:none;stroke:var(--red);stroke-width:2.6;stroke-linejoin:round' }, g); }
   sv('path', { d: `M${X(s.t || 0)} 8 V74`, style: 'stroke:var(--pink);stroke-width:1.6;stroke-dasharray:3 3' }, g);
 }
-const set = (o, kv) => Object.assign(o, kv);
 
 /* ---------- P1: blink every second ---------- */
 const P1_CODE = `#include<stdio.h>

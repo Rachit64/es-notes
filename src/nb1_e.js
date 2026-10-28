@@ -2,27 +2,6 @@
    NOTEBOOK 1 · part E — LCD questions (full solutions + sims)
    ========================================================= */
 
-/* generic "event" exercise: code on the left, live hardware on the right.
-   Each user action builds a little trace that plays through the code. */
-function Exercise(id, title, info, o) {
-  const w = W(id, title, info);
-  const ctl = el('div', { class: 'row mb' }); w.appendChild(ctl);
-  const host = el('div'); w.appendChild(host);
-  let world = o.world();
-  const cloneW = x => { const c = Object.assign({}, x); if (x.lcd) c.lcd = x.lcd.clone(); return c; };
-  const view = (s, v, k, first) => { if (first) { v.innerHTML = ''; v._lv = LCDView(v, new HD44780()); o.setup && o.setup(v); } v._lv.lcd = s.lcd; v._lv.draw(); o.paint && o.paint(s, v); };
-  const st = Stepper(host, { code: o.code, title: o.file, steps: [{ l: [], t: o.hello }], init: () => cloneW(world), view, speed: o.speed || 900, noteClass: 'orange' });
-  const api = {
-    w, ctl, st, get world() { return world; },
-    fire(steps, play = true) { world = st.last(); st.setSteps(steps, 0); if (play) st.play(); },
-    commitNow() { world = st.last(); },
-    reset() { world = o.world(); st.setSteps([{ l: [], t: o.hello }]); },
-    L: t => lineOf(o.code, t)
-  };
-  return api;
-}
-const lcdWith = (l1, l2) => { const l = new HD44780().ready(); l.print(l1 || ''); if (l2 != null) { l.cmd(0xC0); l.print(l2); } return l; };
-
 /* ---------- Q1: keypad → LCD ---------- */
 const Q1_CODE = `#include <LPC17xx.h>
 /* + the LCD driver from above (lcd_init, lcd_cmd, lcd_char, lcd_str) */

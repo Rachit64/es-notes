@@ -292,7 +292,8 @@ select.sel, input.inp{font-family:'Courier Prime'; font-size:16px; padding:4px 8
 input.inp{width:9em}
 
 /* readouts */
-.ro{font-family:'Courier Prime'; font-weight:700; font-size:15.5px; background:var(--paper); border:1.5px solid var(--faint); border-radius:6px; padding:2px 8px; color:var(--ink); white-space:nowrap}
+.ro{font-family:'Courier Prime'; font-weight:700; font-size:15.5px; background:var(--paper); border:1.5px solid var(--faint); border-radius:6px; padding:2px 8px; color:var(--ink); white-space:nowrap; max-width:100%; overflow-wrap:anywhere}
+@media (max-width:640px){ .ro{white-space:normal} }
 .ro.big{font-size:20px}
 .kv{display:grid; grid-template-columns:auto 1fr; gap:3px 12px; font-size:.92em; align-items:baseline}
 .kv > :nth-child(odd){font-family:'Gaegu'; font-weight:700; color:var(--ink2)}

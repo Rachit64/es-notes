@@ -1,0 +1,68 @@
+/* notebook-2 widgets */
+.meter{display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 16px; border:2px solid var(--ink); border-radius:14px; background:var(--paper); min-width:130px; transition:all .2s}
+.meter .mbig{font-family:'Courier Prime'; font-weight:700; font-size:30px; color:var(--purple)}
+.meter.busy{background:var(--hl-l); box-shadow:0 0 0 4px var(--hl-l); animation:bob 1s ease infinite}
+.sarreg{display:flex; gap:4px; flex-wrap:wrap; margin:10px 0}
+.sarreg span{display:flex; flex-direction:column; align-items:center; width:36px; padding:3px 0; border:1.6px solid var(--faint); border-radius:8px; background:var(--paper)}
+.sarreg span b{font-family:'Courier Prime'; font-size:18px}
+.sarreg span small{font-family:'Courier Prime'; font-size:9.5px; color:var(--ink3)}
+.sarreg span.one{background:var(--hl-g); border-color:var(--ink)}
+.sarreg span.zero{background:var(--faint2); border-color:var(--ink3)}
+.sarreg span.next{border:2px dashed var(--pink); animation:bob 1s ease infinite}
+.scope{background:#0e1a14; border:3px solid #2a2933; border-radius:12px; padding:8px; box-shadow:inset 0 0 18px rgba(0,0,0,.6), 2px 3px 0 var(--ink)}
+.scope svg{display:block; width:100%; height:auto}
+.scope .sg{stroke:rgba(125,255,184,.14); stroke-width:1}
+.scope .trace{fill:none; stroke:#7dffb8; stroke-width:2.6; filter:drop-shadow(0 0 4px rgba(125,255,184,.8))}
+.stable{font-size:15px; line-height:1.5; margin-top:8px}
+.stable .mono{background:none; font-size:14px; white-space:normal}
+.stable span.hl{background:var(--hl-p); border-radius:4px; padding:0 3px}
+svg.motor .coil{fill:var(--card); stroke:var(--ink); stroke-width:2; transition:fill .2s, filter .2s}
+svg.motor g.on .coil, svg .coil.on, g.on > .coil{fill:#ffb44a; filter:drop-shadow(0 0 6px rgba(255,170,60,.9))}
+svg .coil{fill:var(--card); stroke:var(--ink); stroke-width:2; transition:fill .2s}
+svg g.on .coil{fill:#ffb44a}
+.seqrow{display:flex; align-items:center; gap:6px; flex-wrap:wrap}
+.seqrow span{display:flex; flex-direction:column; align-items:center; padding:3px 10px; border:1.8px solid var(--faint); border-radius:10px; background:var(--paper)}
+.seqrow span b{font-family:'Courier Prime'; font-size:20px}
+.seqrow span small{font-family:'Courier Prime'; font-size:10px; color:var(--ink3)}
+.seqrow span.on{background:var(--hl-o); border-color:var(--ink); transform:translateY(-3px)}
+.seqrow i{font-style:normal; color:var(--ink3)}
+svg .wr2{fill:none; stroke:var(--ink3); stroke-width:2.4; stroke-linecap:round}
+svg .wr2.flow{stroke:var(--hi); stroke-dasharray:8 6; animation:flow .5s linear infinite}
+.dbox{display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 14px; border:2px solid var(--ink); border-radius:12px; background:var(--paper); min-width:108px}
+.dbox b{font-family:'Courier Prime'; font-size:24px}
+.dbox small{font-size:11px; color:var(--ink3)}
+.dbox.one{background:var(--hl-y)}
+.dbox.pre{background:var(--n-o)}
+.arrow{font-size:26px; color:var(--ink3)}
+.bulb{--b:0}
+.bulb .glass{fill:color-mix(in srgb, #fff3a0 calc(var(--b)*100%), #d8d8de); stroke:#2a2933; stroke-width:2.6}
+.bulb .halo{opacity:calc(var(--b)*.9)}
+.frame{display:flex; gap:3px; flex-wrap:wrap; margin:8px 0}
+.fb{display:flex; flex-direction:column; align-items:center; padding:3px 6px; min-width:44px; border:1.8px solid var(--ink); border-radius:8px; transition:transform .15s}
+.fb b{font-family:'Courier Prime'; font-size:20px}
+.fb small{font-family:'Gaegu'; font-weight:700; font-size:12px}
+.fb.st{background:var(--n-p)} .fb.sp{background:var(--n-g)} .fb.pa{background:var(--n-l)} .fb.da{background:var(--n-y)}
+.fb.cur{transform:translateY(-6px) scale(1.08); box-shadow:2px 3px 0 var(--ink)}
+.dlab{display:flex; flex-direction:column; gap:8px; margin-top:10px}
+.dl{display:flex; gap:14px; align-items:center; flex-wrap:wrap}
+.dl .mono{min-width:120px}
+.doors{display:flex; gap:6px}
+.doors span{padding:4px 12px; border:1.8px dashed var(--ink3); border-radius:8px; opacity:.4; transition:all .25s; font-size:16px}
+.doors span.open{opacity:1; border-style:solid; border-color:var(--ink); background:var(--hl-g); box-shadow:2px 2px 0 var(--ink)}
+.pipe{display:flex; flex-direction:column; gap:10px}
+.pipe .prow{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.fifo{display:flex; gap:3px; padding:3px; border:2px solid var(--ink); border-radius:8px; background:var(--paper)}
+.fifo i{font-style:normal; width:30px; height:30px; display:grid; place-items:center; font-family:'Courier Prime'; font-weight:700; background:var(--faint2); border-radius:5px}
+.fifo i:not(:empty){background:var(--hl-b)}
+.lsrbits{display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:5px}
+.lb{display:flex; flex-direction:column; align-items:center; padding:4px 3px; border:1.8px solid var(--faint); border-radius:10px; background:var(--paper); text-align:center; transition:all .25s}
+.lb small{font-family:'Courier Prime'; font-size:10px; color:var(--ink3)}
+.lb b{font-family:'Courier Prime'; font-size:22px}
+.lb em{font-style:normal; font-family:'Gaegu'; font-weight:700; font-size:15px}
+.lb u{text-decoration:none; font-size:11.5px; line-height:1.15; color:var(--ink2)}
+.lb.one{background:var(--hl-y); border-color:var(--ink); transform:translateY(-2px)}
+.term{background:#14161c; color:#7dffb8; border:3px solid #2a2933; border-radius:10px; padding:8px 12px; min-height:110px; font-family:'Courier Prime'; box-shadow:2px 3px 0 var(--ink)}
+.term .tp{display:block; font-size:11px; color:#8aa; border-bottom:1px solid #2c3a34; margin-bottom:6px}
+.term pre{margin:0; white-space:pre-wrap; word-break:break-all; font-size:18px}
+.term .cur{font-style:normal; animation:blink 1s steps(2) infinite}
+@media (max-width:640px){ .lsrbits{grid-template-columns:repeat(4,minmax(0,1fr))} .meter{min-width:110px} }

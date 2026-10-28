@@ -156,7 +156,7 @@ function navSetup() {
 }
 
 /* ---------- CODE RENDERER ---------- */
-const C_RE = /(\/\/.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(#\s*\w+)|(\bLPC_\w+(?:->\w+)?)|(\b0x[0-9a-fA-F]+\b|\b\d+(?:\.\d+)?\b)|\b(int|void|unsigned|char|long|float|while|for|if|else|return|break|do|switch|case|default)\b/g;
+const C_RE = /(\/\/.*$|\/\*.*?(?:\*\/|$))|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(#\s*\w+)|(\bLPC_\w+(?:->\w+)?)|(\b0x[0-9a-fA-F]+\b|\b\d+(?:\.\d+)?\b)|\b(int|void|unsigned|char|long|float|while|for|if|else|return|break|do|switch|case|default)\b/g;
 function hlC(line) {
   let out = '', last = 0, m; C_RE.lastIndex = 0;
   while ((m = C_RE.exec(line))) { out += esc(line.slice(last, m.index)); const cls = m[1] ? 'c' : m[2] ? 's' : m[3] ? 'pp' : m[4] ? 'r' : m[5] ? 'n' : 'k'; out += `<span class="${cls}">${esc(m[0])}</span>`; last = C_RE.lastIndex; }
@@ -473,6 +473,29 @@ function miniBits(host, labels, title) { // small labelled bit cells, labels lef
   const cells = labels.map(l => { const c = el('div', { class: 'mb' }, `<i>0</i><small>${l}</small>`); row.appendChild(c); return c; });
   return { el: w, set(arr) { arr.forEach((b, i) => { const c = cells[i]; if (!c) return; c.firstChild.textContent = b === null ? '?' : b; c.classList.toggle('one', b === 1); c.classList.toggle('unk', b === null); }); } };
 }
+
+const set = (o, kv) => Object.assign(o, kv);
+/* generic "event" exercise: code on the left, live hardware on the right.
+   Each user action builds a little trace that plays through the code. */
+function Exercise(id, title, info, o) {
+  const w = W(id, title, info);
+  const ctl = el('div', { class: 'row mb' }); w.appendChild(ctl);
+  const host = el('div'); w.appendChild(host);
+  let world = o.world();
+  const cloneW = x => { const c = Object.assign({}, x); if (x.lcd) c.lcd = x.lcd.clone(); return c; };
+  const view = (s, v, k, first) => { if (first) { v.innerHTML = ''; if (!o.noLcd) v._lv = LCDView(v, new HD44780()); o.setup && o.setup(v); } if (v._lv) { v._lv.lcd = s.lcd; v._lv.draw(); } o.paint && o.paint(s, v); };
+  const st = Stepper(host, { code: o.code, title: o.file, steps: o.boot || [{ l: [], t: o.hello }], init: () => cloneW(world), view, speed: o.speed || 900, noteClass: o.noteClass || 'orange' });
+  const api = {
+    w, ctl, st, get world() { return world; },
+    fire(steps, play = true) { world = st.last(); st.setSteps(steps, 0); if (play) st.play(); },
+    commitNow() { world = st.last(); },
+    reset() { world = o.world(); st.setSteps([{ l: [], t: o.hello }]); },
+    L: t => lineOf(o.code, t)
+  };
+  return api;
+}
+const lcdWith = (l1, l2) => { const l = new HD44780().ready(); l.print(l1 || ''); if (l2 != null) { l.cmd(0xC0); l.print(l2); } return l; };
+
 
 /* find the line number (1-based) of the n-th line containing txt */
 function lineOf(code, txt, n = 1) { const L = code.replace(/^\n+|\s+$/g, '').split('\n'); let c = 0; for (let i = 0; i < L.length; i++) if (L[i].includes(txt) && ++c === n) return i + 1; console.warn('lineOf miss', txt); return 0; }

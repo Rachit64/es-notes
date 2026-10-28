@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Assemble the two self-contained notebook HTML files from src/."""
+import os, sys
 from pathlib import Path
 
 SRC = Path(__file__).parent / "src"
@@ -15,15 +16,22 @@ BOOKS = [
 ]
 
 shell = read("shell.html")
+only = set(sys.argv[1:])          # e.g. `python3 build.py nb1` builds just notebook 1
 for b in BOOKS:
     k = b["key"]
+    if only and k not in only:
+        continue
     if not (SRC / f"{k}.html").exists():
         print("skip", k); continue
-    css = read("core.css") + "\n" + read("widgets.css") + "\n" + read(f"{k}.css")
+    css = "\n".join([read("core.css"), read("widgets.css"), read(f"{k}.css")]
+                     + [p.read_text(encoding="utf-8") for p in sorted(SRC.glob(f"{k}_*.css"))])
     parts = sorted(SRC.glob(f"{k}_*.js"))
     js = read("core.js") + "\n" + "\n".join(p.read_text(encoding="utf-8") for p in parts) + "\nbootCore();\n"
     html = (shell.replace("{{TITLE}}", b["title"]).replace("{{DESC}}", b["desc"])
             .replace("{{CSS}}", css).replace("{{DEFS}}", read("defs.html"))
             .replace("{{BODY}}", read(f"{k}.html")).replace("{{JS}}", js))
-    (Path(__file__).parent / b["out"]).write_text(html, encoding="utf-8")
+    out = Path(__file__).parent / b["out"]
+    tmp = out.with_suffix(".tmp")
+    tmp.write_text(html, encoding="utf-8")
+    os.replace(tmp, out)              # atomic, so parallel builds never leave a half-written file
     print(f"wrote {b['out']}  ({len(html)//1024} KB)")

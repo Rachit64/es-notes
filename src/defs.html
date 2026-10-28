@@ -1,0 +1,157 @@
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <filter id="wob" x="-4%" y="-4%" width="108%" height="108%"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="wob2" x="-8%" y="-20%" width="116%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.08" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="glow"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <pattern id="hatch-p" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--pink);stroke-width:2.2;opacity:.5"/></pattern>
+  <pattern id="hatch-b" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--blue);stroke-width:2.2;opacity:.42"/></pattern>
+  <pattern id="hatch-g" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--green);stroke-width:2.2;opacity:.45"/></pattern>
+  <pattern id="hatch-y" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--orange);stroke-width:2.2;opacity:.45"/></pattern>
+  <pattern id="hatch-l" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--purple);stroke-width:2.2;opacity:.45"/></pattern>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" style="fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"/></marker>
+  <marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" style="fill:none;stroke:var(--red);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"/></marker>
+  <marker id="ahb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" style="fill:none;stroke:var(--blue);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" style="fill:none;stroke:var(--purple);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"/></marker>
+
+  <!-- ========== STICKERS (printed, fixed colours) ========== -->
+  <symbol id="st-chip" viewBox="0 0 100 100">
+    <g stroke="#2a2933" stroke-width="3" stroke-linecap="round">
+      <path d="M30 14v-8M43 14v-8M57 14v-8M70 14v-8M30 86v8M43 86v8M57 86v8M70 86v8M14 30h-8M14 43h-8M14 57h-8M14 70h-8M86 30h8M86 43h8M86 57h8M86 70h8" stroke="#9aa0ad" stroke-width="5"/>
+      <path d="M30 14v-8M43 14v-8M57 14v-8M70 14v-8M30 86v8M43 86v8M57 86v8M70 86v8M14 30h-8M14 43h-8M14 57h-8M14 70h-8M86 30h8M86 43h8M86 57h8M86 70h8" stroke-width="1.4"/>
+    </g>
+    <rect x="14" y="14" width="72" height="72" rx="16" fill="#8fd8b8" stroke="#2a2933" stroke-width="3"/>
+    <rect x="20" y="20" width="60" height="18" rx="8" fill="#b6ead2"/>
+    <circle cx="38" cy="50" r="4.6" fill="#2a2933"/><circle cx="62" cy="50" r="4.6" fill="#2a2933"/>
+    <circle cx="39.5" cy="48.5" r="1.4" fill="#fff"/><circle cx="63.5" cy="48.5" r="1.4" fill="#fff"/>
+    <ellipse cx="29" cy="60" rx="6" ry="3.6" fill="#ff9fbf"/><ellipse cx="71" cy="60" rx="6" ry="3.6" fill="#ff9fbf"/>
+    <path d="M44 61 Q50 67 56 61" fill="none" stroke="#2a2933" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="22" cy="78" r="3" fill="#2a2933" opacity=".35"/>
+  </symbol>
+  <symbol id="st-bulb" viewBox="0 0 100 100">
+    <g stroke="#f2a33a" stroke-width="5" stroke-linecap="round"><path d="M50 4v8M20 15l6 6M80 15l-6 6M8 44h8M84 44h8"/></g>
+    <path d="M50 18c-17 0-28 12-28 27 0 11 6 17 11 22 3 3 4 6 4 10h26c0-4 1-7 4-10 5-5 11-11 11-22 0-15-11-27-28-27z" fill="#ffe066" stroke="#2a2933" stroke-width="3"/>
+    <rect x="36" y="77" width="28" height="9" rx="3" fill="#c8c8d2" stroke="#2a2933" stroke-width="3"/>
+    <rect x="40" y="86" width="20" height="8" rx="4" fill="#9aa0ad" stroke="#2a2933" stroke-width="3"/>
+    <circle cx="41" cy="46" r="3.6" fill="#2a2933"/><circle cx="59" cy="46" r="3.6" fill="#2a2933"/>
+    <ellipse cx="34" cy="55" rx="5" ry="3" fill="#ff9fbf"/><ellipse cx="66" cy="55" rx="5" ry="3" fill="#ff9fbf"/>
+    <path d="M45 55 Q50 60 55 55" fill="none" stroke="#2a2933" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M32 34 q4 -8 12 -9" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="st-alert" viewBox="0 0 100 100">
+    <path d="M50 8c24 0 42 15 42 35S74 78 50 78c-5 0-9-1-13-2L18 90l5-17C13 65 8 55 8 43 8 23 26 8 50 8z" fill="#ff6b81" stroke="#2a2933" stroke-width="3.2"/>
+    <path d="M50 22v28" stroke="#fff" stroke-width="10" stroke-linecap="round"/><circle cx="50" cy="63" r="6" fill="#fff"/>
+  </symbol>
+  <symbol id="st-q" viewBox="0 0 100 100">
+    <path d="M50 8c24 0 42 15 42 35S74 78 50 78c-5 0-9-1-13-2L18 90l5-17C13 65 8 55 8 43 8 23 26 8 50 8z" fill="#7cc6f7" stroke="#2a2933" stroke-width="3.2"/>
+    <path d="M38 33c0-8 6-13 13-13s13 5 13 12c0 9-12 10-12 18" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/><circle cx="52" cy="63" r="5.5" fill="#fff"/>
+  </symbol>
+  <symbol id="st-star" viewBox="0 0 100 100">
+    <path d="M50 6l12 27 29 3-22 19 7 29-26-15-26 15 7-29L9 36l29-3z" fill="#ffd84d" stroke="#2a2933" stroke-width="3.2" stroke-linejoin="round"/>
+    <circle cx="42" cy="48" r="3.2" fill="#2a2933"/><circle cx="58" cy="48" r="3.2" fill="#2a2933"/>
+    <path d="M45 56 Q50 61 55 56" fill="none" stroke="#2a2933" stroke-width="2.6" stroke-linecap="round"/>
+    <ellipse cx="36" cy="55" rx="4" ry="2.6" fill="#ff9fbf"/><ellipse cx="64" cy="55" rx="4" ry="2.6" fill="#ff9fbf"/>
+  </symbol>
+  <symbol id="st-heart" viewBox="0 0 100 100">
+    <path d="M50 88S10 62 10 36c0-14 10-24 22-24 9 0 15 5 18 12 3-7 9-12 18-12 12 0 22 10 22 24 0 26-40 52-40 52z" fill="#ff8fb3" stroke="#2a2933" stroke-width="3.2"/>
+    <path d="M24 32c1-6 5-9 10-10" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="st-sparkle" viewBox="0 0 100 100">
+    <path d="M50 4c4 26 10 34 46 46-36 12-42 20-46 46-4-26-10-34-46-46 36-12 42-20 46-46z" fill="#b9a3ff" stroke="#2a2933" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M50 22c2 14 6 20 18 26" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".8"/>
+  </symbol>
+  <symbol id="st-clock" viewBox="0 0 100 100">
+    <path d="M18 26a14 14 0 0 1 22-12M82 26a14 14 0 0 0-22-12" fill="#ffd84d" stroke="#2a2933" stroke-width="3"/>
+    <path d="M27 82l-7 9M73 82l7 9" stroke="#2a2933" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="50" cy="54" r="34" fill="#ff9fbf" stroke="#2a2933" stroke-width="3.2"/>
+    <circle cx="50" cy="54" r="26" fill="#fff8f0" stroke="#2a2933" stroke-width="2.6"/>
+    <path d="M50 54V38M50 54l11 7" stroke="#2a2933" stroke-width="3.4" stroke-linecap="round"/>
+    <circle cx="50" cy="54" r="3" fill="#e6455e"/>
+    <circle cx="38" cy="66" r="2.6" fill="#ff9fbf"/><circle cx="62" cy="66" r="2.6" fill="#ff9fbf"/>
+  </symbol>
+  <symbol id="st-keypad" viewBox="0 0 100 100">
+    <rect x="12" y="8" width="76" height="84" rx="12" fill="#86c5ff" stroke="#2a2933" stroke-width="3.2"/>
+    <g fill="#fff" stroke="#2a2933" stroke-width="2.2">
+      <rect x="20" y="18" width="16" height="14" rx="4"/><rect x="42" y="18" width="16" height="14" rx="4"/><rect x="64" y="18" width="16" height="14" rx="4" fill="#ffd84d"/>
+      <rect x="20" y="38" width="16" height="14" rx="4"/><rect x="42" y="38" width="16" height="14" rx="4" fill="#ff9fbf"/><rect x="64" y="38" width="16" height="14" rx="4"/>
+      <rect x="20" y="58" width="16" height="14" rx="4"/><rect x="42" y="58" width="16" height="14" rx="4"/><rect x="64" y="58" width="16" height="14" rx="4"/>
+      <rect x="20" y="77" width="16" height="10" rx="4"/><rect x="42" y="77" width="16" height="10" rx="4"/><rect x="64" y="77" width="16" height="10" rx="4"/>
+    </g>
+  </symbol>
+  <symbol id="st-lcd" viewBox="0 0 100 100">
+    <rect x="6" y="20" width="88" height="60" rx="8" fill="#3c9a4a" stroke="#2a2933" stroke-width="3.2"/>
+    <rect x="14" y="30" width="72" height="40" rx="4" fill="#b5e24f" stroke="#2a2933" stroke-width="2.4"/>
+    <circle cx="36" cy="46" r="3.6" fill="#1d3a10"/><circle cx="64" cy="46" r="3.6" fill="#1d3a10"/>
+    <path d="M40 56 Q50 64 60 56" fill="none" stroke="#1d3a10" stroke-width="3" stroke-linecap="round"/>
+    <g fill="#d9d9e0" stroke="#2a2933" stroke-width="1.6"><circle cx="12" cy="26" r="2.4"/><circle cx="88" cy="26" r="2.4"/><circle cx="12" cy="74" r="2.4"/><circle cx="88" cy="74" r="2.4"/></g>
+  </symbol>
+  <symbol id="st-cat" viewBox="0 0 100 100">
+    <path d="M16 40 L20 10 L40 26 Q50 23 60 26 L80 10 L84 40 Q92 52 88 66 Q80 90 50 90 Q20 90 12 66 Q8 52 16 40z" fill="#ffe9c9" stroke="#2a2933" stroke-width="3.2" stroke-linejoin="round"/>
+    <path d="M24 20 L27 33 L35 27z M76 20 L73 33 L65 27z" fill="#ff9fbf"/>
+    <path d="M33 54 q5 -6 10 0 M57 54 q5 -6 10 0" fill="none" stroke="#2a2933" stroke-width="3" stroke-linecap="round"/>
+    <path d="M47 63 l3 3 3 -3z" fill="#ff7a9a" stroke="#2a2933" stroke-width="1.6"/>
+    <path d="M50 66 q-4 6 -9 3 M50 66 q4 6 9 3" fill="none" stroke="#2a2933" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="29" cy="65" rx="6" ry="3.5" fill="#ff9fbf"/><ellipse cx="71" cy="65" rx="6" ry="3.5" fill="#ff9fbf"/>
+    <path d="M10 60 h14 M10 68 l14 -3 M90 60 h-14 M90 68 l-14 -3" stroke="#2a2933" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="st-bolt" viewBox="0 0 100 100">
+    <path d="M58 4 L18 56 H46 L36 96 L82 38 H54 L66 4z" fill="#ffd84d" stroke="#2a2933" stroke-width="3.4" stroke-linejoin="round"/>
+    <path d="M56 12 L32 46" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".85"/>
+  </symbol>
+  <symbol id="st-wave" viewBox="0 0 100 100">
+    <rect x="6" y="14" width="88" height="72" rx="12" fill="#2b3a55" stroke="#2a2933" stroke-width="3.2"/>
+    <path d="M14 50h72M50 22v56" stroke="#4d6a96" stroke-width="1.6"/>
+    <path d="M14 50 C22 22, 30 22, 38 50 S54 78, 62 50 S78 22, 86 50" fill="none" stroke="#7dffb8" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="st-gear" viewBox="0 0 100 100">
+    <path d="M44 6h12l2 12 9 4 10-7 8 8-7 10 4 9 12 2v12l-12 2-4 9 7 10-8 8-10-7-9 4-2 12H44l-2-12-9-4-10 7-8-8 7-10-4-9-12-2V44l12-2 4-9-7-10 8-8 10 7 9-4z" fill="#a6b8ff" stroke="#2a2933" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="50" cy="50" r="15" fill="#fff" stroke="#2a2933" stroke-width="3"/>
+    <circle cx="45" cy="48" r="2.4" fill="#2a2933"/><circle cx="55" cy="48" r="2.4" fill="#2a2933"/><path d="M46 54 q4 4 8 0" fill="none" stroke="#2a2933" stroke-width="2.2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="st-mail" viewBox="0 0 100 100">
+    <rect x="8" y="22" width="84" height="58" rx="8" fill="#fff4d6" stroke="#2a2933" stroke-width="3.2"/>
+    <path d="M10 26 L50 56 L90 26" fill="none" stroke="#2a2933" stroke-width="3.2" stroke-linejoin="round"/>
+    <path d="M50 62 s-10 -6 -10 -12 a5 5 0 0 1 10 -2 a5 5 0 0 1 10 2 c0 6 -10 12 -10 12z" fill="#ff7a9a" stroke="#2a2933" stroke-width="2"/>
+  </symbol>
+  <symbol id="st-cam" viewBox="0 0 100 100">
+    <path d="M34 24 l6-10h20l6 10" fill="#ffb5c9" stroke="#2a2933" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="8" y="24" width="84" height="60" rx="12" fill="#ff8fb3" stroke="#2a2933" stroke-width="3.2"/>
+    <circle cx="50" cy="54" r="20" fill="#fff" stroke="#2a2933" stroke-width="3"/>
+    <circle cx="50" cy="54" r="11" fill="#5b6b8f" stroke="#2a2933" stroke-width="2.4"/><circle cx="46" cy="50" r="3.4" fill="#fff"/>
+    <rect x="72" y="32" width="12" height="7" rx="2" fill="#ffd84d" stroke="#2a2933" stroke-width="2"/>
+  </symbol>
+  <symbol id="st-meter" viewBox="0 0 100 100">
+    <path d="M10 70 A40 40 0 0 1 90 70z" fill="#c9f0d8" stroke="#2a2933" stroke-width="3.2" stroke-linejoin="round"/>
+    <path d="M18 70 A32 32 0 0 1 34 42" fill="none" stroke="#7fd8a0" stroke-width="7"/><path d="M34 42 A32 32 0 0 1 66 42" fill="none" stroke="#ffd84d" stroke-width="7"/><path d="M66 42 A32 32 0 0 1 82 70" fill="none" stroke="#ff8fa3" stroke-width="7"/>
+    <path d="M50 70 L68 40" stroke="#2a2933" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="70" r="6" fill="#2a2933"/>
+    <rect x="10" y="74" width="80" height="12" rx="5" fill="#fff" stroke="#2a2933" stroke-width="2.6"/>
+  </symbol>
+  <symbol id="st-flower" viewBox="0 0 100 100">
+    <g fill="#fff" stroke="#2a2933" stroke-width="2.8"><ellipse cx="50" cy="22" rx="12" ry="18"/><ellipse cx="50" cy="78" rx="12" ry="18"/><ellipse cx="22" cy="50" rx="18" ry="12"/><ellipse cx="78" cy="50" rx="18" ry="12"/><ellipse cx="30" cy="30" rx="12" ry="17" transform="rotate(-45 30 30)"/><ellipse cx="70" cy="70" rx="12" ry="17" transform="rotate(-45 70 70)"/><ellipse cx="70" cy="30" rx="12" ry="17" transform="rotate(45 70 30)"/><ellipse cx="30" cy="70" rx="12" ry="17" transform="rotate(45 30 70)"/></g>
+    <circle cx="50" cy="50" r="15" fill="#ffd84d" stroke="#2a2933" stroke-width="2.8"/>
+  </symbol>
+  <symbol id="st-check" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="42" fill="#8fe0b0" stroke="#2a2933" stroke-width="3.2"/>
+    <path d="M30 52 L44 66 L72 36" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="st-bell" viewBox="0 0 100 100">
+    <path d="M50 10c-16 0-26 13-26 30v18l-10 14h72L76 58V40c0-17-10-30-26-30z" fill="#ffd84d" stroke="#2a2933" stroke-width="3.2" stroke-linejoin="round"/>
+    <circle cx="50" cy="80" r="9" fill="#ff8fa3" stroke="#2a2933" stroke-width="3"/>
+    <path d="M36 30c2-6 6-9 11-10" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="st-plug" viewBox="0 0 100 100">
+    <rect x="22" y="36" width="56" height="40" rx="12" fill="#ffc48a" stroke="#2a2933" stroke-width="3.2"/>
+    <path d="M38 36V14M62 36V14" stroke="#2a2933" stroke-width="7" stroke-linecap="round"/>
+    <path d="M50 76v16" stroke="#2a2933" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="40" cy="54" r="3" fill="#2a2933"/><circle cx="60" cy="54" r="3" fill="#2a2933"/><path d="M45 62q5 4 10 0" fill="none" stroke="#2a2933" stroke-width="2.4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="st-moon" viewBox="0 0 100 100">
+    <path d="M62 8a40 40 0 1 0 30 58A34 34 0 0 1 62 8z" fill="#ffe27a" stroke="#2a2933" stroke-width="3.2"/>
+    <circle cx="44" cy="58" r="3" fill="#2a2933"/><path d="M50 66 q4 3 8 0" fill="none" stroke="#2a2933" stroke-width="2.2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="st-sun" viewBox="0 0 100 100">
+    <g stroke="#f2a33a" stroke-width="6" stroke-linecap="round"><path d="M50 4v10M50 86v10M4 50h10M86 50h10M17 17l7 7M76 76l7 7M17 83l7-7M76 24l7-7"/></g>
+    <circle cx="50" cy="50" r="26" fill="#ffd84d" stroke="#2a2933" stroke-width="3.2"/>
+    <circle cx="42" cy="47" r="2.8" fill="#2a2933"/><circle cx="58" cy="47" r="2.8" fill="#2a2933"/><path d="M44 56 q6 5 12 0" fill="none" stroke="#2a2933" stroke-width="2.4" stroke-linecap="round"/>
+  </symbol>
+</defs>
+</svg>

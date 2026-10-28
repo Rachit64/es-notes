@@ -1,0 +1,195 @@
+/* ============ shared widget parts ============ */
+/* keypad */
+.kpad{display:grid; gap:8px; max-width:260px; margin:8px 0; padding:12px; background:#2b3445; border-radius:14px; border:2px solid var(--ink); box-shadow:2px 3px 0 var(--ink)}
+.kkey{position:relative; aspect-ratio:1.15; border-radius:9px; border:1.6px solid #1b2230; background:linear-gradient(#fdfdfd,#dfe4ee); color:#2a2933; font-family:'Gaegu'; font-weight:700; font-size:20px; cursor:pointer; box-shadow:0 3px 0 #10151f; transition:transform .06s, box-shadow .06s, background .15s; touch-action:manipulation; padding:0}
+.kkey small{position:absolute; bottom:1px; right:4px; font-size:9px; font-family:'Courier Prime'; color:#8a90a0; font-weight:400}
+.kkey.down{transform:translateY(3px); box-shadow:0 0 0 #10151f; background:linear-gradient(#ffd6e3,#ff9fbf)}
+.kkey.rowon{outline:2.5px solid var(--hi); outline-offset:1px}
+
+/* mini bit rows */
+.mbits{display:flex; flex-direction:column; gap:3px; margin:4px 0}
+.mbt{font-family:'Gaegu'; font-weight:700; font-size:15px; color:var(--ink2)}
+.mbr{display:flex; gap:4px; flex-wrap:wrap}
+.mb{display:flex; flex-direction:column; align-items:center; min-width:38px}
+.mb i{font-style:normal; font-family:'Courier Prime'; font-weight:700; font-size:16px; width:30px; height:28px; display:grid; place-items:center; border:1.5px solid var(--faint); border-radius:6px; background:var(--paper); transition:all .2s}
+.mb small{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
+.mb.one i{background:var(--hi); color:#fff; border-color:var(--ink); box-shadow:0 0 10px var(--led-glow)}
+.mb.unk i{background:repeating-linear-gradient(45deg,var(--hl-o) 0 4px,transparent 4px 8px)}
+
+/* scanner schematic */
+svg.scan .wire{fill:none; stroke:var(--ink3); stroke-width:3; stroke-linecap:round; transition:stroke .15s}
+svg.scan .wire.hot{stroke:var(--hi); stroke-dasharray:7 6; animation:flow .6s linear infinite; filter:drop-shadow(0 0 3px var(--led-glow))}
+svg.scan .wire.cold{stroke:var(--lo)}
+svg.scan .wire.float{stroke:var(--ink3); stroke-dasharray:2 5; opacity:.7}
+svg.scan .wire.short{stroke:#ffb400; stroke-width:4; animation:shake .12s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-26}}
+@keyframes shake{50%{transform:translateX(1.5px)}}
+svg.scan .pinc{fill:var(--paper); stroke:var(--ink); stroke-width:1.6}
+svg.scan .on .pinc{fill:var(--hi)}
+svg.scan .on .pint{fill:#fff}
+svg.scan .skey{cursor:pointer}
+svg.scan .skey .kc{fill:var(--card); stroke:var(--ink); stroke-width:1.8; transition:all .12s}
+svg.scan .skey .kt{font-family:'Gaegu'; font-weight:700; font-size:17px; fill:var(--ink); pointer-events:none}
+svg.scan .skey .lead{fill:none; stroke:var(--ink3); stroke-width:1.6; stroke-dasharray:3 3}
+svg.scan .skey.down .kc{fill:var(--hl-p); stroke-width:2.6; transform:translateY(2px)}
+svg.scan .skey.down .lead{stroke:var(--ink); stroke-dasharray:none; stroke-width:2.4}
+svg.scan .skey.down.rowon .lead{stroke:var(--hi)}
+svg.scan .skey:focus-visible .kc{stroke:var(--blue); stroke-width:3}
+svg.scan .spark{animation:blink .18s steps(2) infinite}
+.scanlog{font-family:'Caveat'; font-size:20px; color:var(--ink2); line-height:1.2; min-height:3em}
+.scanlog div:first-child{color:var(--green)}
+
+/* segment painter */
+svg.segp .sp{fill:var(--seg-off); stroke:rgba(255,255,255,.12); stroke-width:.6; cursor:pointer; transition:fill .12s}
+svg.segp .sp:hover{fill:rgba(255,80,90,.3)}
+svg.segp .sp.on{fill:var(--led); filter:drop-shadow(0 0 3px var(--led-glow))}
+svg.segp .segl{font-family:'Gaegu'; font-weight:700; font-size:8px; fill:#cfd2dc; pointer-events:none}
+.segbits{display:flex; gap:4px; flex-wrap:wrap}
+.sbit{display:flex; flex-direction:column; align-items:center; gap:1px; padding:3px 4px 2px; border:1.5px solid var(--faint); border-radius:8px; background:var(--paper); cursor:pointer; min-width:38px}
+.sbit small{font-family:'Gaegu'; font-weight:700; font-size:15px; color:var(--pink)}
+.sbit i{font-style:normal; font-family:'Courier Prime'; font-weight:700; font-size:17px}
+.sbit em{font-style:normal; font-family:'Courier Prime'; font-size:9.5px; color:var(--ink3)}
+.sbit.one{background:var(--hl-y); border-color:var(--ink)}
+
+/* stencil (FIOMASK) */
+.stencil{display:flex; flex-direction:column; gap:5px; overflow-x:auto; padding-bottom:4px}
+.srow{display:flex; gap:2px; align-items:center; min-width:max-content}
+.srow .sl{width:96px; flex:none; font-family:'Gaegu'; font-weight:700; font-size:15px; color:var(--ink2)}
+.srow .sc{width:24px; height:28px; flex:none; display:grid; place-items:center; font-family:'Courier Prime'; font-weight:700; font-size:13px; border-radius:4px; position:relative}
+.srow.nums .sc{height:16px; font-size:10px; color:var(--ink3); font-weight:400}
+.srow.nums .sc.tiny{font-family:'Caveat'; font-size:14px; color:var(--purple); overflow:visible; white-space:nowrap}
+.srow .sc.edge{margin-left:6px}
+.srow.mask .sc.solid{background:repeating-linear-gradient(45deg, rgba(130,170,210,.55) 0 3px, rgba(130,170,210,.3) 3px 6px); color:transparent; border:1.4px solid rgba(70,110,160,.6)}
+.srow.mask .sc.hole{border:2px dashed var(--green); background:transparent; color:transparent}
+.srow.val .sc{background:var(--n-y); border:1.4px solid var(--faint)}
+.srow.val .sc.empty{background:transparent; border-style:dashed}
+.srow.val .sc.fall{animation:fall .6s ease}
+.srow.val .sc.blocked{animation:shake2 .4s ease; opacity:.45; text-decoration:line-through}
+@keyframes fall{0%{transform:translateY(-6px)}50%{transform:translateY(16px); background:var(--hl-g)}100%{transform:none}}
+@keyframes shake2{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.srow.port .sc{background:var(--paper); border:1.4px solid var(--ink3)}
+.srow.port .sc.one{background:var(--hi); color:#fff}
+.srow.port .sc.got{box-shadow:0 0 0 2.5px var(--green)}
+.col.center.sel .seg7 .case{stroke:var(--green); stroke-width:3}
+
+/* keypad mini (stepper) */
+.kmini{display:grid; grid-template-columns:repeat(4,30px); gap:4px}
+.kmini span{display:grid; place-items:center; height:28px; border-radius:6px; border:1.5px solid var(--faint); font-family:'Gaegu'; font-weight:700; background:var(--paper)}
+.kmini span.rowon{border-color:var(--hi); background:rgba(226,60,75,.12)}
+.kmini span.held{background:var(--hl-p); border-color:var(--ink)}
+
+/* grid builder */
+table.gb{border-collapse:separate; border-spacing:6px; margin:4px 0}
+table.gb th{font-family:'Gaegu'; font-weight:700; font-size:17px; text-align:center; padding:0 4px}
+table.gb th small{display:block; font-size:12px; color:var(--ink3); font-weight:400}
+.gcell{width:64px; height:44px; border:1.6px dashed var(--ink3); border-radius:10px 12px 9px 13px; background:var(--paper); cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Gaegu'; font-weight:700; font-size:18px; color:var(--ink3); transition:all .15s}
+.gcell small{font-family:'Courier Prime'; font-size:10px; font-weight:400}
+.gcell.on{border-style:solid; border-color:var(--ink); background:var(--hl-p); color:var(--ink); box-shadow:2px 2px 0 var(--ink); transform:rotate(-2deg)}
+
+/* timer engine */
+svg.dg .lampc{fill:#5a5560; stroke:var(--ink); stroke-width:2; transition:fill .08s}
+svg.dg .lampc.on{fill:#ffd23f; filter:drop-shadow(0 0 6px #ffd23f)}
+svg.dg .hand{stroke:var(--pink); stroke-width:4; stroke-linecap:round; transition:transform .25s cubic-bezier(.3,1.5,.5,1)}
+svg.dg .bead{fill:var(--hl-b); stroke:var(--ink); stroke-width:2}
+svg.dg .bellg{transform-box:fill-box}
+svg.dg .bellg.ringing use{animation:ring .5s ease infinite; transform-origin:50% 10%; transform-box:fill-box}
+.recipe{padding:6px 10px; border-left:4px solid var(--green); background:var(--faint2); border-radius:4px; margin:4px 0; font-size:.95em}
+.recipe.bad{border-left-color:var(--ink3); opacity:.7}
+
+/* pin tags */
+.tags{display:flex; flex-wrap:wrap; gap:7px; margin-top:6px}
+.ptag{display:inline-flex; flex-direction:column; align-items:flex-start; padding:3px 12px 3px 16px; background:var(--tg); border:1.5px solid var(--ink); border-radius:4px 12px 12px 4px; cursor:pointer; position:relative; font-family:'Courier Prime'; font-size:12.5px; color:var(--ink); line-height:1.25; transition:transform .15s}
+.ptag::before{content:""; position:absolute; left:5px; top:calc(50% - 3px); width:6px; height:6px; border-radius:50%; background:var(--paper); border:1.2px solid var(--ink)}
+.ptag b{font-family:'Gaegu'; font-size:16px}
+.ptag.used::after{content:"★"; position:absolute; right:-6px; top:-9px; color:var(--orange); font-size:15px}
+.ptag:hover{transform:rotate(-2deg)}
+.ptag.sel{box-shadow:2px 3px 0 var(--ink); transform:translateY(-2px) rotate(-1deg)}
+
+/* capture camera */
+.camera{position:relative; display:flex; flex-wrap:wrap; gap:16px 22px; align-items:center; padding:12px; border:1.6px dashed var(--faint); border-radius:12px}
+.odo{font-family:'Courier Prime'; font-weight:700; font-size:30px; letter-spacing:4px; padding:2px 10px; background:#1c1b22; color:#7dffb8; border-radius:8px; border:2px solid var(--ink); text-shadow:0 0 8px rgba(125,255,184,.6); min-width:110px; text-align:center}
+.flashfx{position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; border-radius:12px}
+.flashfx.go{animation:flash .45s ease-out}
+.slot{display:flex; flex-direction:column; align-items:center; gap:4px}
+.polaroid{width:90px; height:96px; background:#fff; padding:8px 8px 26px; box-shadow:0 2px 5px rgba(0,0,0,.25); transform:rotate(-3deg); display:grid; place-items:center; font-family:'Courier Prime'; font-weight:700; font-size:24px; color:#2a2933; background-clip:content-box; border:8px solid #fff; border-bottom-width:24px; background-color:#d8ecff}
+.slot:nth-child(2) .polaroid{transform:rotate(3deg)}
+.polaroid.empty{background-color:#eee; color:#aaa}
+.irl{display:flex; gap:6px; align-items:center; font-family:'Gaegu'; font-size:14px}
+
+/* block diagram */
+svg.blk .bk rect{transition:all .2s}
+svg.blk .bk.selb rect{stroke:var(--pink); stroke-width:3.2}
+svg.blk .wr{stroke-width:1.6}
+svg.blk .wr.flow{stroke:var(--hi); stroke-width:3; stroke-dasharray:7 5; animation:flow .55s linear infinite}
+
+/* timer program views */
+.tbox{border:1.6px solid var(--faint); border-radius:10px; padding:6px 10px; background:var(--paper); min-width:180px}
+.tbar{position:relative; height:14px; border-radius:8px; background:var(--faint2); border:1.4px solid var(--faint); margin:4px 0; overflow:hidden}
+.tbar i{position:absolute; left:0; top:0; bottom:0; width:0; background:repeating-linear-gradient(45deg,var(--blue) 0 6px, var(--teal) 6px 12px); transition:width 1.1s ease}
+.beads{display:flex; gap:10px; margin:6px 0}
+.beads span{width:40px; height:40px; border-radius:50%; display:grid; place-items:center; border:2px solid var(--ink); font-family:'Courier Prime'; font-weight:700; background:var(--paper); transition:all .2s}
+.beads span.on{background:var(--hl-b); transform:scale(1.15)}
+.beads span.m{background:var(--hi); color:#fff; box-shadow:0 0 12px var(--led-glow)}
+
+/* LCD widgets */
+svg .lpin{cursor:pointer}
+svg .lpin.selb rect{fill:#ff9fbf !important; stroke:var(--ink) !important; stroke-width:2.4 !important}
+.ibits{display:flex; gap:5px; flex-wrap:wrap}
+.ib{display:flex; flex-direction:column; align-items:center; min-width:52px; padding:3px 4px; border-radius:8px; border:1.6px solid var(--faint); background:var(--paper); font:inherit; color:var(--ink)}
+.ib small{font-family:'Courier Prime'; font-size:10.5px; color:var(--ink3)}
+.ib b{font-family:'Courier Prime'; font-size:19px; color:inherit}
+.ib em{font-style:normal; font-family:'Gaegu'; font-weight:700; font-size:14px; color:var(--purple)}
+.ib.fixed{opacity:.75}
+.ib.fixed.one{background:var(--faint2)}
+.ib.dc{opacity:.45; border-style:dashed}
+.ib.opt{border:1.8px solid var(--purple); cursor:pointer}
+.ib.opt.one{background:var(--hl-l)}
+.cmdlist{display:flex; flex-direction:column; gap:4px; max-height:430px; overflow:auto; padding-right:4px}
+.cmdb{display:flex; gap:10px; align-items:center; text-align:left; padding:4px 10px; border:1.4px solid var(--faint); border-radius:8px; background:var(--paper); cursor:pointer; font-size:16px; color:var(--ink)}
+.cmdb b{font-family:'Courier Prime'; color:var(--purple); min-width:42px}
+.cmdb:hover{background:var(--hl-l); border-color:var(--ink)}
+.ddgrid{display:grid; grid-template-columns:repeat(16,minmax(30px,1fr)); gap:3px; overflow-x:auto; padding-bottom:4px}
+.dd{display:flex; flex-direction:column; align-items:center; padding:3px 1px; border:1.4px solid var(--faint); border-radius:6px; background:var(--paper); cursor:pointer; color:var(--ink)}
+.dd small{font-family:'Courier Prime'; font-size:9.5px; color:var(--ink3)}
+.dd b{font-family:'Courier Prime'; font-size:12px; color:var(--purple)}
+.dd:hover,.dd.sel{background:var(--hl-l); border-color:var(--ink)}
+
+/* exercises */
+.bcd{display:flex; gap:8px; margin:8px 0}
+.bcd span{display:flex; flex-direction:column; align-items:center; padding:4px 10px; border:2px solid var(--ink); border-radius:10px; background:var(--paper); transition:all .2s}
+.bcd span b{font-family:'Courier Prime'; font-size:24px}
+.bcd span small{font-family:'Courier Prime'; font-size:10px; color:var(--ink3)}
+.bcd span.on{background:var(--hl-o); transform:translateY(-3px)}
+.spinbox{display:flex; flex-direction:column; align-items:center; font-family:'Gaegu'; padding:6px 12px; border:1.6px dashed var(--ink3); border-radius:10px}
+.spinbox b{font-family:'Courier Prime'; font-size:30px; color:var(--orange)}
+.die{filter:drop-shadow(2px 3px 0 var(--shadow))}
+.bigkey{width:84px; height:84px; border-radius:50%; border:3px solid var(--ink); background:radial-gradient(circle at 40% 35%, #ff9fbf, #e0457a); color:#fff; font-family:'Gaegu'; font-weight:700; font-size:18px; line-height:1.05; box-shadow:0 6px 0 #8a2350, 2px 8px 0 var(--ink); cursor:pointer; transition:transform .06s, box-shadow .06s; touch-action:manipulation}
+.bigkey.down{transform:translateY(5px); box-shadow:0 1px 0 #8a2350, 1px 3px 0 var(--ink)}
+
+@media (max-width:640px){
+  .ddgrid{grid-template-columns:repeat(8,minmax(30px,1fr))}
+  .gcell{width:52px}
+  .srow .sl{width:70px; font-size:13px}
+  .srow .sc{width:19px}
+  .kpad{max-width:230px}
+  .polaroid{width:76px; height:84px; font-size:20px}
+}
+
+.engctl{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px 22px; align-items:end; margin-top:8px}
+.engctl > .row{flex-wrap:wrap}
+.scanwrap{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}
+svg.scan text.lbl{font-size:17px}
+svg.scan text.mono{font-size:13px}
+svg.scan .skey .kt{font-size:19px}
+.srow.nums .sc.gdec{background:var(--hl-l); border-radius:3px; color:var(--ink)}
+.srow.nums .sc.gseg{background:var(--hl-p); border-radius:3px; color:var(--ink)}
+/* hand-drawn wobble on static diagram line-art */
+svg.blk rect, svg.blk path:not(.wr), svg.lcdmod rect, svg.scan .res path, svg.scan .dio path{filter:url(#wob)}
+@media (max-width:860px){ .scanwrap{grid-template-columns:minmax(0,1fr)} }
+
+.rgs{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0}
+.rgc{display:inline-flex; gap:6px; align-items:baseline; padding:1px 9px; border:1.5px dashed var(--faint); border-radius:8px; font-size:15px}
+.rgc i{font-style:normal; font-family:'Gaegu'; font-weight:700; color:var(--ink2)}
+.rgc b{font-family:'Courier Prime'; font-weight:700; color:var(--ink3)}
+.rgc.set{border-style:solid; border-color:var(--ink); background:var(--hl-y)}
+.rgc.set b{color:var(--ink)}
